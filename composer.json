@@ -1,0 +1,31 @@
+{
+  "name": "gred/csi-soporte",
+  "description": "Sistema de gestión de solicitudes de soporte tecnológico para CSI GRED Lambayeque",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.3",
+    "ext-pdo": "*",
+    "ext-pdo_pgsql": "*",
+    "ext-json": "*",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.5"
+  },
+  "autoload": {
+    "psr-4": {"App\\": "src/"}
+  },
+  "autoload-dev": {
+    "psr-4": {"App\\Tests\\": "tests/"}
+  },
+  "scripts": {
+    "test": "phpunit",
+    "migrate": "php bin/migrate.php",
+    "user:create": "php bin/user-create.php"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {}
+  }
+}

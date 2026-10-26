@@ -1,0 +1,6 @@
+{
+  "name": "gred-csi-soporte-assets",
+  "private": true,
+  "scripts": {"build:css": "tailwindcss -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --minify", "watch:css": "tailwindcss -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --watch"},
+  "devDependencies": {"tailwindcss": "^3.4.17"}
+}

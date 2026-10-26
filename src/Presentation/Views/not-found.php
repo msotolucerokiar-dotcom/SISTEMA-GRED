@@ -1,0 +1,4 @@
+<?php
+
+declare(strict_types=1);
+?><!doctype html><html lang="es-PE"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Página no encontrada | Soporte CSI</title><link rel="stylesheet" href="/assets/app.css"></head><body class="grid min-h-screen place-items-center bg-paper p-5 text-ink"><main class="max-w-lg rounded-2xl border border-slate-200 bg-white p-8 shadow-card"><p class="text-sm font-bold text-institutional-700">Error 404</p><h1 class="mt-2 text-2xl font-extrabold">No encontramos esa página</h1><p class="mt-3 text-slate-600">Verifica la dirección o regresa al portal de soporte.</p><a class="mt-6 inline-flex min-h-11 items-center rounded-lg bg-institutional-700 px-4 font-bold text-white" href="/">Ir al inicio</a></main></body></html>

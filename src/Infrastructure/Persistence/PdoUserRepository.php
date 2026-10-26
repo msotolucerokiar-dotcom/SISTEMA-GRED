@@ -1,0 +1,81 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Persistence;
+
+use App\Domain\Authentication\UserRepository;
+use PDO;
+
+final class PdoUserRepository implements UserRepository
+{
+    public function __construct(private readonly PDO $pdo)
+    {
+    }
+
+    public function findForAuthentication(string $email): ?array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT u.id, u.email, u.full_name, u.password_hash, u.is_active, r.code AS role_code, r.name AS role_name,
+                    COALESCE(array_agg(p.code) FILTER (WHERE p.code IS NOT NULL), ARRAY[]::VARCHAR[]) AS permissions
+             FROM users u
+             JOIN roles r ON r.id = u.role_id
+             LEFT JOIN role_permission rp ON rp.role_id = r.id
+             LEFT JOIN permissions p ON p.id = rp.permission_id
+             WHERE u.email = :email
+             GROUP BY u.id, r.id'
+        );
+        $statement->execute(['email' => $email]);
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+        if ($row === false) {
+            return null;
+        }
+
+        $permissions = trim((string) $row['permissions'], '{}');
+        $row['permissions'] = $permissions === '' ? [] : str_getcsv($permissions);
+        $row['id'] = (int) $row['id'];
+        $row['is_active'] = in_array($row['is_active'], [true, 1, '1', 't', 'true'], true);
+
+        return $row;
+    }
+
+    public function recordAttempt(string $email, string $ipAddress, bool $wasSuccessful): void
+    {
+        $statement = $this->pdo->prepare(
+            'INSERT INTO login_attempts (email, ip_address, was_successful) VALUES (:email, CAST(:ip AS INET), :success)'
+        );
+        $statement->execute([
+            'email' => $email,
+            'ip' => $ipAddress,
+            'success' => $wasSuccessful ? 'true' : 'false',
+        ]);
+    }
+
+    public function countRecentFailures(string $email, string $ipAddress, int $windowMinutes): int
+    {
+        $statement = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM login_attempts
+             WHERE email = :email AND ip_address = CAST(:ip AS INET) AND was_successful = FALSE
+               AND attempted_at >= NOW() - (:minutes * INTERVAL '1 minute')"
+        );
+        $statement->execute(['email' => $email, 'ip' => $ipAddress, 'minutes' => $windowMinutes]);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    public function create(string $email, string $fullName, string $passwordHash, string $roleCode): int
+    {
+        $statement = $this->pdo->prepare(
+            'INSERT INTO users (email, full_name, password_hash, role_id)
+             SELECT :email, :full_name, :password_hash, id FROM roles WHERE code = :role_code RETURNING id'
+        );
+        $statement->execute([
+            'email' => $email,
+            'full_name' => $fullName,
+            'password_hash' => $passwordHash,
+            'role_code' => $roleCode,
+        ]);
+
+        return (int) $statement->fetchColumn();
+    }
+}

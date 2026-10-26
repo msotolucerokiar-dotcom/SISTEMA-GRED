@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Bootstrap;
+
+use App\Infrastructure\Persistence\MigrationRunner;
+use App\Application\Authentication\Login;
+use App\Application\Authorization\CanAccess;
+use App\Domain\Authentication\UserRepository;
+use App\Infrastructure\Persistence\PdoUserRepository;
+use PDO;
+use RuntimeException;
+
+/** The single composition root for application adapters. */
+final class ContainerFactory
+{
+    /** @return SimpleContainer<object> */
+    public static function build(): SimpleContainer
+    {
+        $host = self::env('DB_HOST', 'db');
+        $port = self::env('DB_PORT', '5432');
+        $name = self::env('DB_NAME', 'gred_support');
+        $user = self::env('DB_USER', 'gred_app');
+        $password = self::env('DB_PASSWORD', 'change-me-local');
+        $pdo = new PDO(
+            "pgsql:host={$host};port={$port};dbname={$name}",
+            $user,
+            $password,
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+        );
+        $pdo->exec("SET TIME ZONE 'UTC'");
+
+        $users = new PdoUserRepository($pdo);
+
+        return new SimpleContainer([
+            PDO::class => $pdo,
+            MigrationRunner::class => new MigrationRunner($pdo),
+            UserRepository::class => $users,
+            PdoUserRepository::class => $users,
+            Login::class => new Login($users),
+            CanAccess::class => new CanAccess(),
+        ]);
+    }
+
+    private static function env(string $key, string $default): string
+    {
+        $value = getenv($key);
+        if ($value === false || $value === '') {
+            return $default;
+        }
+
+        return $value;
+    }
+}
+
+/** @template T of object */
+final class SimpleContainer
+{
+    /** @param array<class-string, object> $services */
+    public function __construct(private readonly array $services)
+    {
+    }
+
+    /** @template S of object @param class-string<S> $id @return S */
+    public function get(string $id): object
+    {
+        $service = $this->services[$id] ?? null;
+        if ($service === null) {
+            throw new RuntimeException("Service not configured: {$id}");
+        }
+
+        return $service;
+    }
+}
