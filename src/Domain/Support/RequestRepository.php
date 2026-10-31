@@ -14,6 +14,9 @@ interface RequestRepository
 
     public function countOwn(int $requesterId): int;
 
+    /** @return array<string,int> Counts keyed by status code. */
+    public function countOwnByStatus(int $requesterId): array;
+
     /** @return array<string,mixed>|null */
     public function findOwn(string $code, int $requesterId): ?array;
 

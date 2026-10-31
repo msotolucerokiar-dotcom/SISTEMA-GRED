@@ -37,7 +37,15 @@ final class PdoRequestRepositoryTest extends TestCase
             self::assertMatchesRegularExpression('/^SOL-[0-9]{4}-[0-9]{6,}$/', $codes[0]);
             self::assertSame(2, $repository->countOwn($users[0]));
             self::assertSame(0, $repository->countOwn($users[1]));
+            self::assertSame(['pending' => 2], $repository->countOwnByStatus($users[0]));
+            self::assertSame([], $repository->countOwnByStatus($users[1]));
+            $changeStatus = $pdo->prepare('UPDATE requests SET status_id = (SELECT id FROM statuses WHERE code = :status) WHERE public_code = :code');
+            $changeStatus->execute(['status' => 'in_progress', 'code' => $codes[0]]);
+            self::assertEqualsCanonicalizing(['in_progress' => 1, 'pending' => 1], $repository->countOwnByStatus($users[0]));
+            $changeStatus->execute(['status' => 'resolved', 'code' => $codes[0]]);
+            self::assertEqualsCanonicalizing(['pending' => 1, 'resolved' => 1], $repository->countOwnByStatus($users[0]));
             self::assertCount(2, $repository->listOwn($users[0], 10, 0));
+            self::assertCount(1, $repository->listOwn($users[0], 1, 0));
             self::assertNotNull($repository->findOwn($codes[0], $users[0]));
             self::assertNull($repository->findOwn($codes[0], $users[1]));
             $attachments = $repository->attachmentsForOwn($codes[0], $users[0]);

@@ -96,6 +96,7 @@ final class FakeRequestRepository implements RequestRepository
     }
     public function listOwn(int $requesterId, int $limit, int $offset): array { return []; }
     public function countOwn(int $requesterId): int { return 0; }
+    public function countOwnByStatus(int $requesterId): array { return []; }
     public function findOwn(string $code, int $requesterId): ?array { return null; }
     public function attachmentsForOwn(string $code, int $requesterId): array { return []; }
     public function attachmentForOwn(int $attachmentId, int $requesterId): ?array { return null; }

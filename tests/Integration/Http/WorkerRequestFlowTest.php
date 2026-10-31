@@ -32,6 +32,11 @@ final class WorkerRequestFlowTest extends TestCase
             [$status, , $headers] = $this->request('POST', '/login', http_build_query(['_csrf' => $token, 'email' => $email, 'password' => $password]), 'application/x-www-form-urlencoded', $cookie);
             self::assertSame(303, $status);
             $cookie = $this->cookie($headers);
+            [$status, $dashboard] = $this->request('GET', '/dashboard', '', '', $cookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('Resumen de mis solicitudes', $dashboard);
+            self::assertStringContainsString('Aún no tienes solicitudes', $dashboard);
+            self::assertStringNotContainsString('Permisos de tu cuenta', $dashboard);
             [$status, $form] = $this->request('GET', '/requests/new', '', '', $cookie);
             self::assertSame(200, $status);
             $token = $this->csrf($form);
@@ -48,6 +53,11 @@ final class WorkerRequestFlowTest extends TestCase
             $location = $this->header($headers, 'Location');
             self::assertMatchesRegularExpression('~^/requests/SOL-[0-9]{4}-[0-9]+$~', $location);
             $code = basename($location);
+            [$status, $dashboard] = $this->request('GET', '/dashboard', '', '', $cookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('Falla de red en oficina', $dashboard);
+            self::assertStringContainsString('/requests/' . $code, $dashboard);
+            self::assertStringContainsString('Estado: Pendiente', $dashboard);
             [$status, $detail] = $this->request('GET', $location, '', '', $cookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('Falla de red en oficina', $detail);

@@ -68,6 +68,17 @@ final class PdoRequestRepository implements RequestRepository
         return (int) $statement->fetchColumn();
     }
 
+    public function countOwnByStatus(int $requesterId): array
+    {
+        $statement = $this->pdo->prepare('SELECT s.code, COUNT(*) AS total FROM requests r JOIN statuses s ON s.id = r.status_id WHERE r.requester_id = :user GROUP BY s.code ORDER BY s.code');
+        $statement->execute(['user' => $requesterId]);
+        $counts = [];
+        foreach ($statement->fetchAll() as $row) {
+            $counts[$row['code']] = (int) $row['total'];
+        }
+        return $counts;
+    }
+
     public function findOwn(string $code, int $requesterId): ?array
     {
         $statement = $this->pdo->prepare(

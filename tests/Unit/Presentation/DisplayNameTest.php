@@ -13,6 +13,7 @@ final class DisplayNameTest extends TestCase
     {
         self::assertSame('Responsable CSI', DisplayName::withoutDemoMarker('Responsable CSI (demo)'));
         self::assertSame('Técnico CSI', DisplayName::withoutDemoMarker('Técnico CSI [Prueba]'));
+        self::assertSame('Trabajador', DisplayName::withoutDemoMarker('Trabajador de prueba'));
         self::assertSame('Ana Prueba', DisplayName::withoutDemoMarker('Ana Prueba'));
         self::assertSame('Demóstenes', DisplayName::withoutDemoMarker('Demóstenes'));
     }

@@ -8,7 +8,7 @@ final class DisplayName
 {
     public static function withoutDemoMarker(string $name): string
     {
-        $clean = preg_replace('/\s*(?:\((?:demo|prueba)\)|\[(?:demo|prueba)\])\s*$/iu', '', $name);
+        $clean = preg_replace('/\s*(?:\((?:demo|prueba)\)|\[(?:demo|prueba)\]|de prueba)\s*$/iu', '', $name);
         return trim($clean ?? $name);
     }
 }

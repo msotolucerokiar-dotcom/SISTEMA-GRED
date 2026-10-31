@@ -132,6 +132,11 @@ if ($path === '/dashboard') {
         require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
         exit;
     }
+    if ($user->roleCode === 'worker' && $canAccess->execute($user, 'request.view_own')) {
+        $requests = $container->get(RequestRepository::class);
+        $ownStatusCounts = $requests->countOwnByStatus($user->id);
+        $recentOwnRequests = $requests->listOwn($user->id, 5, 0);
+    }
     require dirname(__DIR__) . '/src/Presentation/Views/dashboard.php';
     exit;
 }
