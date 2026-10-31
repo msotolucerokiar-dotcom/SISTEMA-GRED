@@ -36,3 +36,7 @@ Diseño mobile-first, contraste objetivo WCAG AA, orden de tabulación natural, 
 UI UX Pro Max quedó instalado para Codex en `.agents/skills/ui-ux-pro-max/`. Su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md` y recomienda estilo accesible y ético, paleta navy/azul de alto contraste, Fira Sans/Fira Code, foco claro, controles táctiles amplios y respeto por movimiento reducido. Usa ese archivo como fuente para páginas nuevas y revisa primero cualquier override bajo `design-system/csi-soporte-gred-lambayeque/pages/`.
 
 Los tokens de la portada existente viven en `tailwind.config.js`; estilos globales en `src/Presentation/Assets/css/app.css`. Esa portada precede la instalación del skill; aplica el sistema persistido al rediseñarla y a las nuevas pantallas de producto.
+
+## Sprint 2: flujo de solicitudes
+
+Las vistas de nueva solicitud, listado y detalle mantienen la paleta institucional ya presente. Se aplican las recomendaciones de UI UX Pro Max para formularios: etiquetas visibles, instrucciones junto al campo, errores vinculados por `aria-describedby`, foco claro y acciones de al menos 44 px. El listado ofrece estado textual y paginación; el detalle separa descripción y evidencias. La tabla permite desplazamiento horizontal en pantallas estrechas para conservar los encabezados y datos completos.

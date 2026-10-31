@@ -56,6 +56,12 @@ docker compose exec app php bin/user-create.php trabajador@regionlambayeque.gob.
 
 El acceso está en `/`, los paneles en `/dashboard` y el cierre es un `POST` protegido por CSRF. En HTTPS, establece `SESSION_SECURE=1`.
 
+## Solicitudes del trabajador (Sprint 2)
+
+Después de iniciar sesión como trabajador, abre `/requests/new` para registrar un problema y `/requests` para consultar los casos propios. Cada solicitud recibe un código `SOL-año-número` y comienza en estado Pendiente. Se permiten hasta tres evidencias PDF/JPG/PNG/WebP de 8 MiB cada una. Los archivos se guardan en `storage/private` y se descargan mediante una ruta que comprueba la propiedad de la solicitud.
+
+La migración `003_worker_requests.sql` se aplica al iniciar `app`; para ejecutarla manualmente usa `docker compose exec app composer migrate`. Tras cambiar estilos, recompila el CSS con `docker compose --profile assets run --rm tailwind`.
+
 ## Estado del proyecto
 
 Etapa 0 y Sprint 1: base de Clean Architecture, infraestructura Docker, autenticación, control de acceso y paneles por rol. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md` y `docs/decisiones.md`. Próximos sprints: registro de solicitudes y adjuntos; asignación y atención; auditoría, búsqueda y reportes.

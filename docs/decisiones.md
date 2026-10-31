@@ -11,3 +11,6 @@
 9. **Alta de cuentas con CLI interactiva.** El Sprint 1 no crea usuarios ni contraseñas demo. Un administrador de infraestructura crea cuentas con Argon2id mediante `bin/user-create.php`; esto evita credenciales por defecto.
 10. **Rate limit por correo e IP.** Cinco fallos en quince minutos bloquean nuevas comprobaciones de ese par. Los intentos quedan registrados en PostgreSQL.
 11. **Permisos cargados al iniciar sesión.** El panel y futuras rutas consultan los permisos de `role_permission`; ocultar elementos de interfaz no es control de acceso.
+12. **Área elegida por el trabajador.** El esquema existente requiere un área por solicitud; el formulario ofrece las áreas activas y la migración añade “Sede central” como valor inicial. Se podrán administrar áreas en un sprint posterior.
+13. **Código público secuencial.** PostgreSQL asigna un número desde `request_public_number_seq` y la aplicación lo combina con el año UTC. Los huecos de numeración tras transacciones fallidas son aceptables; la restricción única impide duplicados.
+14. **Evidencias privadas.** Se limita a tres archivos de 8 MiB, se valida MIME real y se guardan con clave aleatoria fuera del webroot. La descarga exige ser propietario. El archivo se borra si falla la escritura de la solicitud.
