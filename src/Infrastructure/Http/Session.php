@@ -43,6 +43,12 @@ final class Session
     public function authenticate(User $user): void
     {
         session_regenerate_id(true);
+        $this->refresh($user);
+        unset($_SESSION['csrf_token']);
+    }
+
+    public function refresh(User $user): void
+    {
         $_SESSION['user'] = [
             'id' => $user->id,
             'email' => $user->email,
@@ -51,7 +57,6 @@ final class Session
             'role_name' => $user->roleName,
             'permissions' => $user->permissions,
         ];
-        unset($_SESSION['csrf_token']);
     }
 
     public function user(): ?User
@@ -86,7 +91,6 @@ final class Session
         if (getenv('SESSION_SECURE') === '1') {
             return true;
         }
-        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+        return !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
     }
 }

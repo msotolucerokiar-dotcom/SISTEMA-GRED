@@ -27,8 +27,14 @@ use App\Application\Support\SearchRequests;
 use App\Application\Support\ReportRequests;
 use App\Domain\Support\InsightsRepository;
 use App\Infrastructure\Reporting\PdfReport;
+use App\Domain\Authentication\UserRepository;
+use App\Application\Authentication\ListUsers;
+use App\Application\Authentication\ChangeUserAccess;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
+
+header('Cache-Control: no-store, private');
+header('Pragma: no-cache');
 
 $container = ContainerFactory::build();
 $session = new Session();
@@ -38,6 +44,17 @@ $logout = new Logout();
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $user = $session->user();
+if ($user !== null) {
+    $current = $container->get(UserRepository::class)->findActiveById($user->id);
+    if ($current === null) {
+        $session->destroy();
+        $session = new Session();
+        $user = null;
+    } else {
+        $session->refresh($current);
+        $user = $current;
+    }
+}
 $error = null;
 $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
@@ -106,6 +123,48 @@ if ($path === '/dashboard') {
         exit;
     }
     require dirname(__DIR__) . '/src/Presentation/Views/dashboard.php';
+    exit;
+}
+
+if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)$~D', $path, $userManagementMatch)) {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if (!$canAccess->execute($user, 'user.manage_roles')) {
+        http_response_code(403);
+        require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
+        exit;
+    }
+    $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
+    $editing = $path !== '/csi/users';
+    if ((!$editing && $method !== 'GET') || ($editing && $method !== 'POST')) {
+        http_response_code(405);
+        header('Allow: ' . ($editing ? 'POST' : 'GET'));
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
+        exit;
+    }
+    $formErrors = [];
+    if ($editing) {
+        if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) {
+            http_response_code(419);
+            $formErrors['form'] = 'El formulario venció. Recarga la página e inténtalo de nuevo.';
+        } else {
+            try {
+                $updated = $container->get(ChangeUserAccess::class)->execute(
+                    $user->id, (int) $userManagementMatch[1],
+                    is_string($_POST['role'] ?? null) ? $_POST['role'] : '',
+                    is_string($_POST['active'] ?? null) ? $_POST['active'] : ''
+                );
+                if ($updated) { header('Location: /csi/users?page=' . $page . '&saved=1', true, 303); exit; }
+                http_response_code(404);
+                require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
+                exit;
+            } catch (InvalidRequest $exception) {
+                http_response_code(422);
+                $formErrors = $exception->errors;
+            }
+        }
+    }
+    $listing = $container->get(ListUsers::class)->execute($page);
+    require dirname(__DIR__) . '/src/Presentation/Views/csi-users.php';
     exit;
 }
 

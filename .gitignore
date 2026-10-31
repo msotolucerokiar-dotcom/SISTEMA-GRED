@@ -3,6 +3,7 @@
 /node_modules/
 /storage/private/**
 !/storage/private/.gitkeep
+Documentacion.txt
 .phpunit.cache/
 __pycache__/
 *.py[cod]
