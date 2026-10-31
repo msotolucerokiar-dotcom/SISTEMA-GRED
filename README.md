@@ -76,6 +76,12 @@ Inicia sesión con una cuenta `technician` y abre `/technician/requests`. Solo a
 
 Para probar el flujo completo, crea un trabajador, un responsable y un técnico con `bin/user-create.php`; el trabajador registra un caso, el responsable lo asigna desde `/csi/requests` y el técnico lo atiende desde `/technician/requests`. Ejecuta `docker compose exec app composer test` para verificar transiciones y permisos.
 
+## Historial, búsqueda y reportes (Sprint 5)
+
+El historial de acciones aparece en el detalle de cada solicitud, con actor, fecha y observaciones. El trabajador solo ve solicitudes propias; el técnico, asignaciones activas; el responsable CSI, todas.
+
+Desde `/csi/requests`, el responsable puede buscar por código o asunto y filtrar por estado, fecha, área, categoría y técnico. La paginación conserva los filtros. En `/csi/reports` se muestran totales, una distribución gráfica y una tabla por estado. Las descargas CSV y PDF contienen las solicitudes filtradas; el periodo del reporte se limita a 12 meses y, por defecto, toma los 12 meses anteriores a la fecha actual. Solo las cuentas con `report.view` pueden abrir o descargar reportes.
+
 ## Estado del proyecto
 
-Etapa 0 y Sprints 1–4: base de Clean Architecture, infraestructura Docker, autenticación, solicitudes del trabajador, supervisión CSI y atención técnica. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md` y `docs/decisiones.md`. Próximos sprints: auditoría, búsqueda, reportes y endurecimiento final.
+Etapa 0 y Sprints 1–5: base de Clean Architecture, infraestructura Docker, autenticación, solicitudes del trabajador, supervisión CSI, atención técnica, historial, búsqueda y reportes. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md` y `docs/decisiones.md`. Próximo sprint: pruebas transversales, seguridad y preparación de entrega.

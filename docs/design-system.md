@@ -52,3 +52,7 @@ La lista global usa una tabla con encabezados y código enlazado; el detalle pre
 ## Sprint 4: atención técnica
 
 La bandeja del técnico reutiliza la tabla y la navegación del responsable, con una página vacía que explica cuándo aparecerán casos. El detalle muestra el problema y sus evidencias antes de la acción disponible. La transición se expresa con un botón de texto claro y un formulario con etiquetas visibles, indicaciones y mensajes de error. La solución del trabajador aparece en una tarjeta separada con autor y fecha; no depende del color para comunicar que el caso fue resuelto.
+
+## Sprint 5: historial y reportes
+
+El historial usa una lista semántica ordenada con nombre de la acción, actor, fecha y observación; los puntos de la línea temporal son decorativos y el texto comunica toda la información. La búsqueda usa filtros con etiquetas visibles y conserva los valores al paginar. El reporte combina tarjetas de métricas, barras con cifras escritas y una tabla equivalente para no depender del color ni del gráfico. Las exportaciones tienen botones de texto explícito y estados vacíos claros.
