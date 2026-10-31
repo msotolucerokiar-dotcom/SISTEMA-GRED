@@ -107,6 +107,7 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
     }
     if (!$canAccess->execute($user, 'request.view_all')) {
         http_response_code(403);
+        $error = 'Esta sección está disponible para el Responsable CSI. Inicia sesión con una cuenta de ese rol.';
         require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
         exit;
     }
