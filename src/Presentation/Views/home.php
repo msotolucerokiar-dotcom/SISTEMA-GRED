@@ -39,7 +39,7 @@ $csrfToken = $session->csrfToken();
             <span><span class="block text-sm font-bold tracking-wide">CSI · GRED</span><span class="block text-xs text-white/65">Soporte tecnológico</span></span>
         </a>
         <?php if ($user !== null): ?>
-            <div class="flex items-center gap-3"><span class="hidden text-sm text-white/80 sm:inline"><?= $e($user->fullName) ?></span><a href="/dashboard" class="focus-ring rounded-lg border border-white/30 px-3 py-2 text-sm font-semibold">Mi panel</a></div>
+            <div class="flex items-center gap-3"><span class="hidden text-sm text-white/80 sm:inline"><?= $e(\App\Presentation\DisplayName::withoutDemoMarker($user->fullName)) ?></span><a href="/dashboard" class="focus-ring rounded-lg border border-white/30 px-3 py-2 text-sm font-semibold">Mi panel</a></div>
         <?php else: ?>
             <span class="hidden items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-medium text-white/80 sm:flex"><span class="h-2 w-2 rounded-full bg-lime-300"></span> Centro de Sistemas de Información</span>
         <?php endif; ?>
