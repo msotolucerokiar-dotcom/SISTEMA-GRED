@@ -59,7 +59,7 @@ services:
     working_dir: /var/www/app
     volumes:
       - ./:/var/www/app
-    command: ["sh", "-lc", "npm install --prefix /tmp/tailwind-build --no-save --no-audit --no-fund tailwindcss@^3.4.17 && /tmp/tailwind-build/node_modules/.bin/tailwindcss -c ./tailwind.config.js -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --minify"]
+    command: ["sh", "-lc", "npm install --prefix /tmp/asset-build --no-save --no-audit --no-fund tailwindcss@^3.4.17 gsap@^3.15.0 && /tmp/asset-build/node_modules/.bin/tailwindcss -c ./tailwind.config.js -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --minify && cp /tmp/asset-build/node_modules/gsap/dist/gsap.min.js ./public/assets/gsap.min.js && cp /tmp/asset-build/node_modules/gsap/dist/ScrollTrigger.min.js ./public/assets/ScrollTrigger.min.js"]
     profiles: ["assets"]
 
 volumes:

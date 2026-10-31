@@ -1,6 +1,17 @@
 {
   "name": "gred-csi-soporte-assets",
   "private": true,
-  "scripts": {"build:css": "tailwindcss -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --minify", "watch:css": "tailwindcss -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --watch"},
-  "devDependencies": {"tailwindcss": "^3.4.17"}
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --minify",
+    "watch:css": "tailwindcss -i ./src/Presentation/Assets/css/app.css -o ./public/assets/app.css --watch",
+    "build:motion": "node ./bin/build-motion.cjs",
+    "build:assets": "npm run build:css && npm run build:motion"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.0"
+  }
 }

@@ -40,3 +40,7 @@ Los tokens de la portada existente viven en `tailwind.config.js`; estilos global
 ## Sprint 2: flujo de solicitudes
 
 Las vistas de nueva solicitud, listado y detalle mantienen la paleta institucional ya presente. Se aplican las recomendaciones de UI UX Pro Max para formularios: etiquetas visibles, instrucciones junto al campo, errores vinculados por `aria-describedby`, foco claro y acciones de al menos 44 px. El listado ofrece estado textual y paginación; el detalle separa descripción y evidencias. La tabla permite desplazamiento horizontal en pantallas estrechas para conservar los encabezados y datos completos.
+
+## Movimiento con GSAP
+
+La portada usa GSAP para una entrada breve del título, texto y acciones, y ScrollTrigger para mostrar las tarjetas al entrar en pantalla. Las animaciones solo se configuran con `prefers-reduced-motion: no-preference`; el contenido permanece visible por defecto. Los archivos minificados se sirven localmente desde `public/assets/` y se regeneran con `npm run build:motion` o con el servicio `tailwind` de Docker. `@gsap/react` está instalado para vistas React futuras; las páginas PHP actuales usan GSAP directamente.

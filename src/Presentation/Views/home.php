@@ -17,6 +17,9 @@ $csrfToken = $session->csrfToken();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/app.css">
+    <script src="/assets/gsap.min.js" defer></script>
+    <script src="/assets/ScrollTrigger.min.js" defer></script>
+    <script src="/assets/home-motion.js" defer></script>
     <style>
         :root { --navy:#10283f; --teal:#176b87; --lime:#d6e5a5; --mist:#eff5f7; }
         body { font-family:'DM Sans',sans-serif; }
@@ -50,9 +53,9 @@ $csrfToken = $session->csrfToken();
         <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.1fr_.9fr] lg:py-28">
             <div class="max-w-2xl">
                 <p class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3.5 py-2 text-xs font-semibold tracking-wide text-white/85"><span class="h-1.5 w-1.5 rounded-full bg-lime-300"></span> ATENCIÓN DE SOPORTE · GRED LAMBAYEQUE</p>
-                <h1 class="display max-w-xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.65rem]">Tu trabajo sigue.<br><span class="text-[#c8dc91]">Nosotros resolvemos</span> lo técnico.</h1>
-                <p class="mt-6 max-w-lg text-base leading-7 text-slate-300 sm:text-lg">Registra una solicitud, comparte lo que ocurre y sigue cada avance con el equipo de soporte de la GRED Lambayeque.</p>
-                <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+                <h1 data-motion="hero" class="display max-w-xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.65rem]">Tu trabajo sigue.<br><span class="text-[#c8dc91]">Nosotros resolvemos</span> lo técnico.</h1>
+                <p data-motion="hero" class="mt-6 max-w-lg text-base leading-7 text-slate-300 sm:text-lg">Registra una solicitud, comparte lo que ocurre y sigue cada avance con el equipo de soporte de la GRED Lambayeque.</p>
+                <div data-motion="hero" class="mt-9 flex flex-col gap-3 sm:flex-row">
                     <a href="#acceso" class="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6e5a5] px-5 py-3 text-sm font-bold text-ink shadow-lg shadow-black/10 transition hover:bg-[#e3edc1]">
                         Ingresar al sistema <span aria-hidden="true">→</span>
                     </a>
@@ -87,9 +90,9 @@ $csrfToken = $session->csrfToken();
     <section id="como-funciona" class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
         <div class="mx-auto max-w-2xl text-center"><p class="text-xs font-bold uppercase tracking-[.16em] text-institutional-700">Soporte que acompaña</p><h2 class="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">De la solicitud a la solución</h2><p class="mt-4 text-base leading-7 text-slate-600">Un canal para ordenar la atención y mantenerte al tanto de lo que sucede.</p></div>
         <div class="mt-10 grid gap-4 sm:grid-cols-3 sm:gap-5">
-            <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><span class="grid h-11 w-11 place-items-center rounded-xl bg-institutional-50 font-bold text-institutional-700">01</span><h3 class="mt-5 text-lg font-bold">Cuéntanos qué necesitas</h3><p class="mt-2 text-sm leading-6 text-slate-600">Describe el inconveniente y adjunta una evidencia para ayudarnos a entenderlo mejor.</p></article>
-            <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><span class="grid h-11 w-11 place-items-center rounded-xl bg-accent-50 font-bold text-accent-700">02</span><h3 class="mt-5 text-lg font-bold">El equipo lo atiende</h3><p class="mt-2 text-sm leading-6 text-slate-600">El personal técnico recibe el caso y registra los avances de la atención.</p></article>
-            <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><span class="grid h-11 w-11 place-items-center rounded-xl bg-institutional-50 font-bold text-institutional-700">03</span><h3 class="mt-5 text-lg font-bold">Sigue el resultado</h3><p class="mt-2 text-sm leading-6 text-slate-600">Consulta el estado, el historial y la solución desde un solo lugar.</p></article>
+            <article data-motion="step" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><span class="grid h-11 w-11 place-items-center rounded-xl bg-institutional-50 font-bold text-institutional-700">01</span><h3 class="mt-5 text-lg font-bold">Cuéntanos qué necesitas</h3><p class="mt-2 text-sm leading-6 text-slate-600">Describe el inconveniente y adjunta una evidencia para ayudarnos a entenderlo mejor.</p></article>
+            <article data-motion="step" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><span class="grid h-11 w-11 place-items-center rounded-xl bg-accent-50 font-bold text-accent-700">02</span><h3 class="mt-5 text-lg font-bold">El equipo lo atiende</h3><p class="mt-2 text-sm leading-6 text-slate-600">El personal técnico recibe el caso y registra los avances de la atención.</p></article>
+            <article data-motion="step" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><span class="grid h-11 w-11 place-items-center rounded-xl bg-institutional-50 font-bold text-institutional-700">03</span><h3 class="mt-5 text-lg font-bold">Sigue el resultado</h3><p class="mt-2 text-sm leading-6 text-slate-600">Consulta el estado, el historial y la solución desde un solo lugar.</p></article>
         </div>
     </section>
     <section class="border-y border-slate-200 bg-white"><div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-8"><div><p class="text-sm font-bold">¿Necesitas ayuda para acceder?</p><p class="mt-1 text-sm text-slate-600">Comunícate con el Centro de Sistemas de Información de tu sede.</p></div><span class="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700">Atención al personal GRED</span></div></section>
