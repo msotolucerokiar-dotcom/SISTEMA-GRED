@@ -20,7 +20,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: ["sh", "-lc", "composer install --no-interaction && php bin/migrate.php && php-fpm -F"]
+    command: ["sh", "-lc", "mkdir -p storage/private && chown -R www-data:www-data storage/private && composer install --no-interaction && php bin/migrate.php && php-fpm -F"]
     healthcheck:
       test: ["CMD-SHELL", "php-fpm -t"]
       interval: 15s

@@ -9,6 +9,13 @@ use App\Application\Authentication\Login;
 use App\Application\Authorization\CanAccess;
 use App\Domain\Authentication\UserRepository;
 use App\Infrastructure\Persistence\PdoUserRepository;
+use App\Application\Support\CreateRequest;
+use App\Application\Support\GetOwnRequest;
+use App\Application\Support\ListOwnRequests;
+use App\Domain\Support\PrivateFileStore;
+use App\Domain\Support\RequestRepository;
+use App\Infrastructure\Persistence\PdoRequestRepository;
+use App\Infrastructure\Storage\LocalPrivateFileStore;
 use PDO;
 use RuntimeException;
 
@@ -32,6 +39,8 @@ final class ContainerFactory
         $pdo->exec("SET TIME ZONE 'UTC'");
 
         $users = new PdoUserRepository($pdo);
+        $requests = new PdoRequestRepository($pdo);
+        $files = new LocalPrivateFileStore(dirname(__DIR__, 3) . '/storage/private');
 
         return new SimpleContainer([
             PDO::class => $pdo,
@@ -40,6 +49,12 @@ final class ContainerFactory
             PdoUserRepository::class => $users,
             Login::class => new Login($users),
             CanAccess::class => new CanAccess(),
+            RequestRepository::class => $requests,
+            PdoRequestRepository::class => $requests,
+            PrivateFileStore::class => $files,
+            CreateRequest::class => new CreateRequest($requests, $files),
+            ListOwnRequests::class => new ListOwnRequests($requests),
+            GetOwnRequest::class => new GetOwnRequest($requests),
         ]);
     }
 
