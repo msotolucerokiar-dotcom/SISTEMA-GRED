@@ -34,6 +34,10 @@ use App\Application\Support\RequestFilters;
 use App\Application\Support\SearchRequests;
 use App\Application\Support\ReportRequests;
 use App\Infrastructure\Reporting\PdfReport;
+use App\Domain\Authentication\UserAdministrationRepository;
+use App\Infrastructure\Persistence\PdoUserAdministrationRepository;
+use App\Application\Authentication\ListUsers;
+use App\Application\Authentication\ChangeUserAccess;
 use PDO;
 use RuntimeException;
 
@@ -57,6 +61,7 @@ final class ContainerFactory
         $pdo->exec("SET TIME ZONE 'UTC'");
 
         $users = new PdoUserRepository($pdo);
+        $userAdministration = new PdoUserAdministrationRepository($pdo);
         $requests = new PdoRequestRepository($pdo);
         $management = new PdoManagementRepository($pdo);
         $assigned = new PdoAssignedRequestRepository($pdo);
@@ -70,6 +75,10 @@ final class ContainerFactory
             UserRepository::class => $users,
             PdoUserRepository::class => $users,
             Login::class => new Login($users),
+            UserAdministrationRepository::class => $userAdministration,
+            PdoUserAdministrationRepository::class => $userAdministration,
+            ListUsers::class => new ListUsers($userAdministration),
+            ChangeUserAccess::class => new ChangeUserAccess($userAdministration),
             CanAccess::class => new CanAccess(),
             RequestRepository::class => $requests,
             PdoRequestRepository::class => $requests,
