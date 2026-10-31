@@ -34,7 +34,9 @@ final class WorkerRequestFlowTest extends TestCase
             $cookie = $this->cookie($headers);
             [$status, $dashboard] = $this->request('GET', '/dashboard', '', '', $cookie);
             self::assertSame(200, $status);
-            self::assertStringContainsString('Resumen de mis solicitudes', $dashboard);
+            self::assertStringContainsString('Panel del trabajador', $dashboard);
+            self::assertStringContainsString('Guía rápida', $dashboard);
+            self::assertStringContainsString('Cerradas', $dashboard);
             self::assertStringContainsString('Aún no tienes solicitudes', $dashboard);
             self::assertStringNotContainsString('Permisos de tu cuenta', $dashboard);
             [$status, $form] = $this->request('GET', '/requests/new', '', '', $cookie);
@@ -57,7 +59,7 @@ final class WorkerRequestFlowTest extends TestCase
             self::assertSame(200, $status);
             self::assertStringContainsString('Falla de red en oficina', $dashboard);
             self::assertStringContainsString('/requests/' . $code, $dashboard);
-            self::assertStringContainsString('Estado: Pendiente', $dashboard);
+            self::assertStringContainsString('Pendiente', $dashboard);
             [$status, $detail] = $this->request('GET', $location, '', '', $cookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('Falla de red en oficina', $detail);
