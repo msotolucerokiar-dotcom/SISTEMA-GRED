@@ -82,6 +82,11 @@ final class InMemoryUserRepository implements UserRepository
         return $this->record;
     }
 
+    public function findActiveById(int $id): ?\App\Domain\Authentication\User
+    {
+        return null;
+    }
+
     public function recordAttempt(string $email, string $ipAddress, bool $wasSuccessful): void
     {
         $this->attempts[] = $wasSuccessful;

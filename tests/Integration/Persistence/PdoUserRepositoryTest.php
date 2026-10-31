@@ -28,11 +28,21 @@ final class PdoUserRepositoryTest extends TestCase
             self::assertSame($id, $user['id']);
             self::assertContains('request.create', $user['permissions']);
             self::assertNotContains('request.view_all', $user['permissions']);
+            self::assertContains('request.view_own', $repository->findActiveById($id)?->permissions ?? []);
+            $changeRole = $pdo->prepare("UPDATE users SET role_id = (SELECT id FROM roles WHERE code = 'technician') WHERE id = :id");
+            $changeRole->execute(['id' => $id]);
+            self::assertContains('request.view_assigned', $repository->findActiveById($id)?->permissions ?? []);
+            self::assertNotContains('request.view_own', $repository->findActiveById($id)?->permissions ?? []);
+            $changeRole = $pdo->prepare("UPDATE users SET role_id = (SELECT id FROM roles WHERE code = 'worker') WHERE id = :id");
+            $changeRole->execute(['id' => $id]);
             $result = $container->get(Login::class)->execute($email, 'integration-test-password', '127.0.0.1');
             self::assertTrue($result->succeeded());
             self::assertSame($id, $result->user?->id);
             $repository->recordAttempt($email, '127.0.0.1', false);
             self::assertSame(1, $repository->countRecentFailures($email, '127.0.0.1', 15));
+            $disable = $pdo->prepare('UPDATE users SET is_active = FALSE WHERE id = :id');
+            $disable->execute(['id' => $id]);
+            self::assertNull($repository->findActiveById($id));
         } finally {
             $delete = $pdo->prepare('DELETE FROM users WHERE email = :email');
             $delete->execute(['email' => $email]);

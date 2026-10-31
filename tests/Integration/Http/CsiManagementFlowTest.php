@@ -81,6 +81,24 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringStartsWith('%PDF-1.4', $pdf);
             self::assertStringContainsString($code, $pdf);
             self::assertStringContainsString('application/pdf', implode(' ', $pdfHeaders));
+            [$status] = $this->request('GET', '/csi/users', '', $workerCookie);
+            self::assertSame(403, $status);
+            [$status, $accounts] = $this->request('GET', '/csi/users', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($emails[0], $accounts);
+            preg_match('/name="_csrf" value="([a-f0-9]+)"/', $accounts, $userCsrfMatch);
+            $userCsrf = $userCsrfMatch[1] ?? '';
+            self::assertNotSame('', $userCsrf);
+            [$status] = $this->request('POST', '/csi/users/' . $users[0], 'role=technician&active=1', $managerCookie);
+            self::assertSame(419, $status);
+            [$status] = $this->request('POST', '/csi/users/' . $users[1], http_build_query(['_csrf' => $userCsrf, 'role' => 'worker', 'active' => '1']), $managerCookie);
+            self::assertSame(422, $status);
+            [$status] = $this->request('POST', '/csi/users/' . $users[0], http_build_query(['_csrf' => $userCsrf, 'role' => 'technician', 'active' => '1']), $managerCookie);
+            self::assertSame(303, $status);
+            [$status] = $this->request('GET', '/requests', '', $workerCookie);
+            self::assertSame(403, $status);
+            [$status] = $this->request('POST', '/csi/users/' . $users[0], http_build_query(['_csrf' => $userCsrf, 'role' => 'worker', 'active' => '1']), $managerCookie);
+            self::assertSame(303, $status);
         } finally {
             if ($code !== null) {
                 $statement = $pdo->prepare('DELETE FROM requests WHERE public_code = :code');
