@@ -29,7 +29,7 @@ final class CsiManagementFlowTest extends TestCase
                 $users[] = (int) $statement->fetchColumn();
                 $emails[] = $email;
             }
-            $code = $container->get(PdoRequestRepository::class)->create($users[0], $area, 'Sin Internet', 'No hay Internet en la oficina principal.', []);
+            $code = $container->get(PdoRequestRepository::class)->create($users[0], $area, '=SUM(1,2) Sin Internet', 'No hay Internet en la oficina principal.', []);
             $workerCookie = $this->login($emails[0], $password);
             [$status] = $this->request('GET', '/csi/requests', '', $workerCookie);
             self::assertSame(403, $status);
@@ -56,6 +56,31 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $detail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('Http technician', $detail);
+            self::assertStringContainsString('Historial de acciones', $detail);
+            self::assertStringContainsString('Técnico asignado', $detail);
+            [$status, $workerDetail] = $this->request('GET', '/requests/' . $code, '', $workerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('Historial de acciones', $workerDetail);
+            [$status, $filtered] = $this->request('GET', '/csi/requests?search=' . rawurlencode($code), '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($code, $filtered);
+            [$status] = $this->request('GET', '/csi/requests?from=2026-02-30', '', $managerCookie);
+            self::assertSame(422, $status);
+            [$status] = $this->request('GET', '/csi/reports', '', $workerCookie);
+            self::assertSame(403, $status);
+            [$status, $report] = $this->request('GET', '/csi/reports?search=' . rawurlencode($code), '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('Reportes de soporte', $report);
+            [$status, $csv, $csvHeaders] = $this->request('GET', '/csi/reports.csv?search=' . rawurlencode($code), '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($code, $csv);
+            self::assertStringContainsString("'=SUM(1,2)", $csv);
+            self::assertStringContainsString('text/csv', implode(' ', $csvHeaders));
+            [$status, $pdf, $pdfHeaders] = $this->request('GET', '/csi/reports.pdf?search=' . rawurlencode($code), '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringStartsWith('%PDF-1.4', $pdf);
+            self::assertStringContainsString($code, $pdf);
+            self::assertStringContainsString('application/pdf', implode(' ', $pdfHeaders));
         } finally {
             if ($code !== null) {
                 $statement = $pdo->prepare('DELETE FROM requests WHERE public_code = :code');

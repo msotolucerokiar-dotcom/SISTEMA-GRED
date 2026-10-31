@@ -43,6 +43,7 @@ final class TechnicianFlowTest extends TestCase
             self::assertSame(404, $status);
             [$status, $detail] = $this->request('GET', '/technician/requests/' . $code, '', $technician);
             self::assertSame(200, $status);
+            self::assertStringContainsString('Historial de acciones', $detail);
             preg_match('/name="_csrf" value="([a-f0-9]+)"/', $detail, $match);
             $csrf = $match[1] ?? '';
             self::assertNotSame('', $csrf);
