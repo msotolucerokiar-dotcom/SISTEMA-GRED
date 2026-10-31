@@ -13,7 +13,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-La aplicación queda disponible en <http://localhost:8080>. PostgreSQL escucha en `localhost:5432`. La primera migración y los datos de referencia se aplican al iniciar `app`. No se crean usuarios demo con contraseñas predecibles; se habilitarán junto con el flujo de autenticación.
+La aplicación queda disponible en <http://localhost:8080>. PostgreSQL escucha solo en `127.0.0.1:5432`. Las migraciones y los datos de referencia se aplican al iniciar `app`. Las cuentas se crean mediante el comando interactivo indicado abajo; no se incluyen contraseñas en el repositorio.
 
 Comandos útiles:
 
@@ -42,7 +42,7 @@ storage/                    Archivos privados fuera del webroot
 
 ## Configuración
 
-Revisa `.env.example`. En despliegues, establece `APP_SECRET` y credenciales de base de datos únicas. Los adjuntos se guardan en `storage/private` y nunca bajo `public`.
+Revisa `.env.example`. En despliegues, establece credenciales de base de datos únicas y termina HTTPS antes de exponer el portal. Los adjuntos se guardan en `storage/private` y nunca bajo `public`. La guía de entrega y respaldo está en `docs/entrega.md`.
 
 ## Cuentas y acceso (Sprint 1)
 
@@ -55,6 +55,8 @@ docker compose exec app php bin/user-create.php trabajador@regionlambayeque.gob.
 ```
 
 El acceso está en `/`, los paneles en `/dashboard` y el cierre es un `POST` protegido por CSRF. En HTTPS, establece `SESSION_SECURE=1`.
+
+El Responsable CSI administra roles y estado de las cuentas desde `/csi/users`. Los cambios se aplican en la próxima petición de cada usuario; una cuenta desactivada pierde su sesión. La interfaz impide cambiar la cuenta propia y retirar al último responsable activo.
 
 ## Solicitudes del trabajador (Sprint 2)
 
@@ -84,4 +86,4 @@ Desde `/csi/requests`, el responsable puede buscar por código o asunto y filtra
 
 ## Estado del proyecto
 
-Etapa 0 y Sprints 1–5: base de Clean Architecture, infraestructura Docker, autenticación, solicitudes del trabajador, supervisión CSI, atención técnica, historial, búsqueda y reportes. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md` y `docs/decisiones.md`. Próximo sprint: pruebas transversales, seguridad y preparación de entrega.
+Etapa 0 y Sprints 1–6: base de Clean Architecture, infraestructura Docker, autenticación, administración de acceso, solicitudes del trabajador, supervisión CSI, atención técnica, historial, búsqueda, reportes y revisión de seguridad. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md`, `docs/decisiones.md` y `docs/entrega.md`.

@@ -56,3 +56,7 @@ La bandeja del técnico reutiliza la tabla y la navegación del responsable, con
 ## Sprint 5: historial y reportes
 
 El historial usa una lista semántica ordenada con nombre de la acción, actor, fecha y observación; los puntos de la línea temporal son decorativos y el texto comunica toda la información. La búsqueda usa filtros con etiquetas visibles y conserva los valores al paginar. El reporte combina tarjetas de métricas, barras con cifras escritas y una tabla equivalente para no depender del color ni del gráfico. Las exportaciones tienen botones de texto explícito y estados vacíos claros.
+
+## Sprint 6: administración de acceso
+
+La lista de cuentas usa tarjetas legibles en móvil con nombre, correo y estado escrito. Cada cuenta tiene controles etiquetados para rol y estado, y una acción explícita para guardar. La cuenta propia informa por qué no presenta controles. Errores y confirmaciones se comunican con texto y roles accesibles, sin depender solo del color.
