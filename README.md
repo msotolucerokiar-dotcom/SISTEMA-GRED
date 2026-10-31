@@ -64,6 +64,12 @@ La migración `003_worker_requests.sql` se aplica al iniciar `app`; para ejecuta
 
 La portada incorpora animaciones discretas con GSAP y ScrollTrigger, que respetan la preferencia de movimiento reducido. Para regenerar los recursos locales con Node usa `npm ci` y `npm run build:assets`; en Docker, `docker compose --profile assets run --rm tailwind` construye CSS y los archivos de GSAP.
 
+## Supervisión CSI (Sprint 3)
+
+Inicia sesión con una cuenta `csi_manager` y abre `/csi/requests`. El responsable ve todas las solicitudes; en cada detalle puede elegir una categoría y prioridad, asignar un técnico activo o reasignar el caso. Cada cambio se guarda en una transacción y registra una acción en el historial. El trabajador no puede acceder a estas rutas.
+
+Para crear cuentas del responsable y de técnicos, usa `bin/user-create.php` con los roles `csi_manager` y `technician`. La cuenta técnica debe permanecer activa para aparecer en la lista de asignación.
+
 ## Estado del proyecto
 
 Etapa 0 y Sprint 1: base de Clean Architecture, infraestructura Docker, autenticación, control de acceso y paneles por rol. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md` y `docs/decisiones.md`. Próximos sprints: registro de solicitudes y adjuntos; asignación y atención; auditoría, búsqueda y reportes.

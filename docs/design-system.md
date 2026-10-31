@@ -44,3 +44,7 @@ Las vistas de nueva solicitud, listado y detalle mantienen la paleta institucion
 ## Movimiento con GSAP
 
 La portada usa GSAP para una entrada breve del título, texto y acciones, y ScrollTrigger para mostrar las tarjetas al entrar en pantalla. Las animaciones solo se configuran con `prefers-reduced-motion: no-preference`; el contenido permanece visible por defecto. Los archivos minificados se sirven localmente desde `public/assets/` y se regeneran con `npm run build:motion` o con el servicio `tailwind` de Docker. `@gsap/react` está instalado para vistas React futuras; las páginas PHP actuales usan GSAP directamente.
+
+## Sprint 3: supervisión
+
+La lista global usa una tabla con encabezados y código enlazado; el detalle presenta primero la solicitud y sus evidencias, seguido de formularios separados para clasificación y asignación. Los campos mantienen etiquetas visibles, altura táctil de 48 px, foco de teclado y mensajes de error junto a la acción. El estado y la ausencia de clasificación o responsable se expresan con texto. La tabla puede desplazarse dentro de su contenedor en pantallas pequeñas para preservar todos los datos sin desplazar la página.

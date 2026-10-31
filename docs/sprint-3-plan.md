@@ -1,0 +1,3 @@
+# Sprint 3 · supervisión CSI
+
+HU07–HU09. Archivos: `src/Domain/Support/ManagementRepository.php`, cuatro casos de uso en `src/Application/Support/`, adaptador PDO, rutas HTTP y dos vistas PHP. Tablas existentes: `requests`, `categories`, `priorities`, `users`, `roles`, `request_assignments`, `request_history`, `request_attachments`. Rutas: `GET /csi/requests`, `GET /csi/requests/{code}`, `POST /csi/requests/{code}/classify`, `POST /csi/requests/{code}/assign`, `GET /csi/attachments/{id}`. Solo el permiso `request.view_all` permite lectura y `request.manage` permite cambios. La lista está paginada; búsqueda y filtros avanzados quedan para HU15.
