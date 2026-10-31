@@ -37,10 +37,15 @@ final class WorkerRequestFlowTest extends TestCase
             self::assertStringContainsString('Panel del trabajador', $dashboard);
             self::assertStringContainsString('Guía rápida', $dashboard);
             self::assertStringContainsString('Cerradas', $dashboard);
+            self::assertStringContainsString('registrar tu solicitud desde el celular', $dashboard);
+            self::assertStringContainsString('CSI registró una solución', $dashboard);
+            self::assertStringContainsString('el caso quedó cerrado', $dashboard);
             self::assertStringContainsString('Aún no tienes solicitudes', $dashboard);
             self::assertStringNotContainsString('Permisos de tu cuenta', $dashboard);
             [$status, $form] = $this->request('GET', '/requests/new', '', '', $cookie);
             self::assertSame(200, $status);
+            self::assertStringContainsString('registrar la solicitud desde tu celular', $form);
+            self::assertStringContainsString('Desde tu celular puedes elegir una foto', $form);
             $token = $this->csrf($form);
 
             $boundary = 'GredBoundary' . bin2hex(random_bytes(8));
