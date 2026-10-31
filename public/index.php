@@ -13,6 +13,11 @@ use App\Application\Support\InvalidRequest;
 use App\Application\Support\ListOwnRequests;
 use App\Domain\Support\PrivateFileStore;
 use App\Domain\Support\RequestRepository;
+use App\Application\Support\AssignRequest;
+use App\Application\Support\ClassifyRequest;
+use App\Application\Support\GetRequestForManagement;
+use App\Application\Support\ViewAllRequests;
+use App\Domain\Support\ManagementRepository;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -92,6 +97,105 @@ if ($path === '/dashboard') {
         exit;
     }
     require dirname(__DIR__) . '/src/Presentation/Views/dashboard.php';
+    exit;
+}
+
+if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]+)(?:/(classify|assign))?$~D', $path, $managerMatch)) {
+    if ($user === null) {
+        header('Location: /#acceso', true, 303);
+        exit;
+    }
+    if (!$canAccess->execute($user, 'request.view_all')) {
+        http_response_code(403);
+        require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
+        exit;
+    }
+    $action = $managerMatch[2] ?? null;
+    if ($action !== null && (!$canAccess->execute($user, 'request.manage') || $method !== 'POST')) {
+        http_response_code($method === 'POST' ? 403 : 405);
+        if ($method !== 'POST') { header('Allow: POST'); }
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
+        exit;
+    }
+    if ($action === null && $method !== 'GET') {
+        http_response_code(405);
+        header('Allow: GET');
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
+        exit;
+    }
+    if ($path === '/csi/requests') {
+        $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
+        $listing = $container->get(ViewAllRequests::class)->execute($page);
+        require dirname(__DIR__) . '/src/Presentation/Views/csi-request-list.php';
+        exit;
+    }
+    $code = $managerMatch[1];
+    $formErrors = [];
+    if ($action !== null) {
+        if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) {
+            http_response_code(419);
+            $formErrors[$action] = 'El formulario venció. Recarga la página e inténtalo de nuevo.';
+        } else {
+            try {
+                $updated = $action === 'classify'
+                    ? $container->get(ClassifyRequest::class)->execute(
+                        $code,
+                        (int) (filter_var($_POST['category'] ?? null, FILTER_VALIDATE_INT) ?: 0),
+                        (int) (filter_var($_POST['priority'] ?? null, FILTER_VALIDATE_INT) ?: 0),
+                        $user->id
+                    )
+                    : $container->get(AssignRequest::class)->execute(
+                        $code,
+                        (int) (filter_var($_POST['technician'] ?? null, FILTER_VALIDATE_INT) ?: 0),
+                        $user->id
+                    );
+                if ($updated) {
+                    header('Location: /csi/requests/' . $code . '?saved=' . $action, true, 303);
+                    exit;
+                }
+                http_response_code(404);
+                require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
+                exit;
+            } catch (InvalidRequest $exception) {
+                http_response_code(422);
+                $formErrors = $exception->errors;
+            }
+        }
+    }
+    $detail = $container->get(GetRequestForManagement::class)->execute($code);
+    if ($detail === null) {
+        http_response_code(404);
+        require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
+        exit;
+    }
+    $management = $container->get(ManagementRepository::class);
+    $categories = $management->categories();
+    $priorities = $management->priorities();
+    $technicians = $management->technicians();
+    require dirname(__DIR__) . '/src/Presentation/Views/csi-request-detail.php';
+    exit;
+}
+
+if (preg_match('~^/csi/attachments/([0-9]+)$~D', $path, $managerAttachmentMatch)) {
+    if ($user === null || $method !== 'GET' || !$canAccess->execute($user, 'request.view_all')) {
+        http_response_code(404);
+        exit;
+    }
+    $attachment = $container->get(ManagementRepository::class)->attachment((int) $managerAttachmentMatch[1]);
+    if ($attachment === null) {
+        http_response_code(404);
+        exit;
+    }
+    $filePath = $container->get(PrivateFileStore::class)->path($attachment['storage_key']);
+    if (!is_file($filePath)) {
+        http_response_code(404);
+        exit;
+    }
+    header('Content-Type: ' . $attachment['mime_type']);
+    header('Content-Disposition: attachment; filename="evidencia"; filename*=UTF-8\'\'' . rawurlencode($attachment['original_name']));
+    header('X-Content-Type-Options: nosniff');
+    header('Content-Length: ' . filesize($filePath));
+    readfile($filePath);
     exit;
 }
 
