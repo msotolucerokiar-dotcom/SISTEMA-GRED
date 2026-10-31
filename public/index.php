@@ -22,6 +22,11 @@ use App\Domain\Support\AssignedRequestRepository;
 use App\Application\Support\ListAssignedRequests;
 use App\Application\Support\GetAssignedRequest;
 use App\Application\Support\UpdateAssignedRequest;
+use App\Application\Support\GetRequestHistory;
+use App\Application\Support\SearchRequests;
+use App\Application\Support\ReportRequests;
+use App\Domain\Support\InsightsRepository;
+use App\Infrastructure\Reporting\PdfReport;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -174,7 +179,64 @@ if ($path === '/technician/requests' || preg_match('~^/technician/requests/(SOL-
         require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
         exit;
     }
+    $history = $container->get(GetRequestHistory::class)->forTechnician($code, $user->id);
     require dirname(__DIR__) . '/src/Presentation/Views/technician-request-detail.php';
+    exit;
+}
+
+if (in_array($path, ['/csi/reports', '/csi/reports.csv', '/csi/reports.pdf'], true)) {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if (!$canAccess->execute($user, 'report.view')) {
+        http_response_code(403);
+        require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
+        exit;
+    }
+    if ($method !== 'GET') {
+        http_response_code(405);
+        header('Allow: GET');
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
+        exit;
+    }
+    $reports = $container->get(ReportRequests::class);
+    $filterErrors = [];
+    try {
+        $summary = $reports->summary($_GET);
+    } catch (InvalidRequest $exception) {
+        http_response_code(422);
+        $filterErrors = $exception->errors;
+        $summary = ['filters' => [], 'total' => 0, 'statuses' => []];
+    }
+    if ($filterErrors !== []) {
+        if ($path !== '/csi/reports') { header('Content-Type: text/plain; charset=UTF-8'); echo implode(' ', $filterErrors); exit; }
+    } elseif ($path === '/csi/reports.csv') {
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="solicitudes-csi.csv"');
+        header('X-Content-Type-Options: nosniff');
+        $output = fopen('php://output', 'w');
+        fwrite($output, "\xEF\xBB\xBF");
+        fputcsv($output, ['Código', 'Fecha', 'Asunto', 'Solicitante', 'Área', 'Categoría', 'Prioridad', 'Estado', 'Técnico'], ';');
+        $safe = static function (string $value): string {
+            return preg_match('/^[\s]*[=+\-@]/u', $value) === 1 ? "'" . $value : $value;
+        };
+        foreach ($reports->rows($summary['filters']) as $row) {
+            fputcsv($output, array_map($safe, [
+                $row['public_code'], $row['created_at'], $row['title'], $row['requester_name'], $row['area_name'],
+                $row['category_name'] ?? '', $row['priority_name'] ?? '', $row['status_name'], $row['technician_name'] ?? '',
+            ]), ';');
+        }
+        fclose($output);
+        exit;
+    } elseif ($path === '/csi/reports.pdf') {
+        $pdf = $container->get(PdfReport::class)->render($reports->rows($summary['filters']), $summary['total'], $summary['statuses'], $summary['filters']['from'], $summary['filters']['to']);
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="solicitudes-csi.pdf"');
+        header('Content-Length: ' . strlen($pdf));
+        header('X-Content-Type-Options: nosniff');
+        echo $pdf;
+        exit;
+    }
+    $filterOptions = $container->get(InsightsRepository::class)->filterOptions();
+    require dirname(__DIR__) . '/src/Presentation/Views/csi-report.php';
     exit;
 }
 
@@ -227,7 +289,15 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
     }
     if ($path === '/csi/requests') {
         $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
-        $listing = $container->get(ViewAllRequests::class)->execute($page);
+        $filterErrors = [];
+        try {
+            $listing = $container->get(SearchRequests::class)->execute($_GET, $page);
+        } catch (InvalidRequest $exception) {
+            http_response_code(422);
+            $filterErrors = $exception->errors;
+            $listing = ['filters' => [], 'items' => [], 'total' => 0, 'page' => 1, 'pages' => 1];
+        }
+        $filterOptions = $container->get(InsightsRepository::class)->filterOptions();
         require dirname(__DIR__) . '/src/Presentation/Views/csi-request-list.php';
         exit;
     }
@@ -274,6 +344,7 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
     $categories = $management->categories();
     $priorities = $management->priorities();
     $technicians = $management->technicians();
+    $history = $container->get(GetRequestHistory::class)->forManager($code);
     require dirname(__DIR__) . '/src/Presentation/Views/csi-request-detail.php';
     exit;
 }
@@ -380,6 +451,7 @@ if ($path === '/requests' || $path === '/requests/new' || preg_match('~^/request
         exit;
     }
     $solution = $container->get(AssignedRequestRepository::class)->solution($requestMatch[1], $user->id);
+    $history = $container->get(GetRequestHistory::class)->forWorker($requestMatch[1], $user->id);
     require dirname(__DIR__) . '/src/Presentation/Views/request-detail.php';
     exit;
 }

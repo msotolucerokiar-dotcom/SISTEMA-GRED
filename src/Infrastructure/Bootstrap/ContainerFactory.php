@@ -27,6 +27,13 @@ use App\Infrastructure\Persistence\PdoAssignedRequestRepository;
 use App\Application\Support\ListAssignedRequests;
 use App\Application\Support\GetAssignedRequest;
 use App\Application\Support\UpdateAssignedRequest;
+use App\Domain\Support\InsightsRepository;
+use App\Infrastructure\Persistence\PdoInsightsRepository;
+use App\Application\Support\GetRequestHistory;
+use App\Application\Support\RequestFilters;
+use App\Application\Support\SearchRequests;
+use App\Application\Support\ReportRequests;
+use App\Infrastructure\Reporting\PdfReport;
 use PDO;
 use RuntimeException;
 
@@ -53,6 +60,8 @@ final class ContainerFactory
         $requests = new PdoRequestRepository($pdo);
         $management = new PdoManagementRepository($pdo);
         $assigned = new PdoAssignedRequestRepository($pdo);
+        $insights = new PdoInsightsRepository($pdo);
+        $filterParser = new RequestFilters();
         $files = new LocalPrivateFileStore(dirname(__DIR__, 3) . '/storage/private');
 
         return new SimpleContainer([
@@ -79,6 +88,13 @@ final class ContainerFactory
             ListAssignedRequests::class => new ListAssignedRequests($assigned),
             GetAssignedRequest::class => new GetAssignedRequest($assigned),
             UpdateAssignedRequest::class => new UpdateAssignedRequest($assigned),
+            InsightsRepository::class => $insights,
+            PdoInsightsRepository::class => $insights,
+            RequestFilters::class => $filterParser,
+            GetRequestHistory::class => new GetRequestHistory($insights),
+            SearchRequests::class => new SearchRequests($insights, $filterParser),
+            ReportRequests::class => new ReportRequests($insights, $filterParser),
+            PdfReport::class => new PdfReport(),
         ]);
     }
 
