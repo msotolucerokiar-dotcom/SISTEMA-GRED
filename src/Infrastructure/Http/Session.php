@@ -69,7 +69,8 @@ final class Session
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $parameters = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, [
+            setcookie(session_name(), '', [
+                'expires' => time() - 42000,
                 'path' => $parameters['path'],
                 'domain' => $parameters['domain'],
                 'secure' => $parameters['secure'],
