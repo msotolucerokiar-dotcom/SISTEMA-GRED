@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$localDate = static fn (string $value): string => (new DateTimeImmutable($value))->setTimezone(new DateTimeZone('America/Lima'))->format('d/m/Y H:i');
+$request = $detail['request'];
+?>
+<!doctype html><html lang="es-PE"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title><?= $e($request['public_code']) ?> | Soporte CSI</title><link rel="stylesheet" href="/assets/app.css"></head>
+<body class="min-h-screen bg-paper text-ink"><a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:bg-white focus:p-3">Saltar al contenido</a><header class="bg-ink text-white"><div class="mx-auto max-w-4xl px-5 py-4"><a href="/dashboard" class="text-sm font-bold">CSI · GRED</a></div></header>
+<main id="contenido" class="mx-auto max-w-4xl px-5 py-10"><a href="/requests" class="text-sm font-semibold text-institutional-700 hover:underline">← Mis solicitudes</a><p class="mt-8 text-sm font-bold uppercase tracking-wider text-institutional-700">Solicitud <?= $e($request['public_code']) ?></p><h1 class="mt-2 break-words text-3xl font-extrabold"><?= $e($request['title']) ?></h1><div class="mt-4 flex flex-wrap gap-3 text-sm"><span class="rounded-full bg-amber-50 px-3 py-2 font-semibold text-amber-900">Estado: <?= $e($request['status_name']) ?></span><span class="rounded-full bg-slate-100 px-3 py-2 text-slate-700">Área: <?= $e($request['area_name']) ?></span><span class="rounded-full bg-slate-100 px-3 py-2 text-slate-700">Registrada: <?= $e($localDate($request['created_at'])) ?></span></div>
+<section class="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><h2 class="text-lg font-bold">Descripción del problema</h2><p class="mt-3 whitespace-pre-wrap break-words leading-7 text-slate-700"><?= $e($request['description']) ?></p></section>
+<section class="mt-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-card"><h2 class="text-lg font-bold">Evidencias</h2><?php if ($detail['attachments'] === []): ?><p class="mt-2 text-slate-600">No se adjuntaron archivos.</p><?php else: ?><ul class="mt-3 space-y-3"><?php foreach ($detail['attachments'] as $attachment): ?><li><a class="inline-flex min-h-11 items-center break-all font-semibold text-institutional-700 underline hover:text-institutional-800" href="/attachments/<?= (int) $attachment['id'] ?>"><?= $e($attachment['original_name']) ?> (<?= round((int) $attachment['size_bytes'] / 1024) ?> KiB)</a></li><?php endforeach; ?></ul><?php endif; ?></section></main></body></html>
