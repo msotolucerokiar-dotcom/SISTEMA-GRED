@@ -48,3 +48,7 @@ La portada usa GSAP para una entrada breve del título, texto y acciones, y Scro
 ## Sprint 3: supervisión
 
 La lista global usa una tabla con encabezados y código enlazado; el detalle presenta primero la solicitud y sus evidencias, seguido de formularios separados para clasificación y asignación. Los campos mantienen etiquetas visibles, altura táctil de 48 px, foco de teclado y mensajes de error junto a la acción. El estado y la ausencia de clasificación o responsable se expresan con texto. La tabla puede desplazarse dentro de su contenedor en pantallas pequeñas para preservar todos los datos sin desplazar la página.
+
+## Sprint 4: atención técnica
+
+La bandeja del técnico reutiliza la tabla y la navegación del responsable, con una página vacía que explica cuándo aparecerán casos. El detalle muestra el problema y sus evidencias antes de la acción disponible. La transición se expresa con un botón de texto claro y un formulario con etiquetas visibles, indicaciones y mensajes de error. La solución del trabajador aparece en una tarjeta separada con autor y fecha; no depende del color para comunicar que el caso fue resuelto.

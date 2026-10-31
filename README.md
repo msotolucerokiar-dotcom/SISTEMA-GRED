@@ -70,6 +70,12 @@ Inicia sesión con una cuenta `csi_manager` y abre `/csi/requests`. El responsab
 
 Para crear cuentas del responsable y de técnicos, usa `bin/user-create.php` con los roles `csi_manager` y `technician`. La cuenta técnica debe permanecer activa para aparecer en la lista de asignación.
 
+## Atención técnica (Sprint 4)
+
+Inicia sesión con una cuenta `technician` y abre `/technician/requests`. Solo aparecen las solicitudes actualmente asignadas a esa cuenta. En cada caso puedes consultar evidencias, iniciar la atención con una observación y, después, registrar la solución. La solución es obligatoria al marcar el caso como **Solucionada**; el trabajador la ve en el detalle de su propia solicitud. Una reasignación retira el acceso del técnico anterior.
+
+Para probar el flujo completo, crea un trabajador, un responsable y un técnico con `bin/user-create.php`; el trabajador registra un caso, el responsable lo asigna desde `/csi/requests` y el técnico lo atiende desde `/technician/requests`. Ejecuta `docker compose exec app composer test` para verificar transiciones y permisos.
+
 ## Estado del proyecto
 
-Etapa 0 y Sprint 1: base de Clean Architecture, infraestructura Docker, autenticación, control de acceso y paneles por rol. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md` y `docs/decisiones.md`. Próximos sprints: registro de solicitudes y adjuntos; asignación y atención; auditoría, búsqueda y reportes.
+Etapa 0 y Sprints 1–4: base de Clean Architecture, infraestructura Docker, autenticación, solicitudes del trabajador, supervisión CSI y atención técnica. El skill UI UX Pro Max está instalado para Codex en `.agents/skills/ui-ux-pro-max/`; su sistema visual persistido está en `design-system/csi-soporte-gred-lambayeque/MASTER.md`. Ver también `docs/design-system.md` y `docs/decisiones.md`. Próximos sprints: auditoría, búsqueda, reportes y endurecimiento final.
