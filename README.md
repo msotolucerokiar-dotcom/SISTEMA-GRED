@@ -58,6 +58,8 @@ Después, el Responsable CSI crea las demás cuentas desde `/csi/users` → **Cr
 
 El Responsable CSI también configura allí los permisos individuales de los técnicos: asignar o reasignar, clasificar, consultar reportes y delegar tareas. Una cuenta nueva de técnico comienza sin estos permisos; cada concesión o revocación queda auditada y surte efecto en la siguiente petición. Al desactivar una cuenta técnica o cambiarle el rol, se revocan sus permisos adicionales.
 
+La revisión verificable de autenticación, roles y permisos del Sprint 01 está en [docs/evidencias-sprint-01/](docs/evidencias-sprint-01/README.md), con salida real de PHPUnit y guía para capturas manuales.
+
 ## Solicitudes del trabajador (Sprint 2)
 
 Después de iniciar sesión como trabajador, abre `/requests/new` para registrar un problema y `/requests` para consultar los casos propios. Cada solicitud recibe un código `SOL-año-número` y comienza en estado Pendiente. Se permiten hasta tres evidencias PDF/JPG/PNG/WebP de 8 MiB cada una. Los archivos se guardan en `storage/private` y se descargan mediante una ruta que comprueba la propiedad de la solicitud.

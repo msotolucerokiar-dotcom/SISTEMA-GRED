@@ -41,6 +41,8 @@ final class CsiOperationalFlowTest extends TestCase
             self::assertSame(403, $this->request('POST', '/csi/requests/' . $code . '/assign', http_build_query(['_csrf' => $techCsrf, 'technician' => $ids[2]]), $technician)[0]);
             self::assertSame(403, $this->request('POST', '/csi/users/' . $ids[2] . '/permissions', http_build_query(['_csrf' => $techCsrf, 'permission' => 'request.assign', 'enabled' => '1']), $technician)[0]);
             self::assertSame(403, $this->request('GET', '/csi/requests', '', $intern)[0]);
+            self::assertSame(403, $this->request('GET', '/csi/users', '', $intern)[0]);
+            self::assertSame(403, $this->request('POST', '/csi/users/new', http_build_query(['_csrf' => $internCsrf]), $intern)[0]);
             self::assertSame(200, $this->request('GET', '/intern/tasks', '', $intern)[0]);
             self::assertSame(419, $this->grant($manager, '', $ids[2], 'request.assign', '1'));
             self::assertSame(422, $this->grant($manager, $managerCsrf, $ids[2], 'user.manage_roles', '1'));

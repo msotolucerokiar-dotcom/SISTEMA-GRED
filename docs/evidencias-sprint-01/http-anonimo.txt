@@ -1,0 +1,6 @@
+﻿Verificación HTTP anónima con curl.exe (sin cookies):
+GET / -> HTTP 200
+GET /dashboard -> HTTP 303
+GET /csi/users -> HTTP 303
+GET /csi/users/new -> HTTP 303
+GET /intern/tasks -> HTTP 303

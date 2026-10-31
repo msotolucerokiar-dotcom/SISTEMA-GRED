@@ -1,0 +1,4 @@
+﻿NAME                 IMAGE                COMMAND                  SERVICE   CREATED        STATUS                  PORTS
+gred-soporte-app-1   gred-soporte-app     "docker-php-entrypoi…"   app       10 hours ago   Up 10 hours (healthy)   9000/tcp
+gred-soporte-db-1    postgres:16-alpine   "docker-entrypoint.s…"   db        10 hours ago   Up 10 hours (healthy)   127.0.0.1:5432->5432/tcp
+gred-soporte-web-1   nginx:1.27-alpine    "/docker-entrypoint.…"   web       10 hours ago   Up 10 hours             127.0.0.1:8080->80/tcp

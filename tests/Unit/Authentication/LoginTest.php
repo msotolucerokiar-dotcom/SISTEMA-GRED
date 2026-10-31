@@ -40,6 +40,9 @@ final class LoginTest extends TestCase
 
         self::assertFalse($result->succeeded());
         self::assertSame([false], $repository->attempts);
+        $repository->record = null;
+        self::assertFalse((new Login($repository))->execute('unknown@example.test', 'wrong password', '127.0.0.1')->succeeded());
+        self::assertSame([false, false], $repository->attempts);
     }
 
     public function testRejectsLoginWhenAttemptLimitWasAlreadyReached(): void

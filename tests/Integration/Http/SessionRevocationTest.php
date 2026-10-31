@@ -10,6 +10,39 @@ use PHPUnit\Framework\TestCase;
 
 final class SessionRevocationTest extends TestCase
 {
+    public function testLogoutInvalidatesSessionAndPrivateRoutesRedirect(): void
+    {
+        $pdo = ContainerFactory::build()->get(PDO::class);
+        $email = 'logout-' . bin2hex(random_bytes(8)) . '@example.test';
+        $password = bin2hex(random_bytes(16));
+        $insert = $pdo->prepare("INSERT INTO users (role_id, email, full_name, password_hash) VALUES ((SELECT id FROM roles WHERE code = 'worker'), :email, 'Logout Test', :hash) RETURNING id");
+        $insert->execute(['email' => $email, 'hash' => password_hash($password, PASSWORD_ARGON2ID)]);
+        $id = (int) $insert->fetchColumn();
+        try {
+            [$status, $home, $headers] = $this->request('GET', '/');
+            self::assertSame(200, $status);
+            preg_match('/name="_csrf" value="([a-f0-9]+)"/', $home, $match);
+            [$status, , $headers] = $this->request('POST', '/login', http_build_query(['_csrf' => $match[1] ?? '', 'email' => $email, 'password' => $password]), $this->cookie($headers));
+            self::assertSame(303, $status);
+            $cookie = $this->cookie($headers);
+            [$status, $dashboard] = $this->request('GET', '/dashboard', '', $cookie);
+            self::assertSame(200, $status);
+            preg_match('/name="_csrf" value="([a-f0-9]+)"/', $dashboard, $match);
+            self::assertSame(419, $this->request('POST', '/logout', '', $cookie)[0]);
+            self::assertSame(200, $this->request('GET', '/dashboard', '', $cookie)[0]);
+            self::assertSame(303, $this->request('POST', '/logout', http_build_query(['_csrf' => $match[1] ?? '']), $cookie)[0]);
+            self::assertSame(303, $this->request('GET', '/dashboard', '', $cookie)[0]);
+            self::assertSame(303, $this->request('GET', '/requests', '', $cookie)[0]);
+            self::assertSame(303, $this->request('GET', '/csi/users', '', $cookie)[0]);
+            self::assertSame(200, $this->request('GET', '/', '', $cookie)[0]);
+        } finally {
+            $delete = $pdo->prepare('DELETE FROM users WHERE id = :id');
+            $delete->execute(['id' => $id]);
+            $delete = $pdo->prepare('DELETE FROM login_attempts WHERE email = :email');
+            $delete->execute(['email' => $email]);
+        }
+    }
+
     public function testExistingSessionFollowsRoleChangeAndIsRevokedAfterDeactivation(): void
     {
         $pdo = ContainerFactory::build()->get(PDO::class);
