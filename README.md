@@ -13,7 +13,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-La aplicación queda disponible en <http://localhost:8080>. PostgreSQL escucha solo en `127.0.0.1:5432`. Las migraciones y los datos de referencia se aplican al iniciar `app`. Las cuentas se crean mediante el comando interactivo indicado abajo; no se incluyen contraseñas en el repositorio.
+La aplicación queda disponible en <http://localhost:8080>. PostgreSQL escucha solo en `127.0.0.1:5432`. Las migraciones y los datos de referencia se aplican al iniciar `app`. No se incluyen contraseñas en el repositorio.
 
 Comandos útiles:
 
@@ -46,17 +46,15 @@ Revisa `.env.example`. En despliegues, establece credenciales de base de datos �
 
 ## Cuentas y acceso (Sprint 1)
 
-No hay contraseñas demo. Crea cada cuenta desde una terminal interactiva; la contraseña se solicita sin incluirla en el historial del shell:
+No hay contraseñas demo. Para iniciar una instalación nueva, crea **solo la primera cuenta Responsable CSI** desde una terminal interactiva; la contraseña se solicita sin incluirla en el historial del shell:
 
 ```sh
 docker compose exec app php bin/user-create.php responsable@regionlambayeque.gob.pe "Nombre Responsable" csi_manager
-docker compose exec app php bin/user-create.php tecnico@regionlambayeque.gob.pe "Nombre Técnico" technician
-docker compose exec app php bin/user-create.php trabajador@regionlambayeque.gob.pe "Nombre Trabajador" worker
 ```
 
 El acceso está en `/`, los paneles en `/dashboard` y el cierre es un `POST` protegido por CSRF. En HTTPS, establece `SESSION_SECURE=1`.
 
-El Responsable CSI administra roles y estado de las cuentas desde `/csi/users`. Los cambios se aplican en la próxima petición de cada usuario; una cuenta desactivada pierde su sesión. La interfaz impide cambiar la cuenta propia y retirar al último responsable activo.
+Después, el Responsable CSI crea las demás cuentas desde `/csi/users` → **Crear usuario**. Elige nombre, correo, rol, estado y una contraseña inicial de 12 a 128 caracteres; debe comunicarla privadamente. El sistema guarda un hash Argon2id y exige que la persona cambie la contraseña en su primer inicio de sesión. No se envían correos. Una cuenta desactivada no puede iniciar sesión. El responsable también administra roles y estado desde `/csi/users`; los cambios se aplican en la siguiente petición. La interfaz impide cambiar la cuenta propia y retirar al último responsable activo.
 
 El Responsable CSI también configura allí los permisos individuales de los técnicos: asignar o reasignar, clasificar, consultar reportes y delegar tareas. Una cuenta nueva de técnico comienza sin estos permisos; cada concesión o revocación queda auditada y surte efecto en la siguiente petición. Al desactivar una cuenta técnica o cambiarle el rol, se revocan sus permisos adicionales.
 
@@ -72,21 +70,19 @@ La portada incorpora animaciones discretas con GSAP y ScrollTrigger, que respeta
 
 Inicia sesión con una cuenta `csi_manager` y abre `/csi/requests`. El responsable ve todas las solicitudes; en cada detalle puede elegir una categoría y prioridad, asignar un técnico activo o reasignar el caso. Cada cambio se guarda en una transacción y registra una acción en el historial. El trabajador no puede acceder a estas rutas.
 
-Para crear cuentas del responsable y de técnicos, usa `bin/user-create.php` con los roles `csi_manager` y `technician`. La cuenta técnica debe permanecer activa para aparecer en la lista de asignación.
+El Responsable CSI crea las cuentas técnicas desde `/csi/users/new`. La cuenta técnica debe permanecer activa para aparecer en la lista de asignación.
 
 ## Atención técnica (Sprint 4)
 
 Inicia sesión con una cuenta `technician` y abre `/technician/requests`. Solo aparecen las solicitudes actualmente asignadas a esa cuenta. En cada caso puedes consultar evidencias, iniciar la atención con una observación y, después, registrar la solución. La solución es obligatoria al marcar el caso como **Solucionada**; el trabajador la ve en el detalle de su propia solicitud. Una reasignación retira el acceso del técnico anterior.
 
-Para probar el flujo completo, crea un trabajador, un responsable y un técnico con `bin/user-create.php`; el trabajador registra un caso, el responsable lo asigna desde `/csi/requests` y el técnico lo atiende desde `/technician/requests`. Ejecuta `docker compose exec app composer test` para verificar transiciones y permisos.
+Para probar el flujo completo, crea un trabajador y un técnico desde `/csi/users`; el trabajador registra un caso, el responsable lo asigna desde `/csi/requests` y el técnico lo atiende desde `/technician/requests`. Ejecuta `docker compose exec app composer test` para verificar transiciones y permisos.
 
 ## Colaboración CSI
 
 El responsable puede asignarse un caso para atenderlo directamente. La asignación principal sigue determinando quién responde por la solicitud. Si hace falta ayuda de un practicante, crea una cuenta opcional con rol `intern` y delega una tarea desde el detalle del caso. El practicante ve solo sus tareas en `/intern/tasks`, registra lo realizado y lo envía a validación. El responsable de la solicitud o el ingeniero aprueba o cancela la tarea. Una solicitud con tareas pendientes no puede marcarse como solucionada. Varios practicantes pueden colaborar mediante tareas separadas; la reasignación cancela las tareas aún abiertas y conserva el historial.
 
-```sh
-docker compose exec app php bin/user-create.php practicante@regionlambayeque.gob.pe "Nombre Practicante" intern
-```
+El Responsable CSI puede crear una cuenta de practicante desde `/csi/users/new` seleccionando el rol **Practicante CSI**.
 
 Si un practicante solo acompaña al equipo y no necesita registrar trabajo, no hace falta crearle una cuenta. Desactivar su cuenta conserva el historial de sus intervenciones.
 

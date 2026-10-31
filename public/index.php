@@ -31,6 +31,8 @@ use App\Domain\Authentication\UserRepository;
 use App\Application\Authentication\ListUsers;
 use App\Application\Authentication\ChangeUserAccess;
 use App\Application\Authentication\ChangeUserPermission;
+use App\Application\Authentication\CreateUser;
+use App\Application\Authentication\ChangeInitialPassword;
 use App\Domain\Authentication\UserPermissionRepository;
 use App\Domain\Support\TaskRepository;
 use App\Application\Support\ListInternTasks;
@@ -79,7 +81,7 @@ if ($path === '/login' && $method === 'POST') {
         );
         if ($result->succeeded() && $result->user !== null) {
             $session->authenticate($result->user);
-            header('Location: /dashboard', true, 303);
+            header('Location: ' . ($result->user->mustChangePassword ? '/change-password' : '/dashboard'), true, 303);
             exit;
         }
         http_response_code(401);
@@ -115,6 +117,37 @@ if ($path === '/login' && $method !== 'POST') {
 
 if ($path === '/login' && $method === 'POST') {
     require dirname(__DIR__) . '/src/Presentation/Views/home.php';
+    exit;
+}
+
+if ($user !== null && $user->mustChangePassword && !in_array($path, ['/change-password', '/logout'], true)) {
+    header('Location: /change-password', true, 303);
+    exit;
+}
+
+if ($path === '/change-password') {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if (!$user->mustChangePassword) { header('Location: /dashboard', true, 303); exit; }
+    if (!in_array($method, ['GET', 'POST'], true)) { http_response_code(405); header('Allow: GET, POST'); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    $formErrors = [];
+    if ($method === 'POST') {
+        if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) { http_response_code(419); $formErrors['form'] = 'El formulario venció. Recarga la página.'; }
+        else {
+            try {
+                $container->get(ChangeInitialPassword::class)->execute(
+                    $user->id,
+                    is_string($_POST['current_password'] ?? null) ? $_POST['current_password'] : '',
+                    is_string($_POST['new_password'] ?? null) ? $_POST['new_password'] : '',
+                    is_string($_POST['confirmation'] ?? null) ? $_POST['confirmation'] : ''
+                );
+                $refreshedUser = $container->get(UserRepository::class)->findActiveById($user->id);
+                if ($refreshedUser === null) { $session->destroy(); header('Location: /#acceso', true, 303); exit; }
+                $session->authenticate($refreshedUser);
+                header('Location: /dashboard?password_changed=1', true, 303); exit;
+            } catch (InvalidRequest $exception) { http_response_code(422); $formErrors = $exception->errors; }
+        }
+    }
+    require dirname(__DIR__) . '/src/Presentation/Views/change-password.php';
     exit;
 }
 
@@ -210,9 +243,33 @@ if (preg_match('~^/technician/tasks/([0-9]+)/(approve|cancel)$~D', $path, $appro
     header('Location: ' . ($user->roleCode === 'csi_manager' ? '/csi/requests' : '/technician/requests') . '?task_updated=1', true, 303); exit;
 }
 
+if ($path === '/csi/users/new') {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if ($user->roleCode !== 'csi_manager' || !$canAccess->execute($user, 'user.manage_roles')) { http_response_code(403); require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php'; exit; }
+    if (!in_array($method, ['GET', 'POST'], true)) { http_response_code(405); header('Allow: GET, POST'); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    $newUserForm = ['full_name' => '', 'email' => '', 'role' => '', 'active' => '1'];
+    $formErrors = [];
+    if ($method === 'POST') {
+        foreach ($newUserForm as $field => $_) { $newUserForm[$field] = is_string($_POST[$field] ?? null) ? $_POST[$field] : ''; }
+        if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) { http_response_code(419); $formErrors['form'] = 'El formulario venció. Recarga la página.'; }
+        else {
+            try {
+                $container->get(CreateUser::class)->execute(
+                    $newUserForm['full_name'], $newUserForm['email'], $newUserForm['role'], $newUserForm['active'],
+                    is_string($_POST['password'] ?? null) ? $_POST['password'] : '',
+                    is_string($_POST['confirmation'] ?? null) ? $_POST['confirmation'] : ''
+                );
+                header('Location: /csi/users?created=1', true, 303); exit;
+            } catch (InvalidRequest $exception) { http_response_code(422); $formErrors = $exception->errors; }
+        }
+    }
+    require dirname(__DIR__) . '/src/Presentation/Views/csi-user-create.php';
+    exit;
+}
+
 if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)(?:/(permissions))?$~D', $path, $userManagementMatch)) {
     if ($user === null) { header('Location: /#acceso', true, 303); exit; }
-    if (!$canAccess->execute($user, 'user.manage_roles')) {
+    if ($user->roleCode !== 'csi_manager' || !$canAccess->execute($user, 'user.manage_roles')) {
         http_response_code(403);
         require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
         exit;

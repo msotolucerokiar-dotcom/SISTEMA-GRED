@@ -41,6 +41,8 @@ use App\Application\Authentication\ChangeUserAccess;
 use App\Domain\Authentication\UserPermissionRepository;
 use App\Infrastructure\Persistence\PdoUserPermissionRepository;
 use App\Application\Authentication\ChangeUserPermission;
+use App\Application\Authentication\CreateUser;
+use App\Application\Authentication\ChangeInitialPassword;
 use App\Domain\Support\TaskRepository;
 use App\Infrastructure\Persistence\PdoTaskRepository;
 use App\Application\Support\ListInternTasks;
@@ -92,6 +94,8 @@ final class ContainerFactory
             PdoUserAdministrationRepository::class => $userAdministration,
             ListUsers::class => new ListUsers($userAdministration),
             ChangeUserAccess::class => new ChangeUserAccess($userAdministration),
+            CreateUser::class => new CreateUser($userAdministration),
+            ChangeInitialPassword::class => new ChangeInitialPassword($users),
             UserPermissionRepository::class => $userPermissions,
             PdoUserPermissionRepository::class => $userPermissions,
             ChangeUserPermission::class => new ChangeUserPermission($userPermissions),

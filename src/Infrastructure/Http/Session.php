@@ -56,6 +56,7 @@ final class Session
             'role_code' => $user->roleCode,
             'role_name' => $user->roleName,
             'permissions' => $user->permissions,
+            'must_change_password' => $user->mustChangePassword,
         ];
     }
 
@@ -66,7 +67,7 @@ final class Session
             return null;
         }
 
-        return new User($data['id'], $data['email'], $data['full_name'], $data['role_code'], $data['role_name'], $data['permissions']);
+        return new User($data['id'], $data['email'], $data['full_name'], $data['role_code'], $data['role_name'], $data['permissions'], $data['must_change_password'] ?? false);
     }
 
     public function destroy(): void

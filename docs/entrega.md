@@ -24,7 +24,7 @@ No se publica ninguna contraseña. Crea una cuenta Responsable CSI desde termina
 docker compose exec app php bin/user-create.php responsable@regionlambayeque.gob.pe "Nombre Responsable" csi_manager
 ```
 
-Usa el mismo comando con `worker` o `technician` para crear trabajadores y técnicos. El responsable cambia roles y estado desde `/csi/users`. Los permisos se consultan de nuevo en cada petición; al desactivar una cuenta, la sesión deja de servir. Cambia las contraseñas de cualquier cuenta de prueba antes de entregar el sistema a usuarios reales. El archivo local `Documentacion.txt`, si se usa para apuntes, está ignorado por Git.
+Esta cuenta inicial permite crear trabajadores, técnicos, practicantes y otros responsables desde `/csi/users/new`, sin terminal. La contraseña inicial se entrega de forma privada y el usuario debe cambiarla en su primer acceso; el formulario no la muestra después de guardar. El responsable cambia roles y estado desde `/csi/users`. Los permisos se consultan de nuevo en cada petición; al desactivar una cuenta, la sesión deja de servir. Cambia las contraseñas de cualquier cuenta de prueba antes de entregar el sistema a usuarios reales. El archivo local `Documentacion.txt`, si se usa para apuntes, está ignorado por Git.
 
 ## Publicación
 

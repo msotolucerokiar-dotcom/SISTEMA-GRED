@@ -11,6 +11,9 @@ interface UserAdministrationRepository
 
     public function countUsers(): int;
 
+    /** Returns false when the email is already in use. */
+    public function createUser(string $email, string $fullName, string $passwordHash, string $roleCode, bool $active): bool;
+
     /** @return 'updated'|'not_found'|'last_manager' */
     public function updateAccess(int $actorId, int $userId, string $roleCode, bool $active): string;
 }

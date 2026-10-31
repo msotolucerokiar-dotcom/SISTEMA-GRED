@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence;
 
 use App\Domain\Authentication\UserAdministrationRepository;
 use PDO;
+use PDOException;
 use Throwable;
 
 final class PdoUserAdministrationRepository implements UserAdministrationRepository
@@ -28,6 +29,18 @@ final class PdoUserAdministrationRepository implements UserAdministrationReposit
     public function countUsers(): int
     {
         return (int) $this->pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    }
+
+    public function createUser(string $email, string $fullName, string $passwordHash, string $roleCode, bool $active): bool
+    {
+        try {
+            $query = $this->pdo->prepare('INSERT INTO users (email, full_name, password_hash, role_id, is_active, must_change_password) SELECT :email, :full_name, :password_hash, id, :active, TRUE FROM roles WHERE code = :role RETURNING id');
+            $query->execute(['email' => $email, 'full_name' => $fullName, 'password_hash' => $passwordHash, 'role' => $roleCode, 'active' => $active ? 'true' : 'false']);
+            return $query->fetchColumn() !== false;
+        } catch (PDOException $exception) {
+            if ($exception->getCode() === '23505') { return false; }
+            throw $exception;
+        }
     }
 
     public function updateAccess(int $actorId, int $userId, string $roleCode, bool $active): string

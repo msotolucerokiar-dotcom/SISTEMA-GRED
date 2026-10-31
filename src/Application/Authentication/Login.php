@@ -41,7 +41,7 @@ final class Login
 
         return LoginResult::authenticated(new User(
             $record['id'], $record['email'], $record['full_name'], $record['role_code'],
-            $record['role_name'], $record['permissions']
+            $record['role_name'], $record['permissions'], $record['must_change_password'] ?? false
         ));
     }
 }

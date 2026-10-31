@@ -6,7 +6,7 @@ namespace App\Domain\Authentication;
 
 interface UserRepository
 {
-    /** @return array{id:int,email:string,full_name:string,password_hash:string,role_code:string,role_name:string,permissions:list<string>,is_active:bool}|null */
+    /** @return array{id:int,email:string,full_name:string,password_hash:string,role_code:string,role_name:string,permissions:list<string>,is_active:bool,must_change_password:bool}|null */
     public function findForAuthentication(string $email): ?array;
 
     public function findActiveById(int $id): ?User;
@@ -16,4 +16,6 @@ interface UserRepository
     public function countRecentFailures(string $email, string $ipAddress, int $windowMinutes): int;
 
     public function create(string $email, string $fullName, string $passwordHash, string $roleCode): int;
+
+    public function changeInitialPassword(int $userId, string $currentPassword, string $newPasswordHash): bool;
 }

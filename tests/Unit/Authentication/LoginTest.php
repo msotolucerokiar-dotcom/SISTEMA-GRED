@@ -101,4 +101,9 @@ final class InMemoryUserRepository implements UserRepository
     {
         return 1;
     }
+
+    public function changeInitialPassword(int $userId, string $currentPassword, string $newPasswordHash): bool
+    {
+        return false;
+    }
 }

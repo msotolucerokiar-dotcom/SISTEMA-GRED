@@ -13,7 +13,8 @@ final readonly class User
         public string $fullName,
         public string $roleCode,
         public string $roleName,
-        public array $permissions
+        public array $permissions,
+        public bool $mustChangePassword = false
     ) {
     }
 
