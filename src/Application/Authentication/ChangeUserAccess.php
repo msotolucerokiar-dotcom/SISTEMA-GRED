@@ -15,10 +15,10 @@ final class ChangeUserAccess
     {
         $errors = [];
         if ($actorId < 1 || $userId < 1 || $actorId === $userId) { $errors['user'] = 'No puedes cambiar tu propia cuenta desde esta pantalla.'; }
-        if (!in_array($roleCode, ['worker', 'technician', 'csi_manager'], true)) { $errors['role'] = 'Selecciona un rol válido.'; }
+        if (!in_array($roleCode, ['worker', 'technician', 'csi_manager', 'intern'], true)) { $errors['role'] = 'Selecciona un rol válido.'; }
         if (!in_array($active, ['0', '1'], true)) { $errors['active'] = 'Selecciona un estado válido.'; }
         if ($errors !== []) { throw new InvalidRequest($errors); }
-        $result = $this->users->updateAccess($userId, $roleCode, $active === '1');
+        $result = $this->users->updateAccess($actorId, $userId, $roleCode, $active === '1');
         if ($result === 'last_manager') { throw new InvalidRequest(['user' => 'Debe permanecer al menos una cuenta responsable CSI activa.']); }
         return $result === 'updated';
     }

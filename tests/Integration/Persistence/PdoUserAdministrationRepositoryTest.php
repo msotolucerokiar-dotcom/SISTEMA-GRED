@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Persistence;
 use App\Infrastructure\Bootstrap\ContainerFactory;
 use App\Infrastructure\Persistence\PdoUserAdministrationRepository;
 use App\Infrastructure\Persistence\PdoUserRepository;
+use App\Infrastructure\Persistence\PdoUserPermissionRepository;
 use App\Infrastructure\Persistence\MigrationRunner;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -24,11 +25,11 @@ final class PdoUserAdministrationRepositoryTest extends TestCase
             $users = new PdoUserRepository($pdo);
             $admin = new PdoUserAdministrationRepository($pdo);
             $first = $users->create('first-' . $schema . '@example.test', 'First Manager', 'test-hash', 'csi_manager');
-            self::assertSame('last_manager', $admin->updateAccess($first, 'worker', true));
-            self::assertSame('last_manager', $admin->updateAccess($first, 'csi_manager', false));
+            self::assertSame('last_manager', $admin->updateAccess($first, $first, 'worker', true));
+            self::assertSame('last_manager', $admin->updateAccess($first, $first, 'csi_manager', false));
             self::assertSame('csi_manager', $users->findActiveById($first)?->roleCode);
             $users->create('second-' . $schema . '@example.test', 'Second Manager', 'test-hash', 'csi_manager');
-            self::assertSame('updated', $admin->updateAccess($first, 'worker', true));
+            self::assertSame('updated', $admin->updateAccess($first, $first, 'worker', true));
         } finally {
             $pdo->exec('SET search_path TO public');
             $pdo->exec('DROP SCHEMA "' . $schema . '" CASCADE');
@@ -46,11 +47,18 @@ final class PdoUserAdministrationRepositoryTest extends TestCase
         try {
             self::assertGreaterThanOrEqual(1, $admin->countUsers());
             self::assertContains($id, array_column($admin->listUsers(20, 0), 'id'));
-            self::assertSame('updated', $admin->updateAccess($id, 'technician', true));
+            self::assertSame('updated', $admin->updateAccess($id, $id, 'technician', true));
             self::assertSame('technician', $users->findActiveById($id)?->roleCode);
-            self::assertSame('updated', $admin->updateAccess($id, 'technician', false));
+            $permissions = $container->get(PdoUserPermissionRepository::class);
+            self::assertSame('changed', $permissions->change($id, $id, 'request.assign', true));
+            self::assertContains('request.assign', $permissions->grantsFor($id));
+            self::assertSame('updated', $admin->updateAccess($id, $id, 'technician', false));
             self::assertNull($users->findActiveById($id));
-            self::assertSame('not_found', $admin->updateAccess(999999999, 'worker', true));
+            self::assertSame([], $permissions->grantsFor($id));
+            self::assertSame('revoked', $permissions->historyFor($id)[0]['action']);
+            self::assertSame('updated', $admin->updateAccess($id, $id, 'technician', true));
+            self::assertNotContains('request.assign', $users->findActiveById($id)?->permissions ?? []);
+            self::assertSame('not_found', $admin->updateAccess($id, 999999999, 'worker', true));
         } finally {
             $delete = $pdo->prepare('DELETE FROM users WHERE id = :id');
             $delete->execute(['id' => $id]);

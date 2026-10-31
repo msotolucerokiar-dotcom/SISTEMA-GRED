@@ -58,6 +58,8 @@ El acceso está en `/`, los paneles en `/dashboard` y el cierre es un `POST` pro
 
 El Responsable CSI administra roles y estado de las cuentas desde `/csi/users`. Los cambios se aplican en la próxima petición de cada usuario; una cuenta desactivada pierde su sesión. La interfaz impide cambiar la cuenta propia y retirar al último responsable activo.
 
+El Responsable CSI también configura allí los permisos individuales de los técnicos: asignar o reasignar, clasificar, consultar reportes y delegar tareas. Una cuenta nueva de técnico comienza sin estos permisos; cada concesión o revocación queda auditada y surte efecto en la siguiente petición. Al desactivar una cuenta técnica o cambiarle el rol, se revocan sus permisos adicionales.
+
 ## Solicitudes del trabajador (Sprint 2)
 
 Después de iniciar sesión como trabajador, abre `/requests/new` para registrar un problema y `/requests` para consultar los casos propios. Cada solicitud recibe un código `SOL-año-número` y comienza en estado Pendiente. Se permiten hasta tres evidencias PDF/JPG/PNG/WebP de 8 MiB cada una. Los archivos se guardan en `storage/private` y se descargan mediante una ruta que comprueba la propiedad de la solicitud.
@@ -77,6 +79,16 @@ Para crear cuentas del responsable y de técnicos, usa `bin/user-create.php` con
 Inicia sesión con una cuenta `technician` y abre `/technician/requests`. Solo aparecen las solicitudes actualmente asignadas a esa cuenta. En cada caso puedes consultar evidencias, iniciar la atención con una observación y, después, registrar la solución. La solución es obligatoria al marcar el caso como **Solucionada**; el trabajador la ve en el detalle de su propia solicitud. Una reasignación retira el acceso del técnico anterior.
 
 Para probar el flujo completo, crea un trabajador, un responsable y un técnico con `bin/user-create.php`; el trabajador registra un caso, el responsable lo asigna desde `/csi/requests` y el técnico lo atiende desde `/technician/requests`. Ejecuta `docker compose exec app composer test` para verificar transiciones y permisos.
+
+## Colaboración CSI
+
+El responsable puede asignarse un caso para atenderlo directamente. La asignación principal sigue determinando quién responde por la solicitud. Si hace falta ayuda de un practicante, crea una cuenta opcional con rol `intern` y delega una tarea desde el detalle del caso. El practicante ve solo sus tareas en `/intern/tasks`, registra lo realizado y lo envía a validación. El responsable de la solicitud o el ingeniero aprueba o cancela la tarea. Una solicitud con tareas pendientes no puede marcarse como solucionada. Varios practicantes pueden colaborar mediante tareas separadas; la reasignación cancela las tareas aún abiertas y conserva el historial.
+
+```sh
+docker compose exec app php bin/user-create.php practicante@regionlambayeque.gob.pe "Nombre Practicante" intern
+```
+
+Si un practicante solo acompaña al equipo y no necesita registrar trabajo, no hace falta crearle una cuenta. Desactivar su cuenta conserva el historial de sus intervenciones.
 
 ## Historial, búsqueda y reportes (Sprint 5)
 

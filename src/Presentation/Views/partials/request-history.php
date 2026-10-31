@@ -6,6 +6,9 @@ $actionLabels = [
     'created' => 'Solicitud registrada', 'classified' => 'Clasificación actualizada',
     'assigned' => 'Técnico asignado', 'reassigned' => 'Técnico reasignado',
     'started' => 'Atención iniciada', 'resolved' => 'Solicitud solucionada',
+    'task_delegated' => 'Tarea delegada', 'task_submitted' => 'Trabajo documentado',
+    'task_approved' => 'Trabajo validado', 'tasks_cancelled' => 'Tareas pendientes canceladas por reasignación',
+    'task_cancelled' => 'Tarea cancelada por el responsable',
 ];
 ?>
 <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-card" aria-labelledby="historial"><h2 id="historial" class="text-xl font-bold">Historial de acciones</h2>

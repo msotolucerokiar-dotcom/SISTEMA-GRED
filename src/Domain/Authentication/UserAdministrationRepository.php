@@ -12,5 +12,5 @@ interface UserAdministrationRepository
     public function countUsers(): int;
 
     /** @return 'updated'|'not_found'|'last_manager' */
-    public function updateAccess(int $userId, string $roleCode, bool $active): string;
+    public function updateAccess(int $actorId, int $userId, string $roleCode, bool $active): string;
 }

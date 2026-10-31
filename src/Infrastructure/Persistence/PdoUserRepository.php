@@ -17,14 +17,13 @@ final class PdoUserRepository implements UserRepository
     public function findForAuthentication(string $email): ?array
     {
         $statement = $this->pdo->prepare(
-            'SELECT u.id, u.email, u.full_name, u.password_hash, u.is_active, r.code AS role_code, r.name AS role_name,
-                    COALESCE(array_agg(p.code) FILTER (WHERE p.code IS NOT NULL), ARRAY[]::VARCHAR[]) AS permissions
+            "SELECT u.id, u.email, u.full_name, u.password_hash, u.is_active, r.code AS role_code, r.name AS role_name,
+                    ARRAY(SELECT p.code FROM role_permission rp JOIN permissions p ON p.id = rp.permission_id WHERE rp.role_id = r.id
+                          UNION SELECT p.code FROM user_permissions up JOIN permissions p ON p.id = up.permission_id
+                          WHERE up.user_id = u.id AND r.code = 'technician') AS permissions
              FROM users u
              JOIN roles r ON r.id = u.role_id
-             LEFT JOIN role_permission rp ON rp.role_id = r.id
-             LEFT JOIN permissions p ON p.id = rp.permission_id
-             WHERE u.email = :email
-             GROUP BY u.id, r.id'
+             WHERE u.email = :email"
         );
         $statement->execute(['email' => $email]);
         $row = $statement->fetch(PDO::FETCH_ASSOC);
@@ -43,12 +42,12 @@ final class PdoUserRepository implements UserRepository
     public function findActiveById(int $id): ?User
     {
         $statement = $this->pdo->prepare(
-            'SELECT u.id, u.email, u.full_name, r.code AS role_code, r.name AS role_name,
-                    COALESCE(array_agg(p.code) FILTER (WHERE p.code IS NOT NULL), ARRAY[]::VARCHAR[]) AS permissions
+            "SELECT u.id, u.email, u.full_name, r.code AS role_code, r.name AS role_name,
+                    ARRAY(SELECT p.code FROM role_permission rp JOIN permissions p ON p.id = rp.permission_id WHERE rp.role_id = r.id
+                          UNION SELECT p.code FROM user_permissions up JOIN permissions p ON p.id = up.permission_id
+                          WHERE up.user_id = u.id AND r.code = 'technician') AS permissions
              FROM users u JOIN roles r ON r.id = u.role_id
-             LEFT JOIN role_permission rp ON rp.role_id = r.id
-             LEFT JOIN permissions p ON p.id = rp.permission_id
-             WHERE u.id = :id AND u.is_active = TRUE GROUP BY u.id, r.id'
+             WHERE u.id = :id AND u.is_active = TRUE"
         );
         $statement->execute(['id' => $id]);
         $row = $statement->fetch(PDO::FETCH_ASSOC);

@@ -30,6 +30,15 @@ use App\Infrastructure\Reporting\PdfReport;
 use App\Domain\Authentication\UserRepository;
 use App\Application\Authentication\ListUsers;
 use App\Application\Authentication\ChangeUserAccess;
+use App\Application\Authentication\ChangeUserPermission;
+use App\Domain\Authentication\UserPermissionRepository;
+use App\Domain\Support\TaskRepository;
+use App\Application\Support\ListInternTasks;
+use App\Application\Support\GetInternTask;
+use App\Application\Support\DelegateTask;
+use App\Application\Support\SubmitTaskWork;
+use App\Application\Support\ApproveTaskWork;
+use App\Application\Support\CancelTaskWork;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -116,7 +125,8 @@ if ($path === '/dashboard') {
     }
     if (!$canAccess->execute($user, 'request.view_own')
         && !$canAccess->execute($user, 'request.view_assigned')
-        && !$canAccess->execute($user, 'request.view_all')) {
+        && !$canAccess->execute($user, 'request.view_all')
+        && !$canAccess->execute($user, 'task.view_own')) {
         http_response_code(403);
         $error = 'Tu cuenta no tiene permisos para acceder a este panel.';
         require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
@@ -126,7 +136,76 @@ if ($path === '/dashboard') {
     exit;
 }
 
-if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)$~D', $path, $userManagementMatch)) {
+if ($path === '/intern/tasks' || preg_match('~^/intern/tasks/([0-9]+)(?:/(submit))?$~D', $path, $internMatch)) {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if (!$canAccess->execute($user, 'task.view_own')) {
+        http_response_code(403);
+        require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
+        exit;
+    }
+    if ($path === '/intern/tasks') {
+        if ($method !== 'GET') { http_response_code(405); header('Allow: GET'); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+        $tasks = $container->get(ListInternTasks::class)->execute($user->id);
+        require dirname(__DIR__) . '/src/Presentation/Views/intern-task-list.php';
+        exit;
+    }
+    $taskId = (int) $internMatch[1];
+    $submitting = ($internMatch[2] ?? null) === 'submit';
+    if (($submitting && $method !== 'POST') || (!$submitting && $method !== 'GET')) {
+        http_response_code(405); header('Allow: ' . ($submitting ? 'POST' : 'GET'));
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit;
+    }
+    $formErrors = [];
+    $workNote = is_string($_POST['work_note'] ?? null) ? $_POST['work_note'] : '';
+    if ($submitting) {
+        if (!$canAccess->execute($user, 'task.record_work')) { http_response_code(403); require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php'; exit; }
+        if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) { http_response_code(419); $formErrors['form'] = 'El formulario venció. Recarga la página.'; }
+        else {
+            try {
+                if ($container->get(SubmitTaskWork::class)->execute($taskId, $user->id, $workNote)) {
+                    header('Location: /intern/tasks/' . $taskId . '?saved=1', true, 303); exit;
+                }
+                http_response_code(409); $formErrors['form'] = 'La tarea ya no permite registrar trabajo. Revisa su estado.';
+            } catch (InvalidRequest $exception) { http_response_code(422); $formErrors = $exception->errors; }
+        }
+    }
+    $detail = $container->get(GetInternTask::class)->execute($taskId, $user->id);
+    if ($detail === null) { http_response_code(404); require dirname(__DIR__) . '/src/Presentation/Views/not-found.php'; exit; }
+    require dirname(__DIR__) . '/src/Presentation/Views/intern-task-detail.php';
+    exit;
+}
+
+if (preg_match('~^/intern/attachments/([0-9]+)$~D', $path, $internAttachmentMatch)) {
+    if ($user === null || $method !== 'GET' || !$canAccess->execute($user, 'task.view_own')) { http_response_code(404); exit; }
+    $attachment = $container->get(TaskRepository::class)->attachmentForIntern((int) $internAttachmentMatch[1], $user->id);
+    if ($attachment === null) { http_response_code(404); exit; }
+    $filePath = $container->get(PrivateFileStore::class)->path($attachment['storage_key']);
+    if (!is_file($filePath)) { http_response_code(404); exit; }
+    header('Content-Type: ' . $attachment['mime_type']);
+    header('Content-Disposition: attachment; filename="evidencia"; filename*=UTF-8\'\'' . rawurlencode($attachment['original_name']));
+    header('X-Content-Type-Options: nosniff');
+    header('Content-Length: ' . filesize($filePath));
+    readfile($filePath); exit;
+}
+
+if (preg_match('~^/technician/tasks/([0-9]+)/(approve|cancel)$~D', $path, $approveMatch)) {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if (!$canAccess->execute($user, 'request.view_assigned') || $method !== 'POST') {
+        http_response_code($method === 'POST' ? 403 : 405);
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit;
+    }
+    if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) { http_response_code(419); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    $taskUpdated = $approveMatch[2] === 'approve'
+        ? $container->get(ApproveTaskWork::class)->execute((int) $approveMatch[1], $user->id, $user->roleCode === 'csi_manager')
+        : $container->get(CancelTaskWork::class)->execute((int) $approveMatch[1], $user->id, $user->roleCode === 'csi_manager');
+    if (!$taskUpdated) {
+        http_response_code(409); $error = 'La tarea no puede modificarse o ya no corresponde a tu atención.';
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit;
+    }
+    header('Location: ' . ($user->roleCode === 'csi_manager' ? '/csi/requests' : '/technician/requests') . '?task_updated=1', true, 303); exit;
+}
+
+if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)(?:/(permissions))?$~D', $path, $userManagementMatch)) {
     if ($user === null) { header('Location: /#acceso', true, 303); exit; }
     if (!$canAccess->execute($user, 'user.manage_roles')) {
         http_response_code(403);
@@ -135,6 +214,7 @@ if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)$~D', $path, $use
     }
     $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
     $editing = $path !== '/csi/users';
+    $permissionAction = ($userManagementMatch[2] ?? null) === 'permissions';
     if ((!$editing && $method !== 'GET') || ($editing && $method !== 'POST')) {
         http_response_code(405);
         header('Allow: ' . ($editing ? 'POST' : 'GET'));
@@ -148,11 +228,17 @@ if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)$~D', $path, $use
             $formErrors['form'] = 'El formulario venció. Recarga la página e inténtalo de nuevo.';
         } else {
             try {
-                $updated = $container->get(ChangeUserAccess::class)->execute(
-                    $user->id, (int) $userManagementMatch[1],
-                    is_string($_POST['role'] ?? null) ? $_POST['role'] : '',
-                    is_string($_POST['active'] ?? null) ? $_POST['active'] : ''
-                );
+                $updated = $permissionAction
+                    ? $container->get(ChangeUserPermission::class)->execute(
+                        $user->id, (int) $userManagementMatch[1],
+                        is_string($_POST['permission'] ?? null) ? $_POST['permission'] : '',
+                        is_string($_POST['enabled'] ?? null) ? $_POST['enabled'] : ''
+                    )
+                    : $container->get(ChangeUserAccess::class)->execute(
+                        $user->id, (int) $userManagementMatch[1],
+                        is_string($_POST['role'] ?? null) ? $_POST['role'] : '',
+                        is_string($_POST['active'] ?? null) ? $_POST['active'] : ''
+                    );
                 if ($updated) { header('Location: /csi/users?page=' . $page . '&saved=1', true, 303); exit; }
                 http_response_code(404);
                 require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
@@ -164,11 +250,20 @@ if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)$~D', $path, $use
         }
     }
     $listing = $container->get(ListUsers::class)->execute($page);
+    $permissionRepository = $container->get(UserPermissionRepository::class);
+    $grantsByUser = [];
+    $permissionHistoryByUser = [];
+    foreach ($listing['items'] as $account) {
+        if ($account['role_code'] === 'technician') {
+            $grantsByUser[$account['id']] = $permissionRepository->grantsFor($account['id']);
+            $permissionHistoryByUser[$account['id']] = $permissionRepository->historyFor($account['id']);
+        }
+    }
     require dirname(__DIR__) . '/src/Presentation/Views/csi-users.php';
     exit;
 }
 
-if ($path === '/technician/requests' || preg_match('~^/technician/requests/(SOL-[0-9]{4}-[0-9]+)(?:/progress)?$~D', $path, $technicalMatch)) {
+if ($path === '/technician/requests' || preg_match('~^/technician/requests/(SOL-[0-9]{4}-[0-9]+)(?:/(progress|delegate))?$~D', $path, $technicalMatch)) {
     if ($user === null) {
         header('Location: /#acceso', true, 303);
         exit;
@@ -192,9 +287,10 @@ if ($path === '/technician/requests' || preg_match('~^/technician/requests/(SOL-
     }
     $code = $technicalMatch[1];
     $updating = str_ends_with($path, '/progress');
-    if (($updating && $method !== 'POST') || (!$updating && $method !== 'GET')) {
+    $delegating = str_ends_with($path, '/delegate');
+    if ((($updating || $delegating) && $method !== 'POST') || (!$updating && !$delegating && $method !== 'GET')) {
         http_response_code(405);
-        header('Allow: ' . ($updating ? 'POST' : 'GET'));
+        header('Allow: ' . (($updating || $delegating) ? 'POST' : 'GET'));
         require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
         exit;
     }
@@ -203,8 +299,22 @@ if ($path === '/technician/requests' || preg_match('~^/technician/requests/(SOL-
         require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
         exit;
     }
+    if ($delegating && !$canAccess->execute($user, 'request.delegate')) {
+        http_response_code(403); require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php'; exit;
+    }
     $formErrors = [];
     $form = ['observation' => '', 'solution' => ''];
+    if ($delegating) {
+        if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) { http_response_code(419); $formErrors['delegate'] = 'El formulario venció. Recarga la página.'; }
+        else {
+            try {
+                if ($container->get(DelegateTask::class)->execute($code, $user->id, (int) ($_POST['intern'] ?? 0), is_string($_POST['instructions'] ?? null) ? $_POST['instructions'] : '', $user->roleCode === 'csi_manager')) {
+                    header('Location: /technician/requests/' . $code . '?delegated=1', true, 303); exit;
+                }
+                http_response_code(409); $formErrors['delegate'] = 'No se pudo delegar: verifica la asignación, el estado y las tareas pendientes.';
+            } catch (InvalidRequest $exception) { http_response_code(422); $formErrors = $exception->errors; }
+        }
+    }
     if ($updating) {
         $form = [
             'observation' => is_string($_POST['observation'] ?? null) ? $_POST['observation'] : '',
@@ -239,6 +349,9 @@ if ($path === '/technician/requests' || preg_match('~^/technician/requests/(SOL-
         exit;
     }
     $history = $container->get(GetRequestHistory::class)->forTechnician($code, $user->id);
+    $taskRepository = $container->get(TaskRepository::class);
+    $caseTasks = $taskRepository->tasksForRequest($code);
+    $interns = $user->can('request.delegate') ? $taskRepository->interns() : [];
     require dirname(__DIR__) . '/src/Presentation/Views/technician-request-detail.php';
     exit;
 }
@@ -322,19 +435,20 @@ if (preg_match('~^/technician/attachments/([0-9]+)$~D', $path, $technicalAttachm
     exit;
 }
 
-if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]+)(?:/(classify|assign))?$~D', $path, $managerMatch)) {
+if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]+)(?:/(classify|assign|delegate))?$~D', $path, $managerMatch)) {
     if ($user === null) {
         header('Location: /#acceso', true, 303);
         exit;
     }
-    if (!$canAccess->execute($user, 'request.view_all')) {
+    if (!$canAccess->execute($user, 'request.view_all') && !$canAccess->execute($user, 'request.assign') && !$canAccess->execute($user, 'request.classify')) {
         http_response_code(403);
-        $error = 'Esta sección está disponible para el Responsable CSI. Inicia sesión con una cuenta de ese rol.';
+        $error = 'Tu cuenta no tiene permiso para supervisar solicitudes.';
         require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
         exit;
     }
     $action = $managerMatch[2] ?? null;
-    if ($action !== null && (!$canAccess->execute($user, 'request.manage') || $method !== 'POST')) {
+    $actionPermission = match ($action) { 'classify' => 'request.classify', 'delegate' => 'request.delegate', default => 'request.assign' };
+    if ($action !== null && (!$canAccess->execute($user, $actionPermission) || $method !== 'POST')) {
         http_response_code($method === 'POST' ? 403 : 405);
         if ($method !== 'POST') { header('Allow: POST'); }
         require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
@@ -368,25 +482,30 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
             $formErrors[$action] = 'El formulario venció. Recarga la página e inténtalo de nuevo.';
         } else {
             try {
-                $updated = $action === 'classify'
-                    ? $container->get(ClassifyRequest::class)->execute(
+                $updated = match ($action) {
+                    'classify' => $container->get(ClassifyRequest::class)->execute(
                         $code,
                         (int) (filter_var($_POST['category'] ?? null, FILTER_VALIDATE_INT) ?: 0),
                         (int) (filter_var($_POST['priority'] ?? null, FILTER_VALIDATE_INT) ?: 0),
                         $user->id
-                    )
-                    : $container->get(AssignRequest::class)->execute(
+                    ),
+                    'delegate' => $container->get(DelegateTask::class)->execute(
+                        $code, $user->id,
+                        (int) (filter_var($_POST['intern'] ?? null, FILTER_VALIDATE_INT) ?: 0),
+                        is_string($_POST['instructions'] ?? null) ? $_POST['instructions'] : '', $user->roleCode === 'csi_manager'
+                    ),
+                    default => $container->get(AssignRequest::class)->execute(
                         $code,
                         (int) (filter_var($_POST['technician'] ?? null, FILTER_VALIDATE_INT) ?: 0),
                         $user->id
-                    );
+                    ),
+                };
                 if ($updated) {
                     header('Location: /csi/requests/' . $code . '?saved=' . $action, true, 303);
                     exit;
                 }
-                http_response_code(404);
-                require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
-                exit;
+                if ($action === 'delegate') { http_response_code(409); $formErrors['delegate'] = 'No se pudo delegar: verifica la asignación, el estado y las tareas pendientes.'; }
+                else { http_response_code(404); require dirname(__DIR__) . '/src/Presentation/Views/not-found.php'; exit; }
             } catch (InvalidRequest $exception) {
                 http_response_code(422);
                 $formErrors = $exception->errors;
@@ -404,12 +523,15 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
     $priorities = $management->priorities();
     $technicians = $management->technicians();
     $history = $container->get(GetRequestHistory::class)->forManager($code);
+    $taskRepository = $container->get(TaskRepository::class);
+    $caseTasks = $taskRepository->tasksForRequest($code);
+    $interns = $user->can('request.delegate') ? $taskRepository->interns() : [];
     require dirname(__DIR__) . '/src/Presentation/Views/csi-request-detail.php';
     exit;
 }
 
 if (preg_match('~^/csi/attachments/([0-9]+)$~D', $path, $managerAttachmentMatch)) {
-    if ($user === null || $method !== 'GET' || !$canAccess->execute($user, 'request.view_all')) {
+    if ($user === null || $method !== 'GET' || (!$canAccess->execute($user, 'request.view_all') && !$canAccess->execute($user, 'request.assign') && !$canAccess->execute($user, 'request.classify'))) {
         http_response_code(404);
         exit;
     }

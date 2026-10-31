@@ -14,12 +14,12 @@ if (PHP_SAPI !== 'cli') {
 
 [$script, $email, $fullName, $roleCode] = array_pad($argv, 4, null);
 if ($email === null || $fullName === null || $roleCode === null || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    fwrite(STDERR, "Usage: php bin/user-create.php email full-name (worker|technician|csi_manager)\n");
+    fwrite(STDERR, "Usage: php bin/user-create.php email full-name (worker|technician|csi_manager|intern)\n");
     exit(2);
 }
 
-if (!in_array($roleCode, ['worker', 'technician', 'csi_manager'], true)) {
-    fwrite(STDERR, "Invalid role. Allowed roles: worker, technician, csi_manager.\n");
+if (!in_array($roleCode, ['worker', 'technician', 'csi_manager', 'intern'], true)) {
+    fwrite(STDERR, "Invalid role. Allowed roles: worker, technician, csi_manager, intern.\n");
     exit(2);
 }
 

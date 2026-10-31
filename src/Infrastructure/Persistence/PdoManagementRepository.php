@@ -86,7 +86,7 @@ final class PdoManagementRepository implements ManagementRepository
 
     public function technicians(): array
     {
-        return $this->options("SELECT u.id, u.full_name AS name FROM users u JOIN roles r ON r.id = u.role_id WHERE r.code = 'technician' AND u.is_active = TRUE ORDER BY u.full_name");
+        return $this->options("SELECT u.id, u.full_name AS name FROM users u JOIN roles r ON r.id = u.role_id WHERE r.code IN ('technician', 'csi_manager') AND u.is_active = TRUE ORDER BY u.full_name");
     }
 
     public function classify(string $code, int $categoryId, int $priorityId, int $actorId): bool
@@ -120,7 +120,7 @@ final class PdoManagementRepository implements ManagementRepository
             }
             $technician = $this->pdo->prepare(
                 "SELECT u.id FROM users u JOIN roles r ON r.id = u.role_id
-                 WHERE u.id = :id AND u.is_active = TRUE AND r.code = 'technician' FOR SHARE OF u"
+                 WHERE u.id = :id AND u.is_active = TRUE AND r.code IN ('technician', 'csi_manager') FOR SHARE OF u"
             );
             $technician->execute(['id' => $technicianId]);
             if ($technician->fetchColumn() === false) {
@@ -136,6 +136,11 @@ final class PdoManagementRepository implements ManagementRepository
             }
             $end = $this->pdo->prepare('UPDATE request_assignments SET ended_at = NOW() WHERE request_id = :id AND ended_at IS NULL');
             $end->execute(['id' => $requestId]);
+            $cancelTasks = $this->pdo->prepare("UPDATE request_tasks SET state = 'cancelled', cancelled_at = NOW() WHERE request_id = :id AND state IN ('assigned', 'submitted')");
+            $cancelTasks->execute(['id' => $requestId]);
+            if ($cancelTasks->rowCount() > 0) {
+                $this->history($requestId, $actorId, 'tasks_cancelled', ['count' => $cancelTasks->rowCount()]);
+            }
             $insert = $this->pdo->prepare('INSERT INTO request_assignments (request_id, technician_id, assigned_by) VALUES (:request, :technician, :actor)');
             $insert->execute(['request' => $requestId, 'technician' => $technicianId, 'actor' => $actorId]);
             $this->history($requestId, $actorId, $previousId === false ? 'assigned' : 'reassigned', [

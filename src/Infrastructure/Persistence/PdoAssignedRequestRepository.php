@@ -119,6 +119,14 @@ final class PdoAssignedRequestRepository implements AssignedRequestRepository
                 $this->pdo->rollBack();
                 return false;
             }
+            if ($status === 'resolved') {
+                $pendingTasks = $this->pdo->prepare("SELECT COUNT(*) FROM request_tasks WHERE request_id = :request AND state IN ('assigned', 'submitted')");
+                $pendingTasks->execute(['request' => $request['id']]);
+                if ((int) $pendingTasks->fetchColumn() > 0) {
+                    $this->pdo->rollBack();
+                    return false;
+                }
+            }
             $update = $this->pdo->prepare('UPDATE requests SET status_id = (SELECT id FROM statuses WHERE code = :status), updated_at = NOW() WHERE id = :id');
             $update->execute(['status' => $status, 'id' => $request['id']]);
             if ($status === 'resolved') {

@@ -38,6 +38,17 @@ use App\Domain\Authentication\UserAdministrationRepository;
 use App\Infrastructure\Persistence\PdoUserAdministrationRepository;
 use App\Application\Authentication\ListUsers;
 use App\Application\Authentication\ChangeUserAccess;
+use App\Domain\Authentication\UserPermissionRepository;
+use App\Infrastructure\Persistence\PdoUserPermissionRepository;
+use App\Application\Authentication\ChangeUserPermission;
+use App\Domain\Support\TaskRepository;
+use App\Infrastructure\Persistence\PdoTaskRepository;
+use App\Application\Support\ListInternTasks;
+use App\Application\Support\GetInternTask;
+use App\Application\Support\DelegateTask;
+use App\Application\Support\SubmitTaskWork;
+use App\Application\Support\ApproveTaskWork;
+use App\Application\Support\CancelTaskWork;
 use PDO;
 use RuntimeException;
 
@@ -62,9 +73,11 @@ final class ContainerFactory
 
         $users = new PdoUserRepository($pdo);
         $userAdministration = new PdoUserAdministrationRepository($pdo);
+        $userPermissions = new PdoUserPermissionRepository($pdo);
         $requests = new PdoRequestRepository($pdo);
         $management = new PdoManagementRepository($pdo);
         $assigned = new PdoAssignedRequestRepository($pdo);
+        $tasks = new PdoTaskRepository($pdo);
         $insights = new PdoInsightsRepository($pdo);
         $filterParser = new RequestFilters();
         $files = new LocalPrivateFileStore(dirname(__DIR__, 3) . '/storage/private');
@@ -79,6 +92,9 @@ final class ContainerFactory
             PdoUserAdministrationRepository::class => $userAdministration,
             ListUsers::class => new ListUsers($userAdministration),
             ChangeUserAccess::class => new ChangeUserAccess($userAdministration),
+            UserPermissionRepository::class => $userPermissions,
+            PdoUserPermissionRepository::class => $userPermissions,
+            ChangeUserPermission::class => new ChangeUserPermission($userPermissions),
             CanAccess::class => new CanAccess(),
             RequestRepository::class => $requests,
             PdoRequestRepository::class => $requests,
@@ -97,6 +113,14 @@ final class ContainerFactory
             ListAssignedRequests::class => new ListAssignedRequests($assigned),
             GetAssignedRequest::class => new GetAssignedRequest($assigned),
             UpdateAssignedRequest::class => new UpdateAssignedRequest($assigned),
+            TaskRepository::class => $tasks,
+            PdoTaskRepository::class => $tasks,
+            ListInternTasks::class => new ListInternTasks($tasks),
+            GetInternTask::class => new GetInternTask($tasks),
+            DelegateTask::class => new DelegateTask($tasks),
+            SubmitTaskWork::class => new SubmitTaskWork($tasks),
+            ApproveTaskWork::class => new ApproveTaskWork($tasks),
+            CancelTaskWork::class => new CancelTaskWork($tasks),
             InsightsRepository::class => $insights,
             PdoInsightsRepository::class => $insights,
             RequestFilters::class => $filterParser,

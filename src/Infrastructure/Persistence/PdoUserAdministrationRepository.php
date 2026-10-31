@@ -30,7 +30,7 @@ final class PdoUserAdministrationRepository implements UserAdministrationReposit
         return (int) $this->pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
     }
 
-    public function updateAccess(int $userId, string $roleCode, bool $active): string
+    public function updateAccess(int $actorId, int $userId, string $roleCode, bool $active): string
     {
         $this->pdo->beginTransaction();
         try {
@@ -53,6 +53,12 @@ final class PdoUserAdministrationRepository implements UserAdministrationReposit
             }
             $update = $this->pdo->prepare('UPDATE users SET role_id = (SELECT id FROM roles WHERE code = :role), is_active = :active, updated_at = NOW() WHERE id = :id');
             $update->execute(['role' => $roleCode, 'active' => $active ? 'true' : 'false', 'id' => $userId]);
+            if ($row['role_code'] === 'technician' && ($roleCode !== 'technician' || !$active)) {
+                $audit = $this->pdo->prepare("INSERT INTO user_permission_history (user_id, permission_id, actor_id, action) SELECT user_id, permission_id, :actor, 'revoked' FROM user_permissions WHERE user_id = :user");
+                $audit->execute(['actor' => $actorId, 'user' => $userId]);
+                $remove = $this->pdo->prepare('DELETE FROM user_permissions WHERE user_id = :user');
+                $remove->execute(['user' => $userId]);
+            }
             $this->pdo->commit();
             return 'updated';
         } catch (Throwable $exception) {

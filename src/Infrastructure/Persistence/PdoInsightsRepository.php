@@ -90,7 +90,7 @@ final class PdoInsightsRepository implements InsightsRepository
             'statuses' => $this->options('SELECT id, name FROM statuses ORDER BY id'),
             'areas' => $this->options('SELECT id, name FROM areas WHERE is_active = TRUE ORDER BY name'),
             'categories' => $this->options('SELECT id, name FROM categories WHERE is_active = TRUE ORDER BY name'),
-            'technicians' => $this->options("SELECT u.id, u.full_name AS name FROM users u JOIN roles r ON r.id = u.role_id WHERE r.code = 'technician' AND u.is_active = TRUE ORDER BY u.full_name"),
+            'technicians' => $this->options("SELECT u.id, u.full_name AS name FROM users u JOIN roles r ON r.id = u.role_id WHERE r.code IN ('technician', 'csi_manager') AND u.is_active = TRUE ORDER BY u.full_name"),
         ];
     }
 
