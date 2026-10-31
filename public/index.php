@@ -18,6 +18,10 @@ use App\Application\Support\ClassifyRequest;
 use App\Application\Support\GetRequestForManagement;
 use App\Application\Support\ViewAllRequests;
 use App\Domain\Support\ManagementRepository;
+use App\Domain\Support\AssignedRequestRepository;
+use App\Application\Support\ListAssignedRequests;
+use App\Application\Support\GetAssignedRequest;
+use App\Application\Support\UpdateAssignedRequest;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -97,6 +101,103 @@ if ($path === '/dashboard') {
         exit;
     }
     require dirname(__DIR__) . '/src/Presentation/Views/dashboard.php';
+    exit;
+}
+
+if ($path === '/technician/requests' || preg_match('~^/technician/requests/(SOL-[0-9]{4}-[0-9]+)(?:/progress)?$~D', $path, $technicalMatch)) {
+    if ($user === null) {
+        header('Location: /#acceso', true, 303);
+        exit;
+    }
+    if (!$canAccess->execute($user, 'request.view_assigned')) {
+        http_response_code(403);
+        require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
+        exit;
+    }
+    if ($path === '/technician/requests') {
+        if ($method !== 'GET') {
+            http_response_code(405);
+            header('Allow: GET');
+            require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
+            exit;
+        }
+        $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
+        $listing = $container->get(ListAssignedRequests::class)->execute($user->id, $page);
+        require dirname(__DIR__) . '/src/Presentation/Views/technician-request-list.php';
+        exit;
+    }
+    $code = $technicalMatch[1];
+    $updating = str_ends_with($path, '/progress');
+    if (($updating && $method !== 'POST') || (!$updating && $method !== 'GET')) {
+        http_response_code(405);
+        header('Allow: ' . ($updating ? 'POST' : 'GET'));
+        require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php';
+        exit;
+    }
+    if ($updating && !$canAccess->execute($user, 'request.update_status')) {
+        http_response_code(403);
+        require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
+        exit;
+    }
+    $formErrors = [];
+    $form = ['observation' => '', 'solution' => ''];
+    if ($updating) {
+        $form = [
+            'observation' => is_string($_POST['observation'] ?? null) ? $_POST['observation'] : '',
+            'solution' => is_string($_POST['solution'] ?? null) ? $_POST['solution'] : '',
+        ];
+        if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) {
+            http_response_code(419);
+            $formErrors['form'] = 'El formulario venció. Recarga la página e inténtalo de nuevo.';
+        } else {
+            try {
+                $updated = $container->get(UpdateAssignedRequest::class)->execute(
+                    $user->id, $code,
+                    is_string($_POST['status'] ?? null) ? $_POST['status'] : '',
+                    $form['observation'], $form['solution']
+                );
+                if ($updated) {
+                    header('Location: /technician/requests/' . $code . '?saved=1', true, 303);
+                    exit;
+                }
+                http_response_code(409);
+                $formErrors['form'] = 'La solicitud cambió de estado o fue reasignada. Revisa la información actual.';
+            } catch (InvalidRequest $exception) {
+                http_response_code(422);
+                $formErrors = $exception->errors;
+            }
+        }
+    }
+    $detail = $container->get(GetAssignedRequest::class)->execute($user->id, $code);
+    if ($detail === null) {
+        http_response_code(404);
+        require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
+        exit;
+    }
+    require dirname(__DIR__) . '/src/Presentation/Views/technician-request-detail.php';
+    exit;
+}
+
+if (preg_match('~^/technician/attachments/([0-9]+)$~D', $path, $technicalAttachmentMatch)) {
+    if ($user === null || $method !== 'GET' || !$canAccess->execute($user, 'request.view_assigned')) {
+        http_response_code(404);
+        exit;
+    }
+    $attachment = $container->get(AssignedRequestRepository::class)->attachment((int) $technicalAttachmentMatch[1], $user->id);
+    if ($attachment === null) {
+        http_response_code(404);
+        exit;
+    }
+    $filePath = $container->get(PrivateFileStore::class)->path($attachment['storage_key']);
+    if (!is_file($filePath)) {
+        http_response_code(404);
+        exit;
+    }
+    header('Content-Type: ' . $attachment['mime_type']);
+    header('Content-Disposition: attachment; filename="evidencia"; filename*=UTF-8\'\'' . rawurlencode($attachment['original_name']));
+    header('X-Content-Type-Options: nosniff');
+    header('Content-Length: ' . filesize($filePath));
+    readfile($filePath);
     exit;
 }
 
@@ -278,6 +379,7 @@ if ($path === '/requests' || $path === '/requests/new' || preg_match('~^/request
         require dirname(__DIR__) . '/src/Presentation/Views/not-found.php';
         exit;
     }
+    $solution = $container->get(AssignedRequestRepository::class)->solution($requestMatch[1], $user->id);
     require dirname(__DIR__) . '/src/Presentation/Views/request-detail.php';
     exit;
 }

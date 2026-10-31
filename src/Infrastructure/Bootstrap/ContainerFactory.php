@@ -22,6 +22,11 @@ use App\Application\Support\GetRequestForManagement;
 use App\Application\Support\ViewAllRequests;
 use App\Domain\Support\ManagementRepository;
 use App\Infrastructure\Persistence\PdoManagementRepository;
+use App\Domain\Support\AssignedRequestRepository;
+use App\Infrastructure\Persistence\PdoAssignedRequestRepository;
+use App\Application\Support\ListAssignedRequests;
+use App\Application\Support\GetAssignedRequest;
+use App\Application\Support\UpdateAssignedRequest;
 use PDO;
 use RuntimeException;
 
@@ -47,6 +52,7 @@ final class ContainerFactory
         $users = new PdoUserRepository($pdo);
         $requests = new PdoRequestRepository($pdo);
         $management = new PdoManagementRepository($pdo);
+        $assigned = new PdoAssignedRequestRepository($pdo);
         $files = new LocalPrivateFileStore(dirname(__DIR__, 3) . '/storage/private');
 
         return new SimpleContainer([
@@ -68,6 +74,11 @@ final class ContainerFactory
             GetRequestForManagement::class => new GetRequestForManagement($management),
             ClassifyRequest::class => new ClassifyRequest($management),
             AssignRequest::class => new AssignRequest($management),
+            AssignedRequestRepository::class => $assigned,
+            PdoAssignedRequestRepository::class => $assigned,
+            ListAssignedRequests::class => new ListAssignedRequests($assigned),
+            GetAssignedRequest::class => new GetAssignedRequest($assigned),
+            UpdateAssignedRequest::class => new UpdateAssignedRequest($assigned),
         ]);
     }
 
