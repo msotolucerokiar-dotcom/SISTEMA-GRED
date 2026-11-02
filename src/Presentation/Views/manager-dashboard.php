@@ -20,8 +20,8 @@ $summaryCards = [
 <body class="manager-panel min-h-screen bg-paper text-ink">
 <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">Ir al contenido</a>
 <header class="manager-topbar bg-institutional-800 text-white">
-  <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3">
-    <div class="flex items-center gap-3"><a href="/dashboard" class="text-lg font-extrabold tracking-tight">CSI · GRED</a><span class="border-l border-white/30 pl-3 text-sm text-white/80">Mi panel</span></div>
+  <div class="manager-topbar__inner">
+    <div class="manager-brand"><a href="/dashboard" class="manager-brand__name">CSI - GRED</a><span class="manager-brand__section">Mi panel</span></div>
     <nav class="manager-topnav flex max-w-full flex-wrap items-center gap-1 text-sm font-semibold" aria-label="Navegación principal">
       <a href="/dashboard" aria-current="page" class="min-h-11 rounded-lg border-b-2 border-amber-400 bg-white/15 px-3 py-3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg> Inicio</a>
       <a href="/csi/requests" class="min-h-11 rounded-lg px-3 py-3 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h6"/></svg> Solicitudes</a>
@@ -29,7 +29,7 @@ $summaryCards = [
       <a href="/csi/reports" class="min-h-11 rounded-lg px-3 py-3 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20v-7m5 7V8m5 12v-9m5 9V4"/></svg> Reportes</a>
       <a href="/csi/users" class="min-h-11 rounded-lg px-3 py-3 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg> Usuarios</a>
     </nav>
-    <form action="/logout" method="post"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button class="min-h-11 rounded-lg border border-white/40 px-4 text-sm font-semibold hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white">Cerrar sesión</button></form>
+    <form action="/logout" method="post" class="manager-account"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button type="submit" title="Cerrar sesión" aria-label="Cerrar sesión"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg></button></form>
   </div>
 </header>
 <main id="contenido" class="mx-auto max-w-7xl px-5 py-7 sm:py-9">

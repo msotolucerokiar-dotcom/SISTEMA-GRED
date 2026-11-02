@@ -11,8 +11,21 @@
 @layer components {
   .manager-panel { background: radial-gradient(circle at 50% 0, #eaf3fa 0, #f5f7fa 36rem); }
   .manager-panel .manager-topbar { background: linear-gradient(110deg, #162b49, #1d375c 55%, #122a49); box-shadow: 0 3px 16px rgba(29,55,92,.16); }
-  .manager-topnav a { display: inline-flex; align-items: center; gap: .42rem; white-space: nowrap; }
-  .manager-topnav a svg { width: 1.2rem; height: 1.2rem; flex: none; }
+  .manager-panel .manager-topbar__inner { display: grid; grid-template-columns: minmax(12rem,1fr) auto minmax(3rem,1fr); align-items: center; gap: 1.25rem; width: 100%; min-height: 3.5rem; padding: .25rem 2rem; }
+  .manager-brand { display: flex; align-items: center; min-width: 0; gap: .8rem; white-space: nowrap; }
+  .manager-brand__name { font-size: 1.16rem; font-weight: 800; letter-spacing: -.025em; }
+  .manager-brand__section { border-left: 1px solid rgba(255,255,255,.25); padding-left: .8rem; color: rgba(255,255,255,.83); font-size: .82rem; }
+  .manager-panel .manager-topnav { display: flex; flex-wrap: nowrap; align-items: stretch; justify-content: center; gap: .2rem; }
+  .manager-topnav a { display: inline-flex; align-items: center; gap: .42rem; min-height: 2.85rem; border-bottom: 3px solid transparent; border-radius: .45rem .45rem 0 0; padding: .55rem .78rem; color: #fff; font-size: .83rem; font-weight: 600; line-height: 1; white-space: nowrap; }
+  .manager-topnav a[aria-current="page"] { border-bottom-color: #d9af32; background: rgba(116,158,203,.38); }
+  .manager-topnav a:hover { background: rgba(255,255,255,.12); }
+  .manager-topnav a svg { width: 1.18rem; height: 1.18rem; flex: none; }
+  .manager-account { display: flex; justify-content: flex-end; }
+  .manager-account button { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border: 1px solid #cfe0f1; border-radius: 999px; background: #f4f8fc; color: #1d375c; box-shadow: 0 2px 8px rgba(0,0,0,.16); }
+  .manager-account button:hover { background: #eaf3fa; }
+  .manager-account svg { width: 1.4rem; height: 1.4rem; }
+  @media (max-width: 1040px) { .manager-panel .manager-topbar__inner { grid-template-columns: 1fr auto; gap: .4rem 1rem; padding: .55rem 1.25rem; } .manager-panel .manager-topnav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; overflow-x: auto; scrollbar-width: thin; } .manager-account { grid-column: 2; grid-row: 1; } }
+  @media (max-width: 460px) { .manager-panel .manager-topbar__inner { padding-inline: .8rem; } .manager-brand__name { font-size: 1rem; } .manager-brand__section { font-size: .73rem; } .manager-topnav a { padding-inline: .55rem; font-size: .78rem; } }
   .manager-kpi { isolation: isolate; border-color: #cfdeeb; }
   .manager-kpi::after { content: ''; position: absolute; z-index: -1; width: 62%; height: 8rem; right: -1rem; bottom: -5.7rem; border-radius: 58% 42% 0 0; transform: rotate(-16deg); background: rgba(255,255,255,.13); }
   .manager-kpi--0 { background: linear-gradient(145deg, #315f90, #122f52); }
