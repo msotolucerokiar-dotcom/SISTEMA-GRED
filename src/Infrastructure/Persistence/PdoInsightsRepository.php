@@ -86,6 +86,40 @@ final class PdoInsightsRepository implements InsightsRepository
         return $query->fetchAll();
     }
 
+    public function technicianWorkload(): array
+    {
+        $summary = $this->pdo->query("SELECT u.id, u.full_name AS name, role.code AS role_code,
+                COUNT(r.id) FILTER (WHERE s.is_terminal = FALSE) AS open_count,
+                COUNT(r.id) FILTER (WHERE s.code = 'pending') AS pending_count,
+                COUNT(r.id) FILTER (WHERE s.code = 'in_progress') AS in_progress_count
+            FROM users u JOIN roles role ON role.id = u.role_id
+            LEFT JOIN request_assignments ra ON ra.technician_id = u.id AND ra.ended_at IS NULL
+            LEFT JOIN requests r ON r.id = ra.request_id
+            LEFT JOIN statuses s ON s.id = r.status_id
+            WHERE u.is_active = TRUE AND role.code IN ('technician', 'csi_manager')
+            GROUP BY u.id, role.code
+            ORDER BY open_count DESC, u.full_name ASC")->fetchAll();
+        $cases = $this->pdo->query('SELECT technician_id, public_code, title, status_name FROM (
+                SELECT ra.technician_id, r.public_code, r.title, s.name AS status_name,
+                       ROW_NUMBER() OVER (PARTITION BY ra.technician_id ORDER BY r.created_at ASC, r.id ASC) AS position
+                FROM request_assignments ra JOIN requests r ON r.id = ra.request_id
+                JOIN statuses s ON s.id = r.status_id
+                WHERE ra.ended_at IS NULL AND s.is_terminal = FALSE
+            ) ranked WHERE position <= 3 ORDER BY technician_id, position')->fetchAll();
+        $casesByTechnician = [];
+        foreach ($cases as $case) {
+            $casesByTechnician[(int) $case['technician_id']][] = [
+                'public_code' => $case['public_code'], 'title' => $case['title'], 'status_name' => $case['status_name'],
+            ];
+        }
+        return array_map(static fn (array $row): array => [
+            'id' => (int) $row['id'], 'name' => $row['name'], 'role_code' => $row['role_code'],
+            'open_count' => (int) $row['open_count'], 'pending_count' => (int) $row['pending_count'],
+            'in_progress_count' => (int) $row['in_progress_count'],
+            'cases' => $casesByTechnician[(int) $row['id']] ?? [],
+        ], $summary);
+    }
+
     public function exportFiltered(array $filters): iterable
     {
         [$where, $params] = $this->where($filters);

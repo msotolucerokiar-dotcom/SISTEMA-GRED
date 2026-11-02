@@ -27,6 +27,9 @@ interface InsightsRepository
     /** @return list<array<string,mixed>> */
     public function attentionNeeded(int $limit): array;
 
+    /** @return list<array{id:int,name:string,role_code:string,open_count:int,pending_count:int,in_progress_count:int,cases:list<array{public_code:string,title:string,status_name:string}>}> */
+    public function technicianWorkload(): array;
+
     /** @param array<string,mixed> $filters @return iterable<array<string,mixed>> */
     public function exportFiltered(array $filters): iterable;
 

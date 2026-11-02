@@ -40,6 +40,8 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $managerDashboard] = $this->request('GET', '/dashboard', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('Estado de las solicitudes', $managerDashboard);
+            self::assertStringContainsString('Carga de trabajo', $managerDashboard);
+            self::assertStringContainsString('Http technician', $managerDashboard);
             self::assertStringContainsString('assignment=unassigned', $managerDashboard);
             self::assertStringContainsString('status=', $managerDashboard);
             self::assertStringContainsString('Solicitudes que necesitan atención', $managerDashboard);
@@ -87,6 +89,17 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $attentionList] = $this->request('GET', '/csi/requests?attention=needed', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringNotContainsString($code, $attentionList);
+            [$status, $workloadDashboard] = $this->request('GET', '/dashboard', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('/csi/requests?technician=' . $users[2], $workloadDashboard);
+            self::assertStringContainsString('/csi/requests/' . $code . '#asignar-responsable', $workloadDashboard);
+            self::assertStringContainsString('id="asignar-responsable"', $detail);
+            [$status, $technicianCases] = $this->request('GET', '/csi/requests?technician=' . $users[2], '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($code, $technicianCases);
+            self::assertSame(303, $this->request('POST', '/csi/requests/' . $code . '/assign', http_build_query(['_csrf' => $csrf, 'technician' => $users[1]]), $managerCookie)[0]);
+            self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?technician=' . $users[2], '', $managerCookie)[1]);
+            self::assertStringContainsString($code, $this->request('GET', '/csi/requests?technician=' . $users[1], '', $managerCookie)[1]);
             [$status, $workerDetail] = $this->request('GET', '/requests/' . $code, '', $workerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('Historial de acciones', $workerDetail);
