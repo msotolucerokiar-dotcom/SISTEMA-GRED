@@ -12,7 +12,7 @@ final class RequestFilters
     public function fromInput(array $input, bool $report = false): array
     {
         $errors = [];
-        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'technician' => null, 'assignment' => null, 'from' => null, 'to' => null];
+        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'technician' => null, 'assignment' => null, 'attention' => null, 'from' => null, 'to' => null];
         $search = is_string($input['search'] ?? null) ? trim($input['search']) : '';
         if (mb_strlen($search) > 100) { $errors['search'] = 'La búsqueda admite hasta 100 caracteres.'; }
         $filters['search'] = $search;
@@ -30,6 +30,11 @@ final class RequestFilters
             } else {
                 $filters['assignment'] = $assignment;
             }
+        }
+        $attention = $input['attention'] ?? null;
+        if ($attention !== null && $attention !== '') {
+            if ($attention !== 'needed') { $errors['attention'] = 'Selecciona una opción válida.'; }
+            else { $filters['attention'] = 'needed'; }
         }
         foreach (['from', 'to'] as $key) {
             $value = $input[$key] ?? null;

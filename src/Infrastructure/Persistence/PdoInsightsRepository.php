@@ -76,6 +76,16 @@ final class PdoInsightsRepository implements InsightsRepository
         return array_map(static fn (array $row): array => ['code' => $row['code'], 'name' => $row['name'], 'total' => (int) $row['total']], $query->fetchAll());
     }
 
+    public function attentionNeeded(int $limit): array
+    {
+        $query = $this->pdo->prepare('SELECT ' . self::LIST_COLUMNS . ', r.category_id, r.priority_id, ra.technician_id' . self::JOINS .
+            ' WHERE s.is_terminal = FALSE AND (ra.request_id IS NULL OR r.category_id IS NULL OR r.priority_id IS NULL)
+              ORDER BY r.created_at ASC, r.id ASC LIMIT :limit');
+        $query->bindValue('limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
     public function exportFiltered(array $filters): iterable
     {
         [$where, $params] = $this->where($filters);
@@ -119,6 +129,7 @@ final class PdoInsightsRepository implements InsightsRepository
         }
         if (($filters['assignment'] ?? null) === 'unassigned') { $clauses[] = 'ra.request_id IS NULL'; }
         if (($filters['assignment'] ?? null) === 'assigned') { $clauses[] = 'ra.request_id IS NOT NULL'; }
+        if (($filters['attention'] ?? null) === 'needed') { $clauses[] = 's.is_terminal = FALSE AND (ra.request_id IS NULL OR r.category_id IS NULL OR r.priority_id IS NULL)'; }
         if ($filters['from'] !== null) { $clauses[] = "r.created_at >= (CAST(:from_date AS DATE) AT TIME ZONE 'America/Lima')"; $params['from_date'] = $filters['from']; }
         if ($filters['to'] !== null) { $clauses[] = "r.created_at < ((CAST(:to_date AS DATE) + INTERVAL '1 day') AT TIME ZONE 'America/Lima')"; $params['to_date'] = $filters['to']; }
         return [$clauses === [] ? '' : ' WHERE ' . implode(' AND ', $clauses), $params];

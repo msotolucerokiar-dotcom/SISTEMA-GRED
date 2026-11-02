@@ -186,10 +186,25 @@ if ($path === '/dashboard') {
     }
     if ($user->roleCode === 'csi_manager' && $canAccess->execute($user, 'request.view_all')) {
         $insights = $container->get(InsightsRepository::class);
+        $managerPeriod = is_string($_GET['period'] ?? null) && in_array($_GET['period'], ['today', '7days', 'month'], true) ? $_GET['period'] : '7days';
+        $managerToday = new \DateTimeImmutable('today', new \DateTimeZone('America/Lima'));
+        $managerFrom = match ($managerPeriod) {
+            'today' => $managerToday,
+            'month' => $managerToday->modify('first day of this month'),
+            default => $managerToday->modify('-6 days'),
+        };
+        $managerPeriodLabel = match ($managerPeriod) { 'today' => 'Hoy', 'month' => 'Este mes', default => 'Últimos siete días' };
+        $managerDateRange = ['from' => $managerFrom->format('Y-m-d'), 'to' => $managerToday->format('Y-m-d')];
+        $managerFilters = $container->get(\App\Application\Support\RequestFilters::class)->fromInput($managerDateRange);
         $managerStatuses = $insights->filterOptions()['statuses'];
-        $managerCounts = array_column($insights->countByStatus($container->get(\App\Application\Support\RequestFilters::class)->fromInput([])), 'total', 'code');
+        $managerCounts = array_column($insights->countByStatus($managerFilters), 'total', 'code');
         $managerTotal = array_sum($managerCounts);
-        $managerUnassigned = $insights->countFiltered($container->get(\App\Application\Support\RequestFilters::class)->fromInput(['assignment' => 'unassigned']));
+        $managerUnassigned = $insights->countFiltered([...$managerFilters, 'assignment' => 'unassigned']);
+        $managerAttention = $insights->attentionNeeded(5);
+        $managementOptions = $container->get(ManagementRepository::class);
+        $managerCategories = $managementOptions->categories();
+        $managerPriorities = $managementOptions->priorities();
+        $managerTechnicians = $managementOptions->technicians();
     }
     require dirname(__DIR__) . '/src/Presentation/Views/dashboard.php';
     exit;
@@ -584,7 +599,8 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
                     ),
                 };
                 if ($updated) {
-                    header('Location: /csi/requests/' . $code . '?saved=' . $action, true, 303);
+                    $returnToDashboard = $user->roleCode === 'csi_manager' && in_array($action, ['assign', 'classify'], true) && ($_POST['return_to'] ?? null) === 'dashboard';
+                    header('Location: ' . ($returnToDashboard ? '/dashboard?saved=' . $action : '/csi/requests/' . $code . '?saved=' . $action), true, 303);
                     exit;
                 }
                 if ($action === 'delegate') { http_response_code(409); $formErrors['delegate'] = 'No se pudo delegar: verifica la asignación, el estado y las tareas pendientes.'; }

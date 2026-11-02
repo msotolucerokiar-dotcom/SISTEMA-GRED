@@ -24,6 +24,9 @@ interface InsightsRepository
     /** @param array<string,mixed> $filters @return list<array{code:string,name:string,total:int}> */
     public function countByStatus(array $filters): array;
 
+    /** @return list<array<string,mixed>> */
+    public function attentionNeeded(int $limit): array;
+
     /** @param array<string,mixed> $filters @return iterable<array<string,mixed>> */
     public function exportFiltered(array $filters): iterable;
 
