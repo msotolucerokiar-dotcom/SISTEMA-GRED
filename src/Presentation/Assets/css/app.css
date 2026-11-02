@@ -20,10 +20,15 @@
   .manager-topnav a[aria-current="page"] { border-bottom-color: #d9af32; background: rgba(116,158,203,.38); }
   .manager-topnav a:hover { background: rgba(255,255,255,.12); }
   .manager-topnav a svg { width: 1.18rem; height: 1.18rem; flex: none; }
-  .manager-account { display: flex; justify-content: flex-end; }
-  .manager-account button { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border: 1px solid #cfe0f1; border-radius: 999px; background: #f4f8fc; color: #1d375c; box-shadow: 0 2px 8px rgba(0,0,0,.16); }
-  .manager-account button:hover { background: #eaf3fa; }
+  .manager-account { position: relative; display: flex; justify-content: flex-end; }
+  .manager-account summary { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border: 1px solid #cfe0f1; border-radius: 999px; background: #f4f8fc; color: #1d375c; box-shadow: 0 2px 8px rgba(0,0,0,.16); cursor: pointer; list-style: none; }
+  .manager-account summary::-webkit-details-marker { display: none; }
+  .manager-account summary:hover, .manager-account[open] summary { background: #eaf3fa; }
   .manager-account svg { width: 1.4rem; height: 1.4rem; }
+  .manager-account__menu { position: absolute; z-index: 30; top: calc(100% + .55rem); right: 0; width: 12rem; overflow: hidden; border: 1px solid #cfddeb; border-radius: .75rem; background: #fff; color: #1d375c; box-shadow: 0 14px 30px rgba(15,39,66,.2); }
+  .manager-account__menu a, .manager-account__menu button { display: flex; width: 100%; min-height: 2.8rem; align-items: center; border: 0; padding: .7rem 1rem; background: #fff; color: #1d375c; font-size: .88rem; font-weight: 700; text-align: left; text-decoration: none; cursor: pointer; }
+  .manager-account__menu form { border-top: 1px solid #e1e9f1; }
+  .manager-account__menu a:hover, .manager-account__menu button:hover { background: #eaf3fa; }
   @media (max-width: 1040px) { .manager-panel .manager-topbar__inner { grid-template-columns: 1fr auto; gap: .4rem 1rem; padding: .55rem 1.25rem; } .manager-panel .manager-topnav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; overflow-x: auto; scrollbar-width: thin; } .manager-account { grid-column: 2; grid-row: 1; } }
   @media (max-width: 460px) { .manager-panel .manager-topbar__inner { padding-inline: .8rem; } .manager-brand__name { font-size: 1rem; } .manager-brand__section { font-size: .73rem; } .manager-topnav a { padding-inline: .55rem; font-size: .78rem; } }
   .manager-kpi { isolation: isolate; display: grid; grid-template-columns: 3rem minmax(0,1fr); grid-template-rows: auto auto auto; align-content: center; column-gap: .75rem; min-height: 7.25rem; padding: .8rem 1rem; border-color: #cfdeeb; }

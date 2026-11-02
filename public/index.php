@@ -166,6 +166,13 @@ if ($path === '/change-password') {
     exit;
 }
 
+if ($path === '/profile') {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if ($method !== 'GET') { http_response_code(405); header('Allow: GET'); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    require dirname(__DIR__) . '/src/Presentation/Views/profile.php';
+    exit;
+}
+
 if ($path === '/dashboard') {
     if ($user === null) {
         header('Location: /#acceso', true, 303);

@@ -41,6 +41,14 @@ final class CsiManagementFlowTest extends TestCase
             $managerCookie = $this->login($emails[1], $password);
             [$status, $managerDashboard] = $this->request('GET', '/dashboard', '', $managerCookie);
             self::assertSame(200, $status);
+            self::assertStringContainsString('href="/profile">Perfil</a>', $managerDashboard);
+            self::assertStringContainsString('action="/logout" method="post"', $managerDashboard);
+            self::assertSame(303, $this->request('GET', '/profile')[0]);
+            [$status, $profile] = $this->request('GET', '/profile', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($emails[1], $profile);
+            self::assertStringContainsString('Http csi_manager', $profile);
+            self::assertSame(405, $this->request('POST', '/profile', '', $managerCookie)[0]);
             self::assertStringContainsString('Estado de las solicitudes', $managerDashboard);
             self::assertStringContainsString('href="/assets/app.css?v=', $managerDashboard);
             self::assertStringContainsString('Solicitudes que requieren intervención', $managerDashboard);
