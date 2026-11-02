@@ -64,9 +64,14 @@ final class TechnicianFlowTest extends TestCase
             self::assertSame(200, $status);
             self::assertStringContainsString('Se reconectó el equipo.', $workerDetail);
             self::assertStringContainsString('Solucionada: CSI registró una solución.', $workerDetail);
-            $container->get(PdoManagementRepository::class)->assign($code, $users[3], $users[1]);
+            try {
+                $container->get(PdoManagementRepository::class)->assign($code, $users[3], $users[1]);
+                self::fail('Una solicitud solucionada no debe reasignarse.');
+            } catch (\App\Domain\Support\FinishedRequest) {
+                self::assertTrue(true);
+            }
             [$status] = $this->request('GET', '/technician/requests/' . $code, '', $technician);
-            self::assertSame(404, $status);
+            self::assertSame(200, $status);
         } finally {
             if ($code !== null) {
                 $statement = $pdo->prepare('DELETE FROM requests WHERE public_code = :code');

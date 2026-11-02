@@ -83,8 +83,9 @@ final class PdoRequestRepository implements RequestRepository
     {
         $statement = $this->pdo->prepare(
             'SELECT r.public_code, r.title, r.description, r.created_at, r.updated_at, s.name AS status_name,
-                    s.code AS status_code, a.name AS area_name
+                    s.code AS status_code, a.name AS area_name, ra.id AS assignment_id
              FROM requests r JOIN statuses s ON s.id = r.status_id JOIN areas a ON a.id = r.area_id
+             LEFT JOIN request_assignments ra ON ra.request_id = r.id AND ra.ended_at IS NULL
              WHERE r.public_code = :code AND r.requester_id = :user'
         );
         $statement->execute(['code' => $code, 'user' => $requesterId]);

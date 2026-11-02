@@ -7,7 +7,9 @@ namespace App\Tests\Integration\Persistence;
 use App\Infrastructure\Bootstrap\ContainerFactory;
 use App\Infrastructure\Persistence\MigrationRunner;
 use App\Infrastructure\Persistence\PdoManagementRepository;
+use App\Infrastructure\Persistence\PdoAssignedRequestRepository;
 use App\Infrastructure\Persistence\PdoRequestRepository;
+use App\Domain\Support\FinishedRequest;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
@@ -30,6 +32,8 @@ final class PdoManagementRepositoryTest extends TestCase
                 $users[] = (int) $statement->fetchColumn();
             }
             $code = $requests->create($users[0], $area, 'Falla de Internet', 'Sin acceso a Internet en la oficina.', []);
+            self::assertSame('pending', $repo->find($code)['status_code']);
+            self::assertNull($requests->findOwn($code, $users[0])['assignment_id']);
             self::assertGreaterThanOrEqual(1, $repo->countAll());
             self::assertNotNull($repo->find($code));
             self::assertNotEmpty($repo->listAll(10, 0));
@@ -39,14 +43,32 @@ final class PdoManagementRepositoryTest extends TestCase
             self::assertSame($category, (int) $repo->find($code)['category_id']);
             self::assertTrue($repo->assign($code, $users[2], $users[1]));
             self::assertSame($users[2], (int) $repo->find($code)['technician_id']);
+            self::assertSame('pending', $repo->find($code)['status_code']);
+            self::assertNotNull($requests->findOwn($code, $users[0])['assignment_id']);
+            $progress = $container->get(PdoAssignedRequestRepository::class);
+            self::assertTrue($progress->updateProgress($code, $users[2], 'in_progress', 'Atención iniciada.', null));
             self::assertTrue($repo->assign($code, $users[3], $users[1]));
             self::assertSame($users[3], (int) $repo->find($code)['technician_id']);
+            self::assertSame('in_progress', $repo->find($code)['status_code']);
             $history = $pdo->prepare('SELECT action FROM request_history WHERE request_id = (SELECT id FROM requests WHERE public_code = :code) ORDER BY id');
             $history->execute(['code' => $code]);
-            self::assertSame(['created', 'classified', 'assigned', 'reassigned'], $history->fetchAll(PDO::FETCH_COLUMN));
+            self::assertSame(['created', 'classified', 'assigned', 'started', 'reassigned'], $history->fetchAll(PDO::FETCH_COLUMN));
             $assignments = $pdo->prepare('SELECT COUNT(*) FROM request_assignments WHERE request_id = (SELECT id FROM requests WHERE public_code = :code) AND ended_at IS NULL');
             $assignments->execute(['code' => $code]);
             self::assertSame(1, (int) $assignments->fetchColumn());
+            self::assertTrue($progress->updateProgress($code, $users[3], 'resolved', 'Problema resuelto.', 'Se restableció la conexión.'));
+            self::assertSame('resolved', $repo->find($code)['status_code']);
+            foreach ([
+                static fn () => $repo->assign($code, $users[2], $users[1]),
+                static fn () => $repo->classify($code, $category, $priority, $users[1]),
+            ] as $operation) {
+                try { $operation(); self::fail('Una solicitud solucionada no debe modificarse.'); }
+                catch (FinishedRequest) { /* Rechazo esperado. */ }
+            }
+            self::assertSame($users[3], (int) $repo->find($code)['technician_id']);
+            self::assertSame('resolved', $repo->find($code)['status_code']);
+            $history->execute(['code' => $code]);
+            self::assertSame(['created', 'classified', 'assigned', 'started', 'reassigned', 'resolved'], $history->fetchAll(PDO::FETCH_COLUMN));
             self::assertFalse($repo->assign('SOL-9999-999999', $users[2], $users[1]));
         } finally {
             if ($code !== null) {

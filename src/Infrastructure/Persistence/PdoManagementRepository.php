@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence;
 
 use App\Domain\Support\ManagementRepository;
+use App\Domain\Support\FinishedRequest;
 use PDO;
 use Throwable;
 
@@ -40,7 +41,7 @@ final class PdoManagementRepository implements ManagementRepository
     {
         $query = $this->pdo->prepare(
             'SELECT r.public_code, r.title, r.description, r.created_at, r.category_id, r.priority_id,
-                    s.name AS status_name, a.name AS area_name, u.full_name AS requester_name,
+                    s.name AS status_name, s.code AS status_code, a.name AS area_name, u.full_name AS requester_name,
                     u.email AS requester_email, c.name AS category_name, p.name AS priority_name,
                     tech.id AS technician_id, tech.full_name AS technician_name
              FROM requests r JOIN statuses s ON s.id = r.status_id JOIN areas a ON a.id = r.area_id
@@ -162,10 +163,14 @@ final class PdoManagementRepository implements ManagementRepository
 
     private function lockRequest(string $code): ?int
     {
-        $query = $this->pdo->prepare('SELECT id FROM requests WHERE public_code = :code FOR UPDATE');
+        $query = $this->pdo->prepare('SELECT r.id, CASE WHEN s.is_terminal THEN 1 ELSE 0 END AS terminal
+            FROM requests r JOIN statuses s ON s.id = r.status_id
+            WHERE r.public_code = :code FOR UPDATE OF r');
         $query->execute(['code' => $code]);
-        $id = $query->fetchColumn();
-        return $id === false ? null : (int) $id;
+        $row = $query->fetch();
+        if ($row === false) { return null; }
+        if ((int) $row['terminal'] === 1) { throw new FinishedRequest(); }
+        return (int) $row['id'];
     }
 
     /** @param array<string,int|null> $details */

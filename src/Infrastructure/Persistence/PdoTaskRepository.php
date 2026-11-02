@@ -91,7 +91,7 @@ final class PdoTaskRepository implements TaskRepository
         try {
             $requestId = $this->taskRequestId($taskId);
             if ($requestId === null) { $this->pdo->rollBack(); return false; }
-            $this->lockRequest($requestId);
+            if (!$this->lockOpenRequest($requestId)) { $this->pdo->rollBack(); return false; }
             $task = $this->pdo->prepare("SELECT state, intern_id FROM request_tasks WHERE id = :id FOR UPDATE");
             $task->execute(['id' => $taskId]);
             $row = $task->fetch();
@@ -113,7 +113,7 @@ final class PdoTaskRepository implements TaskRepository
         try {
             $requestId = $this->taskRequestId($taskId);
             if ($requestId === null) { $this->pdo->rollBack(); return false; }
-            $this->lockRequest($requestId);
+            if (!$this->lockOpenRequest($requestId)) { $this->pdo->rollBack(); return false; }
             $task = $this->pdo->prepare('SELECT state, responsible_id FROM request_tasks WHERE id = :id FOR UPDATE');
             $task->execute(['id' => $taskId]);
             $row = $task->fetch();
@@ -141,7 +141,7 @@ final class PdoTaskRepository implements TaskRepository
         try {
             $requestId = $this->taskRequestId($taskId);
             if ($requestId === null) { $this->pdo->rollBack(); return false; }
-            $this->lockRequest($requestId);
+            if (!$this->lockOpenRequest($requestId)) { $this->pdo->rollBack(); return false; }
             $task = $this->pdo->prepare('SELECT state, responsible_id FROM request_tasks WHERE id = :id FOR UPDATE');
             $task->execute(['id' => $taskId]);
             $row = $task->fetch();
@@ -170,11 +170,12 @@ final class PdoTaskRepository implements TaskRepository
         return $id === false ? null : (int) $id;
     }
 
-    private function lockRequest(int $requestId): void
+    private function lockOpenRequest(int $requestId): bool
     {
-        $query = $this->pdo->prepare('SELECT id FROM requests WHERE id = :id FOR UPDATE');
+        $query = $this->pdo->prepare('SELECT CASE WHEN s.is_terminal THEN 0 ELSE 1 END AS open
+            FROM requests r JOIN statuses s ON s.id = r.status_id WHERE r.id = :id FOR UPDATE OF r');
         $query->execute(['id' => $requestId]);
-        $query->fetchColumn();
+        return (int) $query->fetchColumn() === 1;
     }
 
     /** @param array<string,int|string> $details */

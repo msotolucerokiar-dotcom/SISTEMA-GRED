@@ -50,16 +50,21 @@ final class PdoAssignedRequestRepositoryTest extends TestCase
             self::assertSame('Se reconectó y probó la impresora.', $assigned->solution($code, $users[0])['solution']);
             self::assertNull($assigned->solution($code, $users[1]));
             self::assertFalse($assigned->updateProgress($code, $users[3], 'resolved', 'Duplicado', 'Otra solución'));
-            self::assertTrue($management->assign($code, $users[4], $users[2]));
-            self::assertNull($assigned->findAssigned($code, $users[3]));
-            self::assertNull($assigned->attachment($attachmentId, $users[3]));
-            self::assertNotNull($assigned->attachment($attachmentId, $users[4]));
-            self::assertFalse($assigned->updateProgress($code, $users[3], 'in_progress', 'Revocado', null));
-            self::assertNotNull($assigned->findAssigned($code, $users[4]));
+            try {
+                $management->assign($code, $users[4], $users[2]);
+                self::fail('Una solicitud solucionada no debe reasignarse.');
+            } catch (\App\Domain\Support\FinishedRequest) {
+                self::assertTrue(true);
+            }
+            self::assertNotNull($assigned->findAssigned($code, $users[3]));
+            self::assertNotNull($assigned->attachment($attachmentId, $users[3]));
+            self::assertNull($assigned->attachment($attachmentId, $users[4]));
+            self::assertFalse($assigned->updateProgress($code, $users[3], 'in_progress', 'Ya terminó', null));
+            self::assertNull($assigned->findAssigned($code, $users[4]));
             $history = $pdo->prepare('SELECT action, details FROM request_history WHERE request_id = (SELECT id FROM requests WHERE public_code = :code) ORDER BY id');
             $history->execute(['code' => $code]);
             $actions = $history->fetchAll();
-            self::assertSame(['created', 'assigned', 'started', 'resolved', 'reassigned'], array_column($actions, 'action'));
+            self::assertSame(['created', 'assigned', 'started', 'resolved'], array_column($actions, 'action'));
             self::assertSame('Revisé los cables.', json_decode($actions[2]['details'], true, 512, JSON_THROW_ON_ERROR)['observation']);
         } finally {
             if ($code !== null) {

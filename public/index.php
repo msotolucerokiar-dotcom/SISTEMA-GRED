@@ -18,6 +18,7 @@ use App\Application\Support\ClassifyRequest;
 use App\Application\Support\GetRequestForManagement;
 use App\Application\Support\ViewAllRequests;
 use App\Domain\Support\ManagementRepository;
+use App\Domain\Support\FinishedRequest;
 use App\Domain\Support\AssignedRequestRepository;
 use App\Application\Support\ListAssignedRequests;
 use App\Application\Support\GetAssignedRequest;
@@ -196,7 +197,10 @@ if ($path === '/dashboard') {
         $managerPeriodLabel = match ($managerPeriod) { 'today' => 'Hoy', 'month' => 'Este mes', default => 'Últimos siete días' };
         $managerDateRange = ['from' => $managerFrom->format('Y-m-d'), 'to' => $managerToday->format('Y-m-d')];
         $managerFilters = $container->get(\App\Application\Support\RequestFilters::class)->fromInput($managerDateRange);
-        $managerStatuses = $insights->filterOptions()['statuses'];
+        $managerStatuses = array_values(array_filter(
+            $insights->filterOptions()['statuses'],
+            static fn (array $status): bool => in_array($status['code'], ['pending', 'in_progress', 'resolved'], true),
+        ));
         $managerCounts = array_column($insights->countByStatus($managerFilters), 'total', 'code');
         $managerTotal = array_sum($managerCounts);
         $managerUnassigned = $insights->countFiltered([...$managerFilters, 'assignment' => 'unassigned']);
@@ -607,6 +611,9 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
                 }
                 if ($action === 'delegate') { http_response_code(409); $formErrors['delegate'] = 'No se pudo delegar: verifica la asignación, el estado y las tareas pendientes.'; }
                 else { http_response_code(404); require dirname(__DIR__) . '/src/Presentation/Views/not-found.php'; exit; }
+            } catch (FinishedRequest $exception) {
+                http_response_code(409);
+                $formErrors['form'] = 'La solicitud ya terminó. No se puede asignar, reasignar ni clasificar sin un procedimiento de reapertura autorizado.';
             } catch (InvalidRequest $exception) {
                 http_response_code(422);
                 $formErrors = $exception->errors;
