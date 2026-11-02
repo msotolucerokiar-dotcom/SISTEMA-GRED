@@ -74,6 +74,8 @@
   .manager-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; grid-column: 1 / -1; }
   .manager-row-actions .manager-cell-label { width: 100%; }
   .manager-mini-action { display: inline-flex; min-height: 1.85rem; align-items: center; justify-content: center; border: 1px solid #9bb7d1; border-radius: .35rem; padding: .28rem .38rem; background: #fff; color: #1d375c; font-size: .65rem; font-weight: 700; line-height: 1.15; text-decoration: none; white-space: nowrap; }
+  .manager-row-actions > a:first-of-type { width: 1.9rem; padding-inline: 0; font-size: 0; }
+  .manager-row-actions > a:first-of-type::before { content: '↗'; font-size: 1rem; line-height: 1; }
   .manager-mini-action:hover { background: #eaf3fa; border-color: #3a699b; }
   .manager-action-forms { display: none; gap: .75rem; padding: 0 .25rem 1rem; scroll-margin-top: 1rem; }
   .manager-action-forms:target { display: grid; }
@@ -94,10 +96,12 @@
   .manager-panel aside section dl > div { min-height: 3.2rem; align-items: center; }
   @media (min-width: 640px) { .manager-action-forms:target { grid-template-columns: repeat(2,minmax(0,1fr)); } .manager-followup-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
   @media (min-width: 1280px) {
-    .manager-attention-head, .manager-attention-row { grid-template-columns: 7.2rem minmax(9rem,1.4fr) minmax(6.5rem,.9fr) 5.2rem 7rem 14.5rem; gap: .4rem; }
+    .manager-attention-head, .manager-attention-row { grid-template-columns: 7.2rem minmax(9rem,1.4fr) minmax(6.5rem,.9fr) 5.2rem 8.2rem 13.5rem; gap: .4rem; }
     .manager-attention-head { display: grid; border-radius: .55rem; padding: .55rem .4rem; background: #eaf3fa; color: #1d375c; font-size: .68rem; font-weight: 800; }
     .manager-attention-row { align-items: center; padding: .45rem .4rem; }
     .manager-request-title, .manager-request-area { white-space: nowrap; }
+    .manager-request-date { display: none; }
+    .manager-row-actions { flex-wrap: nowrap; }
     .manager-cell-label { display: none; }
     .manager-row-actions { grid-column: auto; }
     .manager-row-actions .manager-cell-label { display: none; }
