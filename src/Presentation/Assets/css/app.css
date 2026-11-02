@@ -26,16 +26,23 @@
   .manager-account svg { width: 1.4rem; height: 1.4rem; }
   @media (max-width: 1040px) { .manager-panel .manager-topbar__inner { grid-template-columns: 1fr auto; gap: .4rem 1rem; padding: .55rem 1.25rem; } .manager-panel .manager-topnav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; overflow-x: auto; scrollbar-width: thin; } .manager-account { grid-column: 2; grid-row: 1; } }
   @media (max-width: 460px) { .manager-panel .manager-topbar__inner { padding-inline: .8rem; } .manager-brand__name { font-size: 1rem; } .manager-brand__section { font-size: .73rem; } .manager-topnav a { padding-inline: .55rem; font-size: .78rem; } }
-  .manager-kpi { isolation: isolate; border-color: #cfdeeb; }
-  .manager-kpi::after { content: ''; position: absolute; z-index: -1; width: 62%; height: 8rem; right: -1rem; bottom: -5.7rem; border-radius: 58% 42% 0 0; transform: rotate(-16deg); background: rgba(255,255,255,.13); }
-  .manager-kpi--0 { background: linear-gradient(145deg, #315f90, #122f52); }
-  .manager-kpi--1 { background: linear-gradient(145deg, #427db6, #1d5489); }
-  .manager-kpi--2 { background: linear-gradient(145deg, #e2f1fd, #bddaf3); }
-  .manager-kpi--3 { background: linear-gradient(145deg, #fff, #f8fcfa); }
-  .manager-kpi--3::after { background: #e7f5e9; }
-  .manager-kpi__orb { position: absolute; left: 1.1rem; top: 1.2rem; display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 999px; }
-  .manager-kpi__orb svg { width: 1.7rem; height: 1.7rem; }
+  .manager-kpi { isolation: isolate; display: grid; grid-template-columns: 3rem minmax(0,1fr); grid-template-rows: auto auto auto; align-content: center; column-gap: .75rem; min-height: 7.25rem; padding: .8rem 1rem; border-color: #cfdeeb; }
+  .manager-kpi::after { content: ''; position: absolute; z-index: -1; width: 55%; height: 5.5rem; right: -1.5rem; bottom: -3.35rem; border-radius: 58% 42% 0 0; transform: rotate(-18deg); background: rgba(255,255,255,.15); }
+  .manager-kpi--0 { background: linear-gradient(140deg, #315f90, #122f52); }
+  .manager-kpi--1 { background: linear-gradient(140deg, #427db6, #1d5489); }
+  .manager-kpi--2 { background: linear-gradient(140deg, #e2f1fd, #bddaf3); }
+  .manager-kpi--2::after { background: rgba(58,105,155,.17); }
+  .manager-kpi--3 { background: linear-gradient(140deg, #fff, #f8fcfa); }
+  .manager-kpi--3::after { background: #dff2e3; }
+  .manager-kpi__orb { display: grid; grid-column: 1; grid-row: 1 / 4; align-self: start; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 999px; }
+  .manager-kpi__orb svg { width: 1.55rem; height: 1.55rem; }
   .manager-kpi--3 .manager-kpi__orb { color: #15803d; }
+  .manager-kpi__title, .manager-kpi__value, .manager-kpi__caption { position: relative; grid-column: 2; min-width: 0; }
+  .manager-kpi__title { font-size: .79rem; font-weight: 800; line-height: 1.2; }
+  .manager-kpi__value { margin-top: .08rem; font-size: 2rem; font-weight: 800; line-height: 1.08; }
+  .manager-kpi__caption { display: inline-flex; width: fit-content; max-width: 100%; align-items: center; gap: .25rem; margin-top: .32rem; font-size: .69rem; font-weight: 700; line-height: 1.2; }
+  .manager-kpi__caption svg { width: .82rem; height: .82rem; flex: none; }
+  .manager-kpi--0 .manager-kpi__caption { border-radius: 999px; padding: .2rem .5rem; background: #fbf0d7; color: #715811; }
   .manager-attention-scroll { margin-top: 1rem; }
   .manager-attention-head, .manager-attention-row { display: grid; gap: .5rem; }
   .manager-attention-head { display: none; }
