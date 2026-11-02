@@ -37,6 +37,16 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(403, $status);
 
             $managerCookie = $this->login($emails[1], $password);
+            [$status, $managerDashboard] = $this->request('GET', '/dashboard', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('Estado de las solicitudes', $managerDashboard);
+            self::assertStringContainsString('href="/csi/requests?assignment=unassigned"', $managerDashboard);
+            self::assertStringContainsString('href="/csi/requests?status=', $managerDashboard);
+            [$status, $unassigned] = $this->request('GET', '/csi/requests?assignment=unassigned', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($code, $unassigned);
+            self::assertStringContainsString('value="unassigned" selected', $unassigned);
+            self::assertSame(422, $this->request('GET', '/csi/requests?assignment=invalid', '', $managerCookie)[0]);
             [$status, $list] = $this->request('GET', '/csi/requests', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $list);
@@ -55,6 +65,9 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(303, $status);
             [$status, $detail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
             self::assertSame(200, $status);
+            [$status, $unassigned] = $this->request('GET', '/csi/requests?assignment=unassigned', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringNotContainsString($code, $unassigned);
             self::assertStringContainsString('Http technician', $detail);
             self::assertStringContainsString('Historial de acciones', $detail);
             self::assertStringContainsString('Técnico asignado', $detail);

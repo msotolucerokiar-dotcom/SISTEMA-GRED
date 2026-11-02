@@ -184,6 +184,13 @@ if ($path === '/dashboard') {
         $ownStatusCounts = $requests->countOwnByStatus($user->id);
         $recentOwnRequests = $requests->listOwn($user->id, 5, 0);
     }
+    if ($user->roleCode === 'csi_manager' && $canAccess->execute($user, 'request.view_all')) {
+        $insights = $container->get(InsightsRepository::class);
+        $managerStatuses = $insights->filterOptions()['statuses'];
+        $managerCounts = array_column($insights->countByStatus($container->get(\App\Application\Support\RequestFilters::class)->fromInput([])), 'total', 'code');
+        $managerTotal = array_sum($managerCounts);
+        $managerUnassigned = $insights->countFiltered($container->get(\App\Application\Support\RequestFilters::class)->fromInput(['assignment' => 'unassigned']));
+    }
     require dirname(__DIR__) . '/src/Presentation/Views/dashboard.php';
     exit;
 }

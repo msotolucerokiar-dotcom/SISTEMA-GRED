@@ -87,17 +87,21 @@ final class PdoInsightsRepository implements InsightsRepository
     public function filterOptions(): array
     {
         return [
-            'statuses' => $this->options('SELECT id, name FROM statuses ORDER BY id'),
+            'statuses' => $this->options('SELECT id, code, name FROM statuses ORDER BY id'),
             'areas' => $this->options('SELECT id, name FROM areas WHERE is_active = TRUE ORDER BY name'),
             'categories' => $this->options('SELECT id, name FROM categories WHERE is_active = TRUE ORDER BY name'),
             'technicians' => $this->options("SELECT u.id, u.full_name AS name FROM users u JOIN roles r ON r.id = u.role_id WHERE r.code IN ('technician', 'csi_manager') AND u.is_active = TRUE ORDER BY u.full_name"),
         ];
     }
 
-    /** @return list<array{id:int,name:string}> */
+    /** @return list<array{id:int,name:string,code?:string}> */
     private function options(string $sql): array
     {
-        return array_map(static fn (array $row): array => ['id' => (int) $row['id'], 'name' => $row['name']], $this->pdo->query($sql)->fetchAll());
+        return array_map(static function (array $row): array {
+            $option = ['id' => (int) $row['id'], 'name' => $row['name']];
+            if (isset($row['code'])) { $option['code'] = $row['code']; }
+            return $option;
+        }, $this->pdo->query($sql)->fetchAll());
     }
 
     /** @param array<string,mixed> $filters @return array{string,array<string,mixed>} */
@@ -113,6 +117,8 @@ final class PdoInsightsRepository implements InsightsRepository
         foreach (['status' => 'r.status_id', 'area' => 'r.area_id', 'category' => 'r.category_id', 'technician' => 'ra.technician_id'] as $key => $column) {
             if ($filters[$key] !== null) { $clauses[] = $column . ' = :' . $key; $params[$key] = $filters[$key]; }
         }
+        if (($filters['assignment'] ?? null) === 'unassigned') { $clauses[] = 'ra.request_id IS NULL'; }
+        if (($filters['assignment'] ?? null) === 'assigned') { $clauses[] = 'ra.request_id IS NOT NULL'; }
         if ($filters['from'] !== null) { $clauses[] = "r.created_at >= (CAST(:from_date AS DATE) AT TIME ZONE 'America/Lima')"; $params['from_date'] = $filters['from']; }
         if ($filters['to'] !== null) { $clauses[] = "r.created_at < ((CAST(:to_date AS DATE) + INTERVAL '1 day') AT TIME ZONE 'America/Lima')"; $params['to_date'] = $filters['to']; }
         return [$clauses === [] ? '' : ' WHERE ' . implode(' AND ', $clauses), $params];

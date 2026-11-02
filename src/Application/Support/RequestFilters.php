@@ -12,7 +12,7 @@ final class RequestFilters
     public function fromInput(array $input, bool $report = false): array
     {
         $errors = [];
-        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'technician' => null, 'from' => null, 'to' => null];
+        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'technician' => null, 'assignment' => null, 'from' => null, 'to' => null];
         $search = is_string($input['search'] ?? null) ? trim($input['search']) : '';
         if (mb_strlen($search) > 100) { $errors['search'] = 'La búsqueda admite hasta 100 caracteres.'; }
         $filters['search'] = $search;
@@ -22,6 +22,14 @@ final class RequestFilters
             $id = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
             if ($id === false) { $errors[$key] = 'Selecciona una opción válida.'; }
             else { $filters[$key] = (int) $id; }
+        }
+        $assignment = $input['assignment'] ?? null;
+        if ($assignment !== null && $assignment !== '') {
+            if (!is_string($assignment) || !in_array($assignment, ['unassigned', 'assigned'], true)) {
+                $errors['assignment'] = 'Selecciona una opción válida.';
+            } else {
+                $filters['assignment'] = $assignment;
+            }
         }
         foreach (['from', 'to'] as $key) {
             $value = $input[$key] ?? null;
