@@ -120,6 +120,46 @@ final class PdoInsightsRepository implements InsightsRepository
         ], $summary);
     }
 
+    public function managerFollowUp(int $limit): array
+    {
+        $queries = [
+            'in_progress' => "SELECT r.public_code, r.title, r.updated_at AS event_at, tech.full_name AS technician_name
+                FROM requests r JOIN statuses s ON s.id = r.status_id
+                LEFT JOIN request_assignments ra ON ra.request_id = r.id AND ra.ended_at IS NULL
+                LEFT JOIN users tech ON tech.id = ra.technician_id
+                WHERE s.code = 'in_progress' ORDER BY r.updated_at DESC, r.id DESC LIMIT :limit",
+            'updates' => "SELECT r.public_code, r.title, h.action, h.created_at AS event_at, actor.full_name AS actor_name
+                FROM request_history h JOIN requests r ON r.id = h.request_id
+                JOIN users actor ON actor.id = h.actor_id
+                WHERE h.action NOT IN ('created', 'assigned')
+                ORDER BY h.created_at DESC, h.id DESC LIMIT :limit",
+            'reassigned' => "SELECT r.public_code, r.title, h.created_at AS event_at,
+                    previous.full_name AS previous_name, next.full_name AS next_name
+                FROM request_history h JOIN requests r ON r.id = h.request_id
+                LEFT JOIN users previous ON previous.id = NULLIF(h.details->>'previous_technician_id', '')::bigint
+                LEFT JOIN users next ON next.id = NULLIF(h.details->>'technician_id', '')::bigint
+                WHERE h.action = 'reassigned' ORDER BY h.created_at DESC, h.id DESC LIMIT :limit",
+            'resolved' => "SELECT r.public_code, r.title, h.created_at AS event_at, actor.full_name AS actor_name
+                FROM request_history h JOIN requests r ON r.id = h.request_id
+                JOIN users actor ON actor.id = h.actor_id WHERE h.action = 'resolved'
+                ORDER BY h.created_at DESC, h.id DESC LIMIT :limit",
+            'pending_validation' => "SELECT r.public_code, r.title, t.id AS task_id, t.submitted_at AS event_at,
+                    intern.full_name AS intern_name, responsible.full_name AS responsible_name
+                FROM request_tasks t JOIN requests r ON r.id = t.request_id
+                JOIN users intern ON intern.id = t.intern_id
+                JOIN users responsible ON responsible.id = t.responsible_id
+                WHERE t.state = 'submitted' ORDER BY t.submitted_at ASC, t.id ASC LIMIT :limit",
+        ];
+        $result = [];
+        foreach ($queries as $key => $sql) {
+            $query = $this->pdo->prepare($sql);
+            $query->bindValue('limit', $limit, PDO::PARAM_INT);
+            $query->execute();
+            $result[$key] = $query->fetchAll();
+        }
+        return $result;
+    }
+
     public function exportFiltered(array $filters): iterable
     {
         [$where, $params] = $this->where($filters);

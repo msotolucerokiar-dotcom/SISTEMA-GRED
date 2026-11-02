@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Http;
 
 use App\Infrastructure\Bootstrap\ContainerFactory;
 use App\Infrastructure\Persistence\PdoManagementRepository;
+use App\Infrastructure\Persistence\PdoInsightsRepository;
 use App\Infrastructure\Persistence\PdoRequestRepository;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -98,6 +99,12 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $technicianCases);
             self::assertSame(303, $this->request('POST', '/csi/requests/' . $code . '/assign', http_build_query(['_csrf' => $csrf, 'technician' => $users[1]]), $managerCookie)[0]);
+            $reassigned = $container->get(PdoInsightsRepository::class)->managerFollowUp(50)['reassigned'];
+            self::assertContains($code, array_column($reassigned, 'public_code'));
+            $reassignment = $reassigned[array_search($code, array_column($reassigned, 'public_code'), true)];
+            self::assertSame('Http technician', $reassignment['previous_name']);
+            self::assertSame('Http csi_manager', $reassignment['next_name']);
+            self::assertStringContainsString('Cambios de responsable', $this->request('GET', '/dashboard', '', $managerCookie)[1]);
             self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?technician=' . $users[2], '', $managerCookie)[1]);
             self::assertStringContainsString($code, $this->request('GET', '/csi/requests?technician=' . $users[1], '', $managerCookie)[1]);
             [$status, $workerDetail] = $this->request('GET', '/requests/' . $code, '', $workerCookie);

@@ -30,6 +30,9 @@ interface InsightsRepository
     /** @return list<array{id:int,name:string,role_code:string,open_count:int,pending_count:int,in_progress_count:int,cases:list<array{public_code:string,title:string,status_name:string}>}> */
     public function technicianWorkload(): array;
 
+    /** @return array{in_progress:list<array<string,mixed>>,updates:list<array<string,mixed>>,reassigned:list<array<string,mixed>>,resolved:list<array<string,mixed>>,pending_validation:list<array<string,mixed>>} */
+    public function managerFollowUp(int $limit): array;
+
     /** @param array<string,mixed> $filters @return iterable<array<string,mixed>> */
     public function exportFiltered(array $filters): iterable;
 

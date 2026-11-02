@@ -202,6 +202,7 @@ if ($path === '/dashboard') {
         $managerUnassigned = $insights->countFiltered([...$managerFilters, 'assignment' => 'unassigned']);
         $managerAttention = $insights->attentionNeeded(5);
         $managerWorkload = $insights->technicianWorkload();
+        $managerFollowUp = $insights->managerFollowUp(5);
         $managementOptions = $container->get(ManagementRepository::class);
         $managerCategories = $managementOptions->categories();
         $managerPriorities = $managementOptions->priorities();
