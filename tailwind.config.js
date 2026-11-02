@@ -4,13 +4,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ink: '#10283F',
-        institutional: { 50: '#EFF7FA', 100: '#DBEDF3', 600: '#176B87', 700: '#12566D', 800: '#10485C' },
-        accent: { 50: '#F4F7E9', 600: '#687C2D', 700: '#536523' },
-        paper: '#F6F8F9'
+        ink: '#1D375C',
+        institutional: { 50: '#EAF3FA', 100: '#D5E7F4', 600: '#3A699B', 700: '#1D375C', 800: '#162B49' },
+        accent: { 50: '#FBF6E6', 600: '#D9AF32', 700: '#715811' },
+        paper: '#F5F7FA'
       },
       fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
-      boxShadow: { card: '0 12px 34px rgba(16, 40, 63, 0.07)' }
+      boxShadow: { card: '0 12px 34px rgba(29, 55, 92, 0.07)' }
     }
   },
   plugins: []

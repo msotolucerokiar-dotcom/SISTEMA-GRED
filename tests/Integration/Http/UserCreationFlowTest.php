@@ -122,6 +122,10 @@ final class UserCreationFlowTest extends TestCase
             ]), $technician);
             self::assertSame(303, $status);
             $technician = $this->cookie($techHeaders);
+            [$status, $deniedPage] = $this->request('GET', '/csi/users/new', '', $technician);
+            self::assertSame(403, $status);
+            self::assertStringContainsString('Acceso restringido', $deniedPage);
+            self::assertStringContainsString('Rol: <strong>', $deniedPage);
             self::assertSame(403, $this->request('POST', '/csi/users/new', http_build_query(['_csrf' => $csrf]), $technician)[0]);
             [$status, $technicianDashboard] = $this->request('GET', '/dashboard', '', $technician);
             self::assertSame(200, $status);

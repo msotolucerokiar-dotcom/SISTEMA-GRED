@@ -2,11 +2,11 @@
 
 ## Dirección visual
 
-La portada presenta la mesa de ayuda como un servicio público cercano y ordenado: azul profundo para transmitir confianza, teal para orientar acciones, y verde salvia para destacar avance y disponibilidad. La composición combina un encabezado institucional compacto, una entrada clara al portal y tres pasos de atención. La retícula sutil recuerda orden técnico sin recurrir a ilustraciones de stock.
+La portada presenta la mesa de ayuda como un servicio público cercano y ordenado. El azul institucional domina las superficies y acciones; el dorado aparece solo en detalles discretos. La composición combina un encabezado compacto, una entrada clara al portal y tres pasos de atención. Estos colores son una paleta acordada para el sistema, no una declaración de colores corporativos oficiales.
 
 ## Fundamentos
 
-- **Color:** tinta `#10283F` para títulos y navegación; institucional `#176B87` para acciones y enlaces; salvia `#D6E5A5` como acento; fondo `#F6F8F9`; blanco para superficies. Estados previstos: pendiente en ámbar, atención en azul, solucionada en verde y cancelada en gris, siempre acompañados de texto.
+- **Color:** azul principal `#1D375C` para encabezados y botones; azul secundario `#3A699B` para enlaces y estados activos; celeste `#EAF3FA` para avisos; blanco `#FFFFFF` para tarjetas; gris `#F5F7FA` para el fondo; dorado `#D9AF32` como acento moderado. Los errores, éxitos y advertencias usan colores semánticos y texto explícito.
 - **Tipografía:** Manrope para encabezados y DM Sans para interfaz. Ambas se sirven desde Google Fonts; las familias del sistema son el fallback cuando no haya conexión.
 - **Espaciado:** escala base de 4 px, controles de al menos 48 px de alto, tarjetas con 20–24 px de padding, contenido con ancho máximo de 1280 px.
 - **Forma y profundidad:** radio de 8 px en controles, 16 px en tarjetas principales; bordes finos y sombras suaves reservadas para elevar superficies accionables.
@@ -14,7 +14,7 @@ La portada presenta la mesa de ayuda como un servicio público cercano y ordenad
 
 ## Componentes y estados
 
-- **Botón primario:** teal o salvia con texto de alto contraste; hover oscurece o aclara la superficie. Foco visible de 2–3 px. Deshabilitado reduce opacidad y explica el motivo cercano.
+- **Botón primario:** azul institucional con texto blanco de alto contraste; hover oscurece la superficie. Foco visible de 2–3 px. El dorado no se usa como fondo principal de botones.
 - **Campos:** etiqueta persistente, altura mínima de 48 px, borde neutro y ayuda junto al control. Error combina texto explícito e indicador visual; no depende solo del color.
 - **Badges:** texto y color comparten el significado; no usar color como único indicador. Prioridad urgente puede sumar un icono.
 - **Tablas:** encabezados claramente separados, columnas que colapsan o se desplazan en móvil, filtros antes del listado, paginación con controles táctiles.

@@ -45,6 +45,19 @@ final class LoginTest extends TestCase
         self::assertSame([false, false], $repository->attempts);
     }
 
+    public function testRejectsMissingOrMalformedCredentialsBeforeLookingUpAnAccount(): void
+    {
+        $repository = new InMemoryUserRepository();
+        $login = new Login($repository);
+
+        foreach ([['', 'password'], ['not-an-email', 'password'], ['person@example.test', '']] as [$email, $password]) {
+            self::assertFalse($login->execute($email, $password, '127.0.0.1')->succeeded());
+        }
+
+        self::assertNull($repository->lastEmail);
+        self::assertSame([], $repository->attempts);
+    }
+
     public function testRejectsLoginWhenAttemptLimitWasAlreadyReached(): void
     {
         $repository = new InMemoryUserRepository();

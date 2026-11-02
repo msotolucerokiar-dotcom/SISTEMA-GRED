@@ -67,27 +67,41 @@ if ($user !== null) {
     }
 }
 $error = null;
+$loginEmail = '';
 $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 if ($path === '/login' && $method === 'POST') {
+    $loginEmail = is_string($_POST['email'] ?? null) ? trim($_POST['email']) : '';
     if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) {
         http_response_code(419);
         $error = 'La sesión del formulario venció. Recarga la página e inténtalo de nuevo.';
     } else {
-        $result = $login->execute(
-            is_string($_POST['email'] ?? null) ? $_POST['email'] : '',
-            is_string($_POST['password'] ?? null) ? $_POST['password'] : '',
-            $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'
-        );
-        if ($result->succeeded() && $result->user !== null) {
-            $session->authenticate($result->user);
-            header('Location: ' . ($result->user->mustChangePassword ? '/change-password' : '/dashboard'), true, 303);
-            exit;
+        $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+        if ($loginEmail === '') {
+            http_response_code(422);
+            $error = 'Ingresa tu correo electrónico.';
+        } elseif (strlen($loginEmail) > 254 || !filter_var($loginEmail, FILTER_VALIDATE_EMAIL)) {
+            http_response_code(422);
+            $error = 'Ingresa un correo electrónico válido.';
+        } elseif ($password === '') {
+            http_response_code(422);
+            $error = 'Ingresa tu contraseña.';
+        } else {
+            $result = $login->execute(
+                $loginEmail,
+                $password,
+                $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'
+            );
+            if ($result->succeeded() && $result->user !== null) {
+                $session->authenticate($result->user);
+                header('Location: ' . ($result->user->mustChangePassword ? '/change-password' : '/dashboard'), true, 303);
+                exit;
+            }
+            http_response_code(401);
+            $error = $result->rateLimited
+                ? 'Se han realizado varios intentos fallidos. Inténtalo nuevamente más tarde.'
+                : 'Verifica los datos de acceso e inténtalo nuevamente.';
         }
-        http_response_code(401);
-        $error = $result->rateLimited
-            ? 'Se alcanzó el límite de intentos. Espera 15 minutos antes de volver a intentarlo.'
-            : 'El correo o la contraseña no son correctos.';
     }
     $user = $session->user();
 }

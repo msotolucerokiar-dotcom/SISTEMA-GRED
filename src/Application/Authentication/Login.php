@@ -19,7 +19,7 @@ final class Login
     public function execute(string $email, string $password, string $ipAddress): LoginResult
     {
         $email = mb_strtolower(trim($email));
-        if ($email === '' || strlen($email) > 254 || strlen($password) > 4096) {
+        if (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '' || strlen($password) > 4096) {
             return LoginResult::rejected();
         }
 

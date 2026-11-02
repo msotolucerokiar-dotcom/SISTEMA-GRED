@@ -113,8 +113,8 @@ final class PdoInsightsRepository implements InsightsRepository
         foreach (['status' => 'r.status_id', 'area' => 'r.area_id', 'category' => 'r.category_id', 'technician' => 'ra.technician_id'] as $key => $column) {
             if ($filters[$key] !== null) { $clauses[] = $column . ' = :' . $key; $params[$key] = $filters[$key]; }
         }
-        if ($filters['from'] !== null) { $clauses[] = 'r.created_at >= CAST(:from_date AS DATE)'; $params['from_date'] = $filters['from']; }
-        if ($filters['to'] !== null) { $clauses[] = 'r.created_at < CAST(:to_date AS DATE) + INTERVAL \'1 day\''; $params['to_date'] = $filters['to']; }
+        if ($filters['from'] !== null) { $clauses[] = "r.created_at >= (CAST(:from_date AS DATE) AT TIME ZONE 'America/Lima')"; $params['from_date'] = $filters['from']; }
+        if ($filters['to'] !== null) { $clauses[] = "r.created_at < ((CAST(:to_date AS DATE) + INTERVAL '1 day') AT TIME ZONE 'America/Lima')"; $params['to_date'] = $filters['to']; }
         return [$clauses === [] ? '' : ' WHERE ' . implode(' AND ', $clauses), $params];
     }
 
