@@ -204,6 +204,13 @@ if ($path === '/dashboard') {
         $managerCounts = array_column($insights->countByStatus($managerFilters), 'total', 'code');
         $managerTotal = array_sum($managerCounts);
         $managerUnassigned = $insights->countFiltered([...$managerFilters, 'assignment' => 'unassigned']);
+        $pendingStatusId = null;
+        foreach ($managerStatuses as $status) {
+            if ($status['code'] === 'pending') { $pendingStatusId = $status['id']; break; }
+        }
+        $managerPendingAssigned = $pendingStatusId === null ? 0 : $insights->countFiltered([
+            ...$managerFilters, 'status' => $pendingStatusId, 'assignment' => 'assigned',
+        ]);
         $managerAttention = $insights->attentionNeeded(5);
         $managerWorkload = $insights->technicianWorkload();
         $managerFollowUp = $insights->managerFollowUp(5);

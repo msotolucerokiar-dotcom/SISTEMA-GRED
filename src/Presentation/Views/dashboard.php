@@ -6,6 +6,10 @@ if ($user->roleCode === 'worker') {
     require __DIR__ . '/worker-dashboard.php';
     return;
 }
+if ($user->roleCode === 'csi_manager') {
+    require __DIR__ . '/manager-dashboard.php';
+    return;
+}
 
 $e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $csrfToken = $session->csrfToken();
