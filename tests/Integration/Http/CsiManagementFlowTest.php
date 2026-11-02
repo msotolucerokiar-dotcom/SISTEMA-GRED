@@ -41,6 +41,11 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $managerDashboard] = $this->request('GET', '/dashboard', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('Estado de las solicitudes', $managerDashboard);
+            self::assertStringContainsString('De la solicitud al resultado', $managerDashboard);
+            self::assertStringContainsString('aria-label="Recorrido habitual del Responsable CSI"', $managerDashboard);
+            self::assertStringContainsString('href="#manager-overview"', $managerDashboard);
+            self::assertStringContainsString('href="#manager-attention-actions"', $managerDashboard);
+            self::assertStringContainsString('href="#manager-follow-up"', $managerDashboard);
             self::assertStringContainsString('Carga de trabajo', $managerDashboard);
             self::assertStringContainsString('Http technician', $managerDashboard);
             self::assertStringContainsString('assignment=unassigned', $managerDashboard);
