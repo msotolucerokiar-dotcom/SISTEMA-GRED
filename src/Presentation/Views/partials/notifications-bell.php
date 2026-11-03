@@ -20,3 +20,4 @@ $notificationRecent = $notificationRecent ?? [];
     <a class="notification-bell__all" href="/notifications">Ver todas las notificaciones</a>
   </div>
 </details>
+<script src="/assets/notifications-bell.js?v=<?= (int) filemtime(dirname(__DIR__, 4) . '/public/assets/notifications-bell.js') ?>" defer></script>
