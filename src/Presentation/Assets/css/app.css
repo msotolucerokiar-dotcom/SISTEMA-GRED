@@ -72,7 +72,7 @@
   .manager-kpi__caption { display: inline-flex; width: fit-content; max-width: 100%; align-items: center; gap: .25rem; margin-top: .32rem; font-size: .69rem; font-weight: 700; line-height: 1.2; }
   .manager-kpi__caption svg { width: .82rem; height: .82rem; flex: none; }
   .manager-kpi--0 .manager-kpi__caption { border-radius: 999px; padding: .2rem .5rem; background: #fbf0d7; color: #715811; }
-  .manager-panel #intervencion { border-color: #cfddeb; }
+  .manager-panel #intervencion { border-color: #cfddeb; padding: 1rem 1.15rem; }
   .manager-attention-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; }
   .manager-attention-heading { display: flex; min-width: 0; align-items: center; gap: .7rem; }
   .manager-attention-heading svg { width: 1.4rem; height: 1.4rem; flex: none; color: #1d375c; }
@@ -80,15 +80,15 @@
   .manager-attention-all { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .4rem; color: #1d375c; font-size: .76rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
   .manager-attention-all:hover { text-decoration: underline; }
   .manager-attention-all span { font-size: 1.2rem; line-height: 1; }
-  .manager-attention-scroll { margin-top: .55rem; }
+  .manager-attention-scroll { margin-top: .65rem; }
   .manager-attention-head, .manager-attention-row { display: grid; gap: .5rem; }
   .manager-attention-head { display: none; }
   .manager-attention-list { border-top: 1px solid #dbe5ef; }
   .manager-attention-item { border-bottom: 1px solid #dbe5ef; }
-  .manager-attention-row { grid-template-columns: repeat(2, minmax(0,1fr)); align-items: start; padding: .9rem .55rem; font-size: .81rem; line-height: 1.35; }
+  .manager-attention-row { grid-template-columns: repeat(2, minmax(0,1fr)); align-items: start; padding: .8rem .55rem; font-size: .8rem; line-height: 1.3; }
   .manager-code-content { display: flex; align-items: center; gap: .35rem; min-width: 0; }
   .manager-request-code { display: inline-block; white-space: nowrap; font-size: .73rem; }
-  .manager-detail-link { display: inline-grid; width: 1.45rem; height: 1.45rem; flex: none; place-items: center; border: 1px solid #b9cfe2; border-radius: .3rem; color: #1d375c; }
+  .manager-detail-link { display: inline-grid; width: 2.75rem; height: 2.75rem; flex: none; place-items: center; border: 1px solid #b9cfe2; border-radius: .3rem; color: #1d375c; }
   .manager-detail-link svg { width: .9rem; height: .9rem; }
   .manager-detail-link:hover { background: #eaf3fa; }
   .manager-request-title, .manager-request-area { display: block; overflow: hidden; text-overflow: ellipsis; }
@@ -101,9 +101,10 @@
   .manager-priority[data-priority="Alta"], .manager-priority[data-priority="Urgente"] { background: #fde8e8; color: #9f1d1d; }
   .manager-priority[data-priority="Normal"] { background: #fff2d8; color: #77510b; }
   .manager-priority[data-priority="Baja"] { background: #e4f5e9; color: #166534; }
-  .manager-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; grid-column: 1 / -1; }
+  .manager-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; grid-column: 1 / -1; }
   .manager-row-actions .manager-cell-label { width: 100%; }
-  .manager-mini-action { display: inline-flex; min-height: 2.1rem; align-items: center; justify-content: center; border: 1px solid #9bb7d1; border-radius: .35rem; padding: .35rem .55rem; background: #fff; color: #1d375c; font-size: .7rem; font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; }
+  .manager-mini-action { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: .25rem; border: 1px solid #9bb7d1; border-radius: .35rem; padding: .3rem .5rem; background: #fff; color: #1d375c; font-size: .7rem; font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; }
+  .manager-mini-action svg { width: .95rem; height: .95rem; flex: none; }
   .manager-mini-action:hover { background: #eaf3fa; border-color: #3a699b; }
   .manager-action-forms { display: none; gap: .75rem; padding: 0 .25rem 1rem; scroll-margin-top: 1rem; }
   .manager-action-forms:target { display: grid; }
@@ -124,12 +125,19 @@
   .manager-panel aside section dl > div { min-height: 3.2rem; align-items: center; }
   @media (min-width: 640px) { .manager-action-forms:target { grid-template-columns: repeat(2,minmax(0,1fr)); } .manager-followup-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
   @media (min-width: 1280px) {
-    .manager-attention-head, .manager-attention-row { grid-template-columns: 7.7rem minmax(10rem,1.5fr) minmax(7rem,1fr) 5.7rem 8rem 12rem; gap: .4rem; }
-    .manager-attention-head { display: grid; border-radius: .55rem; padding: .7rem .55rem; background: #eaf3fa; color: #1d375c; font-size: .72rem; font-weight: 800; }
-    .manager-attention-row { align-items: center; padding: .72rem .55rem; }
+    .manager-content-grid > .manager-main-stack { display: contents; }
+    .manager-content-grid > .manager-main-stack > * { margin-top: 0; }
+    .manager-content-grid #intervencion { grid-column: 1 / -1; }
+    .manager-content-grid #equipo, .manager-content-grid .manager-followup { grid-column: 1; }
+    .manager-content-grid > aside { grid-column: 2; grid-row: 2 / span 2; }
+    .manager-attention-head, .manager-attention-row { grid-template-columns: minmax(8rem,.9fr) minmax(15rem,1.8fr) minmax(10rem,1.25fr) minmax(6rem,.7fr) minmax(9rem,1fr) minmax(15rem,1.5fr); gap: .7rem; }
+    .manager-attention-head { display: grid; border-radius: .55rem; padding: .6rem .8rem; background: #eaf3fa; color: #1d375c; font-size: .72rem; font-weight: 800; }
+    .manager-attention-row { align-items: center; padding: .48rem .8rem; }
+    .manager-detail-link { width: 2rem; height: 2rem; }
+    .manager-mini-action { min-height: 2rem; }
     .manager-request-title, .manager-request-area { white-space: nowrap; }
     .manager-request-date { display: none; }
-    .manager-state { white-space: nowrap; font-size: .63rem; }
+    .manager-state { white-space: nowrap; font-size: .67rem; }
     .manager-row-actions { flex-wrap: nowrap; }
     .manager-cell-label { display: none; }
     .manager-row-actions { grid-column: auto; }
