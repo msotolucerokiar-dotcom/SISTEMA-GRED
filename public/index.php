@@ -248,7 +248,7 @@ if ($path === '/dashboard') {
         ]);
         $managerAttention = $insights->attentionNeeded(5);
         $managerWorkload = $insights->technicianWorkload();
-        $managerFollowUp = $insights->managerFollowUp(5);
+        $managerActivity = $insights->recentActivityForManager(5);
         $managementOptions = $container->get(ManagementRepository::class);
         $managerCategories = $managementOptions->categories();
         $managerPriorities = $managementOptions->priorities();
@@ -578,6 +578,26 @@ if (preg_match('~^/technician/attachments/([0-9]+)$~D', $path, $technicalAttachm
     header('X-Content-Type-Options: nosniff');
     header('Content-Length: ' . filesize($filePath));
     readfile($filePath);
+    exit;
+}
+
+if ($path === '/csi/activity') {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if ($user->roleCode !== 'csi_manager' || !$canAccess->execute($user, 'request.view_all')) {
+        http_response_code(403);
+        $error = 'Tu cuenta no tiene permiso para consultar este historial.';
+        require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
+        exit;
+    }
+    if ($method !== 'GET') { http_response_code(405); header('Allow: GET'); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    $insights = $container->get(InsightsRepository::class);
+    $activityTotal = $insights->countActivityForManager();
+    $activityPages = max(1, (int) ceil($activityTotal / 20));
+    $activityPage = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
+    $activityPage = min($activityPage, $activityPages);
+    $managerActivity = $insights->recentActivityForManager(20, ($activityPage - 1) * 20);
+    $activityFullPage = true;
+    require dirname(__DIR__) . '/src/Presentation/Views/manager-activity-page.php';
     exit;
 }
 

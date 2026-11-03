@@ -36,6 +36,11 @@ final class PdoInsightsRepositoryTest extends TestCase
             $priority = (int) $pdo->query("SELECT id FROM priorities WHERE code = 'high'")->fetchColumn();
             self::assertTrue($management->classify($code, $category, $priority, $users[2]));
             self::assertTrue($management->assign($code, $users[3], $users[2]));
+            $recent = array_values(array_filter($repo->recentActivityForManager(10), static fn (array $event): bool => $event['public_code'] === $code));
+            self::assertSame(['assigned', 'classified', 'created'], array_column($recent, 'action'));
+            self::assertSame('Test technician', $recent[0]['technician_name']);
+            self::assertGreaterThanOrEqual(3, $repo->countActivityForManager());
+            self::assertSame('classified', $repo->recentActivityForManager(1, 1)[0]['action']);
             $workload = array_column($repo->technicianWorkload(), null, 'id');
             self::assertSame(1, $workload[$users[3]]['open_count']);
             self::assertSame(1, $workload[$users[3]]['high_priority_count']);
@@ -51,6 +56,7 @@ final class PdoInsightsRepositoryTest extends TestCase
             self::assertCount(3, $repo->historyForTechnician($code, $users[3]));
             self::assertSame([], $repo->historyForTechnician($code, $users[4]));
             self::assertTrue($management->assign($code, $users[4], $users[2]));
+            self::assertSame('reassigned', $repo->recentActivityForManager(1)[0]['action']);
             $workload = array_column($repo->technicianWorkload(), null, 'id');
             self::assertSame(0, $workload[$users[3]]['high_priority_count']);
             self::assertSame(1, $workload[$users[4]]['high_priority_count']);

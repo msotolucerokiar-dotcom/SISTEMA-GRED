@@ -122,6 +122,33 @@ final class PdoInsightsRepository implements InsightsRepository
         ], $summary);
     }
 
+    public function recentActivityForManager(int $limit, int $offset = 0): array
+    {
+        $query = $this->pdo->prepare("SELECT h.id, h.action, h.created_at AS event_at, r.public_code,
+                actor.full_name AS actor_name, requester.full_name AS requester_name,
+                area.name AS area_name, assigned.full_name AS technician_name,
+                previous.full_name AS previous_name, intern.full_name AS intern_name
+            FROM request_history h
+            JOIN requests r ON r.id = h.request_id
+            JOIN users actor ON actor.id = h.actor_id
+            JOIN users requester ON requester.id = r.requester_id
+            JOIN areas area ON area.id = r.area_id
+            LEFT JOIN users assigned ON assigned.id = NULLIF(h.details->>'technician_id', '')::bigint
+            LEFT JOIN users previous ON previous.id = NULLIF(h.details->>'previous_technician_id', '')::bigint
+            LEFT JOIN request_tasks task ON task.id = NULLIF(h.details->>'task_id', '')::bigint
+            LEFT JOIN users intern ON intern.id = task.intern_id
+            ORDER BY h.created_at DESC, h.id DESC LIMIT :limit OFFSET :offset");
+        $query->bindValue('limit', $limit, PDO::PARAM_INT);
+        $query->bindValue('offset', $offset, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    public function countActivityForManager(): int
+    {
+        return (int) $this->pdo->query('SELECT COUNT(*) FROM request_history')->fetchColumn();
+    }
+
     public function managerFollowUp(int $limit): array
     {
         $queries = [

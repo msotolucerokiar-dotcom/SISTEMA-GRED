@@ -37,6 +37,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(403, $status);
             self::assertSame(403, $this->request('POST', '/csi/requests/' . $code . '/classify-category', 'category=1', $workerCookie)[0]);
             self::assertSame(403, $this->request('POST', '/csi/requests/' . $code . '/classify-priority', 'priority=1', $workerCookie)[0]);
+            self::assertSame(403, $this->request('GET', '/csi/activity', '', $workerCookie)[0]);
             [$status] = $this->request('POST', '/csi/requests/' . $code . '/assign', 'technician=' . $users[2], $workerCookie);
             self::assertSame(403, $status);
 
@@ -60,6 +61,13 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('href="#manager-overview"', $managerDashboard);
             self::assertStringContainsString('href="#manager-attention-actions"', $managerDashboard);
             self::assertStringContainsString('href="#manager-follow-up"', $managerDashboard);
+            self::assertStringContainsString('Actividad reciente', $managerDashboard);
+            self::assertStringContainsString('Nueva solicitud registrada', $managerDashboard);
+            self::assertStringContainsString('href="/csi/activity"', $managerDashboard);
+            [$status, $activityPage] = $this->request('GET', '/csi/activity', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('Historial de actividad', $activityPage);
+            self::assertStringContainsString($code, $activityPage);
             self::assertStringContainsString('Distribución del trabajo', $managerDashboard);
             self::assertStringContainsString('Carga relativa', $managerDashboard);
             self::assertStringContainsString('Http technician', $managerDashboard);
@@ -136,7 +144,7 @@ final class CsiManagementFlowTest extends TestCase
             $reassignment = $reassigned[array_search($code, array_column($reassigned, 'public_code'), true)];
             self::assertSame('Http technician', $reassignment['previous_name']);
             self::assertSame('Http csi_manager', $reassignment['next_name']);
-            self::assertStringContainsString('Cambios de responsable', $this->request('GET', '/dashboard', '', $managerCookie)[1]);
+            self::assertStringContainsString('Solicitud reasignada', $this->request('GET', '/dashboard', '', $managerCookie)[1]);
             self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?technician=' . $users[2], '', $managerCookie)[1]);
             self::assertStringContainsString($code, $this->request('GET', '/csi/requests?technician=' . $users[1], '', $managerCookie)[1]);
             [$status, $workerDetail] = $this->request('GET', '/requests/' . $code, '', $workerCookie);
