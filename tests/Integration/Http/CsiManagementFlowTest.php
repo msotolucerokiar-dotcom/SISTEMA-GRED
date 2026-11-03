@@ -60,7 +60,8 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('href="#manager-overview"', $managerDashboard);
             self::assertStringContainsString('href="#manager-attention-actions"', $managerDashboard);
             self::assertStringContainsString('href="#manager-follow-up"', $managerDashboard);
-            self::assertStringContainsString('Carga de trabajo', $managerDashboard);
+            self::assertStringContainsString('Distribución del trabajo', $managerDashboard);
+            self::assertStringContainsString('Carga relativa', $managerDashboard);
             self::assertStringContainsString('Http technician', $managerDashboard);
             self::assertStringContainsString('assignment=unassigned', $managerDashboard);
             self::assertStringContainsString('status=', $managerDashboard);
