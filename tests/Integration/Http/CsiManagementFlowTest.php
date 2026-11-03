@@ -56,11 +56,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('href="/assets/app.css?v=', $managerDashboard);
             self::assertStringContainsString('Solicitudes que requieren intervención', $managerDashboard);
             self::assertStringNotContainsString('Ã', $managerDashboard);
-            self::assertStringContainsString('De la solicitud al resultado', $managerDashboard);
-            self::assertStringContainsString('aria-label="Recorrido habitual del Responsable CSI"', $managerDashboard);
-            self::assertStringContainsString('href="#manager-overview"', $managerDashboard);
-            self::assertStringContainsString('href="#manager-attention-actions"', $managerDashboard);
-            self::assertStringContainsString('href="#manager-follow-up"', $managerDashboard);
+            self::assertStringNotContainsString('De la solicitud al resultado', $managerDashboard);
             self::assertStringContainsString('Actividad reciente', $managerDashboard);
             self::assertStringContainsString('Nueva solicitud registrada', $managerDashboard);
             self::assertStringContainsString('href="/csi/activity"', $managerDashboard);

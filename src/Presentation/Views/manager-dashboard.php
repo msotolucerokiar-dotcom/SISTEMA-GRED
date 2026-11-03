@@ -82,7 +82,6 @@ $summaryCards = [
       <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card"><h2 class="text-xl font-extrabold">Indicadores del período</h2><dl class="mt-4 divide-y divide-slate-200 text-sm"><div class="flex justify-between gap-3 py-3"><dt>Solicitudes registradas</dt><dd class="font-extrabold"><?= (int) $managerTotal ?></dd></div><div class="flex justify-between gap-3 py-3"><dt>Sin asignar</dt><dd class="font-extrabold"><?= (int) $managerUnassigned ?></dd></div><div class="flex justify-between gap-3 py-3"><dt>Solucionadas</dt><dd class="font-extrabold"><?= (int) ($managerCounts['resolved'] ?? 0) ?></dd></div></dl><p class="mt-3 text-xs text-slate-600">Los indicadores consideran la fecha de registro de cada solicitud.</p></section>
     </aside>
   </div>
-  <?php require __DIR__ . '/partials/manager-workflow.php'; ?>
 </main>
 <script src="/assets/manager-action-dialogs.js?v=<?= (int) filemtime(dirname(__DIR__, 3) . '/public/assets/manager-action-dialogs.js') ?>" defer></script>
 </body></html>
