@@ -35,6 +35,8 @@ final class CsiManagementFlowTest extends TestCase
             $workerCookie = $this->login($emails[0], $password);
             [$status] = $this->request('GET', '/csi/requests', '', $workerCookie);
             self::assertSame(403, $status);
+            self::assertSame(403, $this->request('POST', '/csi/requests/' . $code . '/classify-category', 'category=1', $workerCookie)[0]);
+            self::assertSame(403, $this->request('POST', '/csi/requests/' . $code . '/classify-priority', 'priority=1', $workerCookie)[0]);
             [$status] = $this->request('POST', '/csi/requests/' . $code . '/assign', 'technician=' . $users[2], $workerCookie);
             self::assertSame(403, $status);
 
@@ -90,6 +92,16 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(419, $status);
             $category = $container->get(PdoManagementRepository::class)->categories()[0]['id'];
             $priority = $container->get(PdoManagementRepository::class)->priorities()[0]['id'];
+            self::assertStringContainsString('data-modal-open="clasificar-' . $code . '"', $managerDashboard);
+            self::assertStringContainsString('data-modal-open="priorizar-' . $code . '"', $managerDashboard);
+            [$status, , $actionHeaders] = $this->request('POST', '/csi/requests/' . $code . '/classify-category', http_build_query(['_csrf' => $csrf, 'category' => $category, 'return_to' => 'dashboard']), $managerCookie);
+            self::assertSame(303, $status);
+            self::assertStringContainsString('/dashboard?saved=classify-category', implode(' ', $actionHeaders));
+            self::assertSame($category, (int) $container->get(PdoManagementRepository::class)->find($code)['category_id']);
+            self::assertNull($container->get(PdoManagementRepository::class)->find($code)['priority_id']);
+            [$status] = $this->request('POST', '/csi/requests/' . $code . '/classify-priority', http_build_query(['_csrf' => $csrf, 'priority' => $priority]), $managerCookie);
+            self::assertSame(303, $status);
+            self::assertSame($priority, (int) $container->get(PdoManagementRepository::class)->find($code)['priority_id']);
             [$status] = $this->request('POST', '/csi/requests/' . $code . '/classify', http_build_query(['_csrf' => $csrf, 'category' => $category, 'priority' => $priority]), $managerCookie);
             self::assertSame(303, $status);
             [$status, , $actionHeaders] = $this->request('POST', '/csi/requests/' . $code . '/assign', http_build_query(['_csrf' => $csrf, 'technician' => $users[2], 'return_to' => 'dashboard']), $managerCookie);

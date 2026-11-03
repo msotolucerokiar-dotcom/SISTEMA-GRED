@@ -110,6 +110,26 @@ final class PdoManagementRepository implements ManagementRepository
         }
     }
 
+    public function classifyPartial(string $code, ?int $categoryId, ?int $priorityId, int $actorId): bool
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $requestId = $this->lockRequest($code);
+            if ($requestId === null) {
+                $this->pdo->rollBack();
+                return false;
+            }
+            $update = $this->pdo->prepare('UPDATE requests SET category_id = COALESCE(:category, category_id), priority_id = COALESCE(:priority, priority_id), updated_at = NOW() WHERE id = :id');
+            $update->execute(['category' => $categoryId, 'priority' => $priorityId, 'id' => $requestId]);
+            $this->history($requestId, $actorId, 'classified', array_filter(['category_id' => $categoryId, 'priority_id' => $priorityId], static fn (?int $id): bool => $id !== null));
+            $this->pdo->commit();
+            return true;
+        } catch (Throwable $exception) {
+            if ($this->pdo->inTransaction()) { $this->pdo->rollBack(); }
+            throw $exception;
+        }
+    }
+
     public function assign(string $code, int $technicianId, int $actorId): bool
     {
         $this->pdo->beginTransaction();

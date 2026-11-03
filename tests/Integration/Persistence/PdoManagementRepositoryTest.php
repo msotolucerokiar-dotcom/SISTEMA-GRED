@@ -15,6 +15,36 @@ use PHPUnit\Framework\TestCase;
 
 final class PdoManagementRepositoryTest extends TestCase
 {
+    public function testCategoryAndPriorityUpdatesDoNotOverwriteEachOther(): void
+    {
+        $container = ContainerFactory::build();
+        $pdo = $container->get(PDO::class);
+        $repo = $container->get(PdoManagementRepository::class);
+        $requests = $container->get(PdoRequestRepository::class);
+        $area = $requests->activeAreas()[0]['id'];
+        $users = [];
+        $code = null;
+        try {
+            foreach (['worker', 'csi_manager'] as $role) {
+                $insert = $pdo->prepare("INSERT INTO users (role_id, area_id, email, full_name, password_hash) VALUES ((SELECT id FROM roles WHERE code = :role), :area, :email, 'Prueba', 'test-hash') RETURNING id");
+                $insert->execute(['role' => $role, 'area' => $area, 'email' => 'partial-' . bin2hex(random_bytes(8)) . '@example.test']);
+                $users[] = (int) $insert->fetchColumn();
+            }
+            $code = $requests->create($users[0], $area, 'Solicitud parcial', 'Clasificación por separado.', []);
+            $category = $repo->categories()[0]['id'];
+            $priority = $repo->priorities()[0]['id'];
+            self::assertTrue($repo->classifyPartial($code, $category, null, $users[1]));
+            self::assertSame($category, (int) $repo->find($code)['category_id']);
+            self::assertNull($repo->find($code)['priority_id']);
+            self::assertTrue($repo->classifyPartial($code, null, $priority, $users[1]));
+            self::assertSame($category, (int) $repo->find($code)['category_id']);
+            self::assertSame($priority, (int) $repo->find($code)['priority_id']);
+        } finally {
+            if ($code !== null) { $pdo->prepare('DELETE FROM requests WHERE public_code = :code')->execute(['code' => $code]); }
+            foreach ($users as $id) { $pdo->prepare('DELETE FROM users WHERE id = :id')->execute(['id' => $id]); }
+        }
+    }
+
     public function testClassifiesAssignsReassignsAndRecordsHistory(): void
     {
         $container = ContainerFactory::build();

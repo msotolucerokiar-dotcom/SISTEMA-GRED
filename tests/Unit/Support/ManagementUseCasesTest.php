@@ -44,6 +44,23 @@ final class ManagementUseCasesTest extends TestCase
         self::assertSame(['SOL-2026-000001', 1, 1, 5], $repo->classified);
     }
 
+    public function testCategoryAndPriorityCanBeValidatedSeparately(): void
+    {
+        $repo = new FakeManagementRepository();
+        $useCase = new ClassifyRequest($repo);
+        self::assertTrue($useCase->executePartial('SOL-2026-000001', 1, null, 5));
+        self::assertSame(['SOL-2026-000001', 1, null, 5], $repo->classified);
+        self::assertTrue($useCase->executePartial('SOL-2026-000001', null, 1, 5));
+        self::assertSame(['SOL-2026-000001', null, 1, 5], $repo->classified);
+    }
+
+    public function testPartialClassificationRejectsUnknownOption(): void
+    {
+        $repo = new FakeManagementRepository();
+        $this->expectException(InvalidRequest::class);
+        (new ClassifyRequest($repo))->executePartial('SOL-2026-000001', null, 999, 5);
+    }
+
     public function testAssignmentRejectsInactiveOrNonTechnician(): void
     {
         $repo = new FakeManagementRepository();
@@ -74,5 +91,6 @@ final class FakeManagementRepository implements ManagementRepository
     public function priorities(): array { return [['id' => 1, 'name' => 'Baja']]; }
     public function technicians(): array { return [['id' => 7, 'name' => 'Técnico']]; }
     public function classify(string $code, int $categoryId, int $priorityId, int $actorId): bool { $this->classified = [$code, $categoryId, $priorityId, $actorId]; return true; }
+    public function classifyPartial(string $code, ?int $categoryId, ?int $priorityId, int $actorId): bool { $this->classified = [$code, $categoryId, $priorityId, $actorId]; return true; }
     public function assign(string $code, int $technicianId, int $actorId): bool { $this->assigned = [$code, $technicianId, $actorId]; return true; }
 }

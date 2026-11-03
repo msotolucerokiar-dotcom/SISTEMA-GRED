@@ -22,5 +22,6 @@ interface ManagementRepository
     /** @return list<array{id:int,name:string}> */
     public function technicians(): array;
     public function classify(string $code, int $categoryId, int $priorityId, int $actorId): bool;
+    public function classifyPartial(string $code, ?int $categoryId, ?int $priorityId, int $actorId): bool;
     public function assign(string $code, int $technicianId, int $actorId): bool;
 }

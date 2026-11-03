@@ -581,7 +581,7 @@ if (preg_match('~^/technician/attachments/([0-9]+)$~D', $path, $technicalAttachm
     exit;
 }
 
-if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]+)(?:/(classify|assign|delegate))?$~D', $path, $managerMatch)) {
+if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]+)(?:/(classify|classify-category|classify-priority|assign|delegate))?$~D', $path, $managerMatch)) {
     if ($user === null) {
         header('Location: /#acceso', true, 303);
         exit;
@@ -593,7 +593,7 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
         exit;
     }
     $action = $managerMatch[2] ?? null;
-    $actionPermission = match ($action) { 'classify' => 'request.classify', 'delegate' => 'request.delegate', default => 'request.assign' };
+    $actionPermission = match ($action) { 'classify', 'classify-category', 'classify-priority' => 'request.classify', 'delegate' => 'request.delegate', default => 'request.assign' };
     if ($action !== null && (!$canAccess->execute($user, $actionPermission) || $method !== 'POST')) {
         http_response_code($method === 'POST' ? 403 : 405);
         if ($method !== 'POST') { header('Allow: POST'); }
@@ -635,6 +635,12 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
                         (int) (filter_var($_POST['priority'] ?? null, FILTER_VALIDATE_INT) ?: 0),
                         $user->id
                     ),
+                    'classify-category' => $container->get(ClassifyRequest::class)->executePartial(
+                        $code, (int) (filter_var($_POST['category'] ?? null, FILTER_VALIDATE_INT) ?: 0), null, $user->id
+                    ),
+                    'classify-priority' => $container->get(ClassifyRequest::class)->executePartial(
+                        $code, null, (int) (filter_var($_POST['priority'] ?? null, FILTER_VALIDATE_INT) ?: 0), $user->id
+                    ),
                     'delegate' => $container->get(DelegateTask::class)->execute(
                         $code, $user->id,
                         (int) (filter_var($_POST['intern'] ?? null, FILTER_VALIDATE_INT) ?: 0),
@@ -647,7 +653,7 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
                     ),
                 };
                 if ($updated) {
-                    $returnToDashboard = $user->roleCode === 'csi_manager' && in_array($action, ['assign', 'classify'], true) && ($_POST['return_to'] ?? null) === 'dashboard';
+                    $returnToDashboard = $user->roleCode === 'csi_manager' && in_array($action, ['assign', 'classify', 'classify-category', 'classify-priority'], true) && ($_POST['return_to'] ?? null) === 'dashboard';
                     header('Location: ' . ($returnToDashboard ? '/dashboard?saved=' . $action : '/csi/requests/' . $code . '?saved=' . $action), true, 303);
                     exit;
                 }

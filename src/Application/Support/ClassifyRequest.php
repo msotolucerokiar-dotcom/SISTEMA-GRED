@@ -21,4 +21,14 @@ final class ClassifyRequest
         }
         return $this->requests->classify($code, $categoryId, $priorityId, $actorId);
     }
+
+    public function executePartial(string $code, ?int $categoryId, ?int $priorityId, int $actorId): bool
+    {
+        if ($actorId < 1 || ($categoryId === null && $priorityId === null)
+            || ($categoryId !== null && !in_array($categoryId, array_column($this->requests->categories(), 'id'), true))
+            || ($priorityId !== null && !in_array($priorityId, array_column($this->requests->priorities(), 'id'), true))) {
+            throw new InvalidRequest(['classification' => 'Selecciona una opción válida.']);
+        }
+        return $this->requests->classifyPartial($code, $categoryId, $priorityId, $actorId);
+    }
 }

@@ -106,8 +106,19 @@
   .manager-mini-action { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: .25rem; border: 1px solid #9bb7d1; border-radius: .35rem; padding: .3rem .5rem; background: #fff; color: #1d375c; font-size: .7rem; font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; }
   .manager-mini-action svg { width: .95rem; height: .95rem; flex: none; }
   .manager-mini-action:hover { background: #eaf3fa; border-color: #3a699b; }
-  .manager-action-forms { display: none; gap: .75rem; padding: 0 .25rem 1rem; scroll-margin-top: 1rem; }
-  .manager-action-forms:target { display: grid; }
+  .manager-action-dialog { width: min(27rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); margin: auto; overflow-y: auto; border: 1px solid #cbdced; border-radius: 1rem; padding: 1.25rem; background: #fff; color: #1d375c; box-shadow: 0 24px 64px rgba(15,39,66,.25); }
+  .manager-action-dialog::backdrop { background: rgba(15,39,66,.55); }
+  .manager-action-dialog__heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .manager-action-dialog__heading h3 { font-size: 1.15rem; font-weight: 800; }
+  .manager-action-dialog__heading button { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: .5rem; color: #1d375c; font-size: 1.5rem; }
+  .manager-action-dialog__heading button:hover { background: #eaf3fa; }
+  .manager-action-dialog__context { margin: .3rem 0 1.25rem; color: #52677e; font-size: .8rem; overflow-wrap: anywhere; }
+  .manager-action-dialog form label { display: block; margin-bottom: .35rem; font-size: .85rem; font-weight: 700; }
+  .manager-action-dialog form select { width: 100%; min-height: 2.75rem; border: 1px solid #aebfd0; border-radius: .55rem; padding: 0 .75rem; background: white; }
+  .manager-action-dialog__footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .6rem; margin-top: 1.25rem; }
+  .manager-action-dialog__footer button { min-height: 2.75rem; border: 1px solid #9bb7d1; border-radius: .5rem; padding: .5rem .8rem; font-size: .8rem; font-weight: 700; }
+  .manager-action-dialog__footer button[type="submit"] { border-color: #1d375c; background: #1d375c; color: white; }
+  .manager-action-dialog__footer button:hover { filter: brightness(.94); }
   .manager-followup-grid { display: grid; gap: 1rem; }
   .manager-followup-feed { border-left: 3px solid #d5e7f4; padding: .25rem 0 .25rem 1rem; }
   .manager-followup-feed:nth-child(3) { border-color: #d9af32; }
@@ -123,7 +134,7 @@
   .manager-quick-link { display: flex; min-height: 5rem; align-items: center; gap: .85rem; }
   .manager-quick-link svg { width: 2.75rem; height: 2.75rem; flex: none; border-radius: 999px; padding: .55rem; background: #d5e7f4; color: #1d375c; }
   .manager-panel aside section dl > div { min-height: 3.2rem; align-items: center; }
-  @media (min-width: 640px) { .manager-action-forms:target { grid-template-columns: repeat(2,minmax(0,1fr)); } .manager-followup-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+  @media (min-width: 640px) { .manager-followup-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
   @media (min-width: 1280px) {
     .manager-content-grid > .manager-main-stack { display: contents; }
     .manager-content-grid > .manager-main-stack > * { margin-top: 0; }
