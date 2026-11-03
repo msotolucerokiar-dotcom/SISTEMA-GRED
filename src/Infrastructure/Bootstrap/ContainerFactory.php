@@ -29,6 +29,7 @@ use App\Application\Support\GetAssignedRequest;
 use App\Application\Support\UpdateAssignedRequest;
 use App\Domain\Support\InsightsRepository;
 use App\Infrastructure\Persistence\PdoInsightsRepository;
+use App\Infrastructure\Persistence\PdoNotificationRepository;
 use App\Application\Support\GetRequestHistory;
 use App\Application\Support\RequestFilters;
 use App\Application\Support\SearchRequests;
@@ -81,6 +82,7 @@ final class ContainerFactory
         $assigned = new PdoAssignedRequestRepository($pdo);
         $tasks = new PdoTaskRepository($pdo);
         $insights = new PdoInsightsRepository($pdo);
+        $notifications = new PdoNotificationRepository($pdo);
         $filterParser = new RequestFilters();
         $files = new LocalPrivateFileStore(dirname(__DIR__, 3) . '/storage/private');
 
@@ -127,6 +129,7 @@ final class ContainerFactory
             CancelTaskWork::class => new CancelTaskWork($tasks),
             InsightsRepository::class => $insights,
             PdoInsightsRepository::class => $insights,
+            PdoNotificationRepository::class => $notifications,
             RequestFilters::class => $filterParser,
             GetRequestHistory::class => new GetRequestHistory($insights),
             SearchRequests::class => new SearchRequests($insights, $filterParser),

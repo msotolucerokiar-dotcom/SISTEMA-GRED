@@ -28,6 +28,7 @@ use App\Application\Support\SearchRequests;
 use App\Application\Support\ReportRequests;
 use App\Domain\Support\InsightsRepository;
 use App\Infrastructure\Reporting\PdfReport;
+use App\Infrastructure\Persistence\PdoNotificationRepository;
 use App\Domain\Authentication\UserRepository;
 use App\Application\Authentication\ListUsers;
 use App\Application\Authentication\ChangeUserAccess;
@@ -173,6 +174,30 @@ if ($path === '/profile') {
     exit;
 }
 
+if ($path === '/notifications/open') {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if ($method !== 'POST') { http_response_code(405); header('Allow: POST'); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    if (!$session->verifyCsrf($_POST['_csrf'] ?? null)) { http_response_code(419); $error = 'La sesión venció. Recarga la página e inténtalo nuevamente.'; require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    $notificationId = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    $target = is_int($notificationId) ? $container->get(PdoNotificationRepository::class)->open($notificationId, $user->id) : null;
+    if ($target === null) { http_response_code(404); require dirname(__DIR__) . '/src/Presentation/Views/not-found.php'; exit; }
+    header('Location: ' . (str_starts_with($target, '/') && !str_starts_with($target, '//') ? $target : '/notifications'), true, 303);
+    exit;
+}
+
+if ($path === '/notifications') {
+    if ($user === null) { header('Location: /#acceso', true, 303); exit; }
+    if ($method !== 'GET') { http_response_code(405); header('Allow: GET'); require dirname(__DIR__) . '/src/Presentation/Views/method-not-allowed.php'; exit; }
+    $notifications = $container->get(PdoNotificationRepository::class);
+    $notificationPage = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
+    $notificationTotal = $notifications->totalCount($user->id);
+    $notificationPages = max(1, (int) ceil($notificationTotal / 20));
+    $notificationPage = min($notificationPage, $notificationPages);
+    $notificationItems = $notifications->listFor($user->id, 20, ($notificationPage - 1) * 20);
+    require dirname(__DIR__) . '/src/Presentation/Views/notifications.php';
+    exit;
+}
+
 if ($path === '/dashboard') {
     if ($user === null) {
         header('Location: /#acceso', true, 303);
@@ -187,6 +212,9 @@ if ($path === '/dashboard') {
         require dirname(__DIR__) . '/src/Presentation/Views/forbidden.php';
         exit;
     }
+    $notifications = $container->get(PdoNotificationRepository::class);
+    $notificationUnread = $notifications->unreadCount($user->id);
+    $notificationRecent = $notifications->listFor($user->id, 5);
     if ($user->roleCode === 'worker' && $canAccess->execute($user, 'request.view_own')) {
         $requests = $container->get(RequestRepository::class);
         $ownStatusCounts = $requests->countOwnByStatus($user->id);

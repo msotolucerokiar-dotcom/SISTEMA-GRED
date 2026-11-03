@@ -29,7 +29,10 @@ $summaryCards = [
       <a href="/csi/reports" class="min-h-11 rounded-lg px-3 py-3 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20v-7m5 7V8m5 12v-9m5 9V4"/></svg> Reportes</a>
       <a href="/csi/users" class="min-h-11 rounded-lg px-3 py-3 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg> Usuarios</a>
     </nav>
-    <details class="manager-account"><summary aria-label="Opciones de cuenta" title="Opciones de cuenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg></summary><div class="manager-account__menu"><a href="/profile">Perfil</a><form action="/logout" method="post"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button type="submit">Cerrar sesión</button></form></div></details>
+    <div class="manager-header-actions">
+      <?php require __DIR__ . '/partials/notifications-bell.php'; ?>
+      <details class="manager-account"><summary aria-label="Opciones de cuenta" title="Opciones de cuenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg></summary><div class="manager-account__menu"><a href="/profile">Perfil</a><form action="/logout" method="post"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button type="submit">Cerrar sesión</button></form></div></details>
+    </div>
   </div>
 </header>
 <main id="contenido" class="mx-auto max-w-[90rem] px-5 py-7 sm:py-9">

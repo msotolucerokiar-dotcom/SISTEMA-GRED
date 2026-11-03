@@ -21,7 +21,7 @@ $localDate = static fn (string $value): string => (new DateTimeImmutable($value)
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mi panel | Soporte CSI</title>
-    <link rel="stylesheet" href="/assets/app.css">
+    <link rel="stylesheet" href="/assets/app.css?v=<?= (int) filemtime(dirname(__DIR__, 3) . '/public/assets/app.css') ?>">
 </head>
 <body class="min-h-screen bg-paper text-ink">
 <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:p-3">Saltar al contenido</a>
@@ -31,7 +31,7 @@ $localDate = static fn (string $value): string => (new DateTimeImmutable($value)
             <span class="grid h-10 w-10 place-items-center rounded-xl border border-white/30 bg-white/10 text-sm font-extrabold" aria-hidden="true">CSI</span>
             <span class="leading-tight"><strong class="block text-sm tracking-wide">GRED Lambayeque</strong><span class="block text-xs text-white/70">Soporte tecnológico · CSI</span></span>
         </a>
-        <div class="flex items-center gap-3"><span class="hidden text-sm font-semibold sm:inline"><?= $e($displayName) ?></span><form action="/logout" method="post"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button class="min-h-11 rounded-lg border border-white/30 px-4 text-sm font-semibold hover:bg-white/10">Cerrar sesión</button></form></div>
+        <div class="flex items-center gap-3"><span class="hidden text-sm font-semibold sm:inline"><?= $e($displayName) ?></span><?php require __DIR__ . '/partials/notifications-bell.php'; ?><form action="/logout" method="post"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button class="min-h-11 rounded-lg border border-white/30 px-4 text-sm font-semibold hover:bg-white/10">Cerrar sesión</button></form></div>
     </div>
 </header>
 <main id="contenido" class="mx-auto max-w-6xl px-5 py-9 sm:py-12">
