@@ -123,11 +123,42 @@
   .manager-followup-feed { border-left: 3px solid #d5e7f4; padding: .25rem 0 .25rem 1rem; }
   .manager-followup-feed:nth-child(3) { border-color: #d9af32; }
   .manager-followup-feed:nth-child(4) { border-color: #b6dec4; }
-  .manager-panel #equipo article { background: linear-gradient(145deg,#fff,#f8fbff); border-color: #cfddeb; box-shadow: 0 5px 12px rgba(29,55,92,.06); }
-  .manager-panel #equipo article h3 { color: #1d375c; }
-  .manager-panel #equipo article a { display: inline-flex; min-height: 2.4rem; align-items: center; justify-content: center; border-radius: .45rem; border: 1px solid #3a699b; padding: .35rem .75rem; text-decoration: none; }
-  .manager-panel #equipo article a:first-child { background: #1d375c; color: #fff; }
-  .manager-panel #equipo article a:hover { box-shadow: 0 3px 12px rgba(29,55,92,.14); }
+  .manager-workload { border-color: #cfddeb; }
+  .manager-workload__heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: .5rem 1rem; }
+  .manager-workload__title { display: flex; min-width: 0; align-items: flex-start; gap: .7rem; }
+  .manager-workload__title > svg { width: 1.6rem; height: 1.6rem; flex: none; color: #1d375c; }
+  .manager-workload__title h2 { color: #1d375c; font-size: 1.13rem; font-weight: 800; line-height: 1.25; }
+  .manager-workload__title p { margin-top: .15rem; color: #52677e; font-size: .75rem; line-height: 1.35; }
+  .manager-workload__heading > a { display: inline-flex; min-height: 2rem; align-items: center; gap: .3rem; color: #1d375c; font-size: .75rem; font-weight: 700; white-space: nowrap; }
+  .manager-workload__heading > a:hover { text-decoration: underline; }
+  .manager-workload__heading > a span { font-size: 1.2rem; }
+  .manager-workload__empty { margin-top: 1rem; color: #52677e; font-size: .85rem; }
+  .manager-workload__cards { display: grid; gap: .8rem; margin-top: .85rem; }
+  .manager-workload-card { min-width: 0; border: 1px solid #cfddeb; border-radius: .8rem; padding: .8rem; background: linear-gradient(150deg,#fff,#f8fbff); box-shadow: 0 4px 12px rgba(29,55,92,.07); }
+  .manager-workload-card--manager { border-color: #d9af32; }
+  .manager-workload-card__identity { display: flex; min-width: 0; align-items: center; gap: .55rem; }
+  .manager-workload-card__avatar { display: grid; width: 2.65rem; height: 2.65rem; flex: none; place-items: center; border-radius: 999px; background: #e1f0fd; color: #1d5f9a; }
+  .manager-workload-card--manager .manager-workload-card__avatar { background: #fbf0d7; color: #ae7600; }
+  .manager-workload-card__avatar svg { width: 1.45rem; height: 1.45rem; }
+  .manager-workload-card__person { min-width: 0; flex: 1; }
+  .manager-workload-card__person h3 { overflow: hidden; color: #1d375c; font-size: .84rem; font-weight: 800; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+  .manager-workload-card__person p { margin-top: .15rem; color: #52677e; font-size: .65rem; line-height: 1.2; }
+  .manager-workload-card__active { width: .48rem; height: .48rem; flex: none; border-radius: 999px; background: #60c65a; }
+  .manager-workload-card--manager .manager-workload-card__active { background: #d9af32; }
+  .manager-workload-card__metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: .8rem; border-bottom: 1px solid #dce7f1; padding-bottom: .5rem; text-align: center; }
+  .manager-workload-card__metrics > div { display: flex; flex-direction: column; }
+  .manager-workload-card__metrics > div + div { border-left: 1px solid #dce7f1; }
+  .manager-workload-card__metrics dd { order: -1; color: #174c80; font-size: 1.13rem; font-weight: 800; line-height: 1.1; }
+  .manager-workload-card__metrics .manager-workload-card__high { color: #a72525; }
+  .manager-workload-card__metrics dt { margin-top: .15rem; color: #1d375c; font-size: .66rem; line-height: 1.2; }
+  .manager-workload-card__actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; margin-top: .5rem; }
+  .manager-workload-card__actions a { display: inline-flex; min-height: 2.5rem; align-items: center; justify-content: center; gap: .35rem; border: 1px solid #3a699b; border-radius: .4rem; padding: .3rem .45rem; color: #1d375c; font-size: .72rem; font-weight: 700; text-decoration: none; }
+  .manager-workload-card__actions a:only-child { grid-column: 1 / -1; }
+  .manager-workload-card__actions a:hover { box-shadow: 0 3px 12px rgba(29,55,92,.14); }
+  .manager-workload-card__actions svg { width: .95rem; height: .95rem; flex: none; }
+  .manager-workload-card__actions .manager-workload-card__primary { background: #1d375c; color: #fff; }
+  @media (min-width: 700px) { .manager-workload__cards { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+  @media (min-width: 1120px) { .manager-workload__cards { grid-template-columns: repeat(3,minmax(0,1fr)); } }
   .manager-panel aside section { border-color: #cfdeeb; }
   .manager-panel aside section a { border: 1px solid transparent; transition: border-color .18s ease, transform .18s ease; }
   .manager-panel aside section a:hover { border-color: #a9c7df; transform: translateX(2px); }

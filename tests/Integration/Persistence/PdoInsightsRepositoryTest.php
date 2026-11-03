@@ -33,9 +33,12 @@ final class PdoInsightsRepositoryTest extends TestCase
             $title = 'Unique-' . bin2hex(random_bytes(8));
             $code = $requests->create($users[0], $area, $title, 'Sin conexión.', []);
             $category = $management->categories()[0]['id'];
-            $priority = $management->priorities()[0]['id'];
+            $priority = (int) $pdo->query("SELECT id FROM priorities WHERE code = 'high'")->fetchColumn();
             self::assertTrue($management->classify($code, $category, $priority, $users[2]));
             self::assertTrue($management->assign($code, $users[3], $users[2]));
+            $workload = array_column($repo->technicianWorkload(), null, 'id');
+            self::assertSame(1, $workload[$users[3]]['open_count']);
+            self::assertSame(1, $workload[$users[3]]['high_priority_count']);
             $status = (int) $pdo->query("SELECT id FROM statuses WHERE code = 'pending'")->fetchColumn();
             $filters = (new RequestFilters())->fromInput(['search' => $title, 'status' => (string) $status, 'area' => (string) $area, 'category' => (string) $category, 'technician' => (string) $users[3]]);
             self::assertSame(1, $repo->countFiltered($filters));
@@ -48,6 +51,9 @@ final class PdoInsightsRepositoryTest extends TestCase
             self::assertCount(3, $repo->historyForTechnician($code, $users[3]));
             self::assertSame([], $repo->historyForTechnician($code, $users[4]));
             self::assertTrue($management->assign($code, $users[4], $users[2]));
+            $workload = array_column($repo->technicianWorkload(), null, 'id');
+            self::assertSame(0, $workload[$users[3]]['high_priority_count']);
+            self::assertSame(1, $workload[$users[4]]['high_priority_count']);
             self::assertSame([], $repo->historyForTechnician($code, $users[3]));
             self::assertCount(4, $repo->historyForTechnician($code, $users[4]));
             self::assertSame(0, $repo->countFiltered($filters));
