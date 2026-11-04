@@ -14,3 +14,17 @@ document.querySelectorAll('.manager-action-dialog').forEach((dialog) => {
     if (event.target === dialog) dialog.close();
   });
 });
+
+document.addEventListener('pointerdown', (event) => {
+  document.querySelectorAll('[data-workload-menu][open]').forEach((menu) => {
+    if (!menu.contains(event.target)) menu.open = false;
+  });
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  document.querySelectorAll('[data-workload-menu][open]').forEach((menu) => {
+    menu.open = false;
+    menu.querySelector('summary')?.focus();
+  });
+});
