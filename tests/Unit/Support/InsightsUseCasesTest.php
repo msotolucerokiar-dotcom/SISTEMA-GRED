@@ -38,6 +38,17 @@ final class InsightsUseCasesTest extends TestCase
         $filters->fromInput(['from' => '2024-01-01', 'to' => '2026-01-01'], true);
     }
 
+    public function testUrgentOpenFiltersAreValidated(): void
+    {
+        $filters = (new RequestFilters())->fromInput(['priority' => '4', 'open' => '1']);
+        self::assertSame(4, $filters['priority']);
+        self::assertTrue($filters['open']);
+        foreach ([['priority' => 'abc'], ['open' => 'wrong']] as $input) {
+            try { (new RequestFilters())->fromInput($input); self::fail('El filtro inválido debe rechazarse.'); }
+            catch (InvalidRequest $exception) { self::assertNotEmpty($exception->errors); }
+        }
+    }
+
     public function testReportCountsAndHistoryScope(): void
     {
         $repo = $this->createMock(InsightsRepository::class);

@@ -63,9 +63,12 @@
   .manager-kpi--2::after { background: rgba(58,105,155,.17); }
   .manager-kpi--3 { background: linear-gradient(140deg, #fff, #f8fcfa); }
   .manager-kpi--3::after { background: #dff2e3; }
+  .manager-kpi--4 { background: linear-gradient(140deg, #fffdf6, #f9e9bb); }
+  .manager-kpi--4::after { background: rgba(217,175,50,.19); }
   .manager-kpi__orb { display: grid; grid-column: 1; grid-row: 1 / 4; align-self: start; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 999px; }
   .manager-kpi__orb svg { width: 1.55rem; height: 1.55rem; }
   .manager-kpi--3 .manager-kpi__orb { color: #15803d; }
+  .manager-kpi--4 .manager-kpi__orb { color: #8a5a00; }
   .manager-kpi__title, .manager-kpi__value, .manager-kpi__caption { position: relative; grid-column: 2; min-width: 0; }
   .manager-kpi__title { font-size: .79rem; font-weight: 800; line-height: 1.2; }
   .manager-kpi__value { margin-top: .08rem; font-size: 2rem; font-weight: 800; line-height: 1.08; }

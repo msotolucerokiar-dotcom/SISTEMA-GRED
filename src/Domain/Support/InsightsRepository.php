@@ -41,6 +41,6 @@ interface InsightsRepository
     /** @param array<string,mixed> $filters @return iterable<array<string,mixed>> */
     public function exportFiltered(array $filters): iterable;
 
-    /** @return array{statuses:list<array{id:int,name:string}>,areas:list<array{id:int,name:string}>,categories:list<array{id:int,name:string}>,technicians:list<array{id:int,name:string}>} */
+    /** @return array{statuses:list<array{id:int,name:string}>,areas:list<array{id:int,name:string}>,categories:list<array{id:int,name:string}>,priorities:list<array{id:int,code:string,name:string}>,technicians:list<array{id:int,name:string}>} */
     public function filterOptions(): array;
 }

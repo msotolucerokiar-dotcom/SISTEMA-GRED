@@ -92,6 +92,8 @@ Si un practicante solo acompaña al equipo y no necesita registrar trabajo, no h
 
 En el panel del Responsable CSI, **Actividad reciente** muestra los últimos movimientos registrados en `request_history`, con fecha, estado y acceso a cada solicitud. **Ver historial completo** abre `/csi/activity`, una lista paginada que solo puede consultar el Responsable CSI. Los movimientos se leen del historial existente; no se conserva un segundo registro.
 
+El indicador **Urgentes abiertas** cuenta solicitudes registradas en el período seleccionado con prioridad Urgente y estado no terminal. Su tarjeta abre `/csi/requests` con los mismos filtros de fecha, prioridad y situación. El sistema aún no define una fecha límite por solicitud, por lo que no calcula solicitudes vencidas.
+
 El historial de acciones aparece en el detalle de cada solicitud, con actor, fecha y observaciones. El trabajador solo ve solicitudes propias; el técnico, asignaciones activas; el responsable CSI, todas.
 
 Desde `/csi/requests`, el responsable puede buscar por código o asunto y filtrar por estado, fecha, área, categoría y técnico. La paginación conserva los filtros. En `/csi/reports` se muestran totales, una distribución gráfica y una tabla por estado. Las descargas CSV y PDF contienen las solicitudes filtradas; el periodo del reporte se limita a 12 meses y, por defecto, toma los 12 meses anteriores a la fecha actual. Solo las cuentas con `report.view` pueden abrir o descargar reportes.

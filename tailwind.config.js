@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/Presentation/Views/**/*.php', './public/**/*.php'],
-  safelist: ['manager-kpi--0', 'manager-kpi--1', 'manager-kpi--2', 'manager-kpi--3'],
+  safelist: ['manager-kpi--0', 'manager-kpi--1', 'manager-kpi--2', 'manager-kpi--3', 'manager-kpi--4'],
   theme: {
     extend: {
       colors: {

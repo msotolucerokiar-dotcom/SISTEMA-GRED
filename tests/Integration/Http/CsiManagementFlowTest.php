@@ -58,6 +58,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringNotContainsString('Ã', $managerDashboard);
             self::assertStringNotContainsString('De la solicitud al resultado', $managerDashboard);
             self::assertStringContainsString('Actividad reciente', $managerDashboard);
+            self::assertStringContainsString('Urgentes abiertas', $managerDashboard);
             self::assertStringContainsString('Nueva solicitud registrada', $managerDashboard);
             self::assertStringContainsString('href="/csi/activity"', $managerDashboard);
             [$status, $activityPage] = $this->request('GET', '/csi/activity', '', $managerCookie);
@@ -96,7 +97,7 @@ final class CsiManagementFlowTest extends TestCase
             [$status] = $this->request('POST', '/csi/requests/' . $code . '/assign', 'technician=' . $users[2], $managerCookie);
             self::assertSame(419, $status);
             $category = $container->get(PdoManagementRepository::class)->categories()[0]['id'];
-            $priority = $container->get(PdoManagementRepository::class)->priorities()[0]['id'];
+            $priority = (int) $pdo->query("SELECT id FROM priorities WHERE code = 'urgent'")->fetchColumn();
             self::assertStringContainsString('data-modal-open="clasificar-' . $code . '"', $managerDashboard);
             self::assertStringContainsString('data-modal-open="priorizar-' . $code . '"', $managerDashboard);
             [$status, , $actionHeaders] = $this->request('POST', '/csi/requests/' . $code . '/classify-category', http_build_query(['_csrf' => $csrf, 'category' => $category, 'return_to' => 'dashboard']), $managerCookie);
@@ -107,6 +108,10 @@ final class CsiManagementFlowTest extends TestCase
             [$status] = $this->request('POST', '/csi/requests/' . $code . '/classify-priority', http_build_query(['_csrf' => $csrf, 'priority' => $priority]), $managerCookie);
             self::assertSame(303, $status);
             self::assertSame($priority, (int) $container->get(PdoManagementRepository::class)->find($code)['priority_id']);
+            [$status, $urgentList] = $this->request('GET', '/csi/requests?priority=' . $priority . '&open=1', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($code, $urgentList);
+            self::assertStringContainsString('value="' . $priority . '" selected', $urgentList);
             [$status] = $this->request('POST', '/csi/requests/' . $code . '/classify', http_build_query(['_csrf' => $csrf, 'category' => $category, 'priority' => $priority]), $managerCookie);
             self::assertSame(303, $status);
             [$status, , $actionHeaders] = $this->request('POST', '/csi/requests/' . $code . '/assign', http_build_query(['_csrf' => $csrf, 'technician' => $users[2], 'return_to' => 'dashboard']), $managerCookie);
@@ -169,6 +174,7 @@ final class CsiManagementFlowTest extends TestCase
             $progress = $container->get(PdoAssignedRequestRepository::class);
             self::assertTrue($progress->updateProgress($code, $users[1], 'in_progress', 'Atención iniciada.', null));
             self::assertTrue($progress->updateProgress($code, $users[1], 'resolved', 'Atención completada.', 'Servicio restablecido.'));
+            self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?priority=' . $priority . '&open=1', '', $managerCookie)[1]);
             [$status, $finishedDetail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('La atención terminó', $finishedDetail);

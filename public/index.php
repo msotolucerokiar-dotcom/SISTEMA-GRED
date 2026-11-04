@@ -232,8 +232,9 @@ if ($path === '/dashboard') {
         $managerPeriodLabel = match ($managerPeriod) { 'today' => 'Hoy', 'month' => 'Este mes', default => 'Últimos siete días' };
         $managerDateRange = ['from' => $managerFrom->format('Y-m-d'), 'to' => $managerToday->format('Y-m-d')];
         $managerFilters = $container->get(\App\Application\Support\RequestFilters::class)->fromInput($managerDateRange);
+        $managerFilterOptions = $insights->filterOptions();
         $managerStatuses = array_values(array_filter(
-            $insights->filterOptions()['statuses'],
+            $managerFilterOptions['statuses'],
             static fn (array $status): bool => in_array($status['code'], ['pending', 'in_progress', 'resolved'], true),
         ));
         $managerCounts = array_column($insights->countByStatus($managerFilters), 'total', 'code');
@@ -245,6 +246,10 @@ if ($path === '/dashboard') {
         }
         $managerPendingAssigned = $pendingStatusId === null ? 0 : $insights->countFiltered([
             ...$managerFilters, 'status' => $pendingStatusId, 'assignment' => 'assigned',
+        ]);
+        $urgentPriorityId = array_column($managerFilterOptions['priorities'], 'id', 'code')['urgent'] ?? null;
+        $managerUrgent = $urgentPriorityId === null ? 0 : $insights->countFiltered([
+            ...$managerFilters, 'priority' => $urgentPriorityId, 'open' => true,
         ]);
         $managerAttention = $insights->attentionNeeded(5);
         $managerWorkload = $insights->technicianWorkload();
