@@ -201,18 +201,7 @@
     .manager-workload__load::before { content: 'Carga relativa'; min-width: 6rem; color: #60758b; font-size: .7rem; }
     .manager-workload__links a { display: inline-flex; min-height: 2rem; align-items: center; }
   }
-  .manager-panel aside section { border-color: #cfdeeb; }
-  .manager-panel aside section a { border: 1px solid transparent; transition: border-color .18s ease, transform .18s ease; }
-  .manager-panel aside section a:hover { border-color: #a9c7df; transform: translateX(2px); }
-  .manager-quick-link { display: flex; min-height: 5rem; align-items: center; gap: .85rem; }
-  .manager-quick-link svg { width: 2.75rem; height: 2.75rem; flex: none; border-radius: 999px; padding: .55rem; background: #d5e7f4; color: #1d375c; }
-  .manager-panel aside section dl > div { min-height: 3.2rem; align-items: center; }
   @media (min-width: 1280px) {
-    .manager-content-grid > .manager-main-stack { display: contents; }
-    .manager-content-grid > .manager-main-stack > * { margin-top: 0; }
-    .manager-content-grid #intervencion { grid-column: 1 / -1; }
-    .manager-content-grid #equipo, .manager-content-grid .manager-followup { grid-column: 1; }
-    .manager-content-grid > aside { grid-column: 2; grid-row: 2 / span 2; }
     .manager-attention-head, .manager-attention-row { grid-template-columns: minmax(8rem,.9fr) minmax(15rem,1.8fr) minmax(10rem,1.25fr) minmax(6rem,.7fr) minmax(9rem,1fr) minmax(15rem,1.5fr); gap: .7rem; }
     .manager-attention-head { display: grid; border-radius: .55rem; padding: .6rem .8rem; background: #eaf3fa; color: #1d375c; font-size: .72rem; font-weight: 800; }
     .manager-attention-row { align-items: center; padding: .48rem .8rem; }

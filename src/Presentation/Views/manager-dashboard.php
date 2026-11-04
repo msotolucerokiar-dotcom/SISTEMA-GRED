@@ -50,8 +50,7 @@ $summaryCards = [
     <?php endforeach; ?>
   </div></section>
 
-  <div class="manager-content-grid mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,3fr)_minmax(17rem,1fr)]">
-    <div class="manager-main-stack min-w-0 space-y-5">
+  <div class="mt-5 space-y-5">
       <section id="intervencion" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-card sm:p-6" aria-labelledby="intervencion-titulo">
         <div class="manager-attention-toolbar"><div class="manager-attention-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 5h13M8 12h13M8 19h13"/><circle cx="3" cy="5" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="19" r="1"/></svg><h2 id="intervencion-titulo" class="text-xl font-extrabold">Solicitudes que requieren intervención</h2></div><a href="/csi/requests?attention=needed" class="manager-attention-all">Ver todas las solicitudes <span aria-hidden="true">›</span></a></div><p class="sr-only">Solicitudes que necesitan atención: casos abiertos sin responsable, categoría o prioridad. Se muestran primero los más antiguos.</p>
         <?php if ($managerAttention === []): ?><p class="mt-5 rounded-xl bg-institutional-50 p-5 text-slate-700">No hay solicitudes abiertas pendientes de asignación o clasificación.</p><?php else: ?>
@@ -72,16 +71,6 @@ $summaryCards = [
 
       <?php require __DIR__ . '/partials/manager-workload.php'; ?>
       <?php require __DIR__ . '/partials/manager-follow-up.php'; ?>
-    </div>
-    <aside class="space-y-5" aria-label="Accesos y resultados">
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card"><h2 class="text-xl font-extrabold">Accesos rápidos</h2><div class="mt-4 space-y-3">
-        <a href="/csi/users" class="manager-quick-link rounded-xl bg-institutional-50 p-4 hover:bg-blue-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c0-4 2-6 6-6s6 2 6 6M15 15c4 0 6 2 6 5"/></svg><span><strong class="block">Acceso de usuarios →</strong><span class="mt-1 block text-sm text-slate-600">Cuentas, roles y permisos.</span></span></a>
-        <a href="/csi/reports" class="manager-quick-link rounded-xl bg-institutional-50 p-4 hover:bg-blue-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20v-7m5 7V8m5 12v-9m5 9V4"/></svg><span><strong class="block">Reportes de atención →</strong><span class="mt-1 block text-sm text-slate-600">Cifras y descargas CSV o PDF.</span></span></a>
-        <a href="/csi/requests" class="manager-quick-link rounded-xl bg-institutional-50 p-4 hover:bg-blue-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M3 9h18M9 13h6"/></svg><span><strong class="block">Historial general →</strong><span class="mt-1 block text-sm text-slate-600">Listado y detalle de solicitudes.</span></span></a>
-        <a href="/technician/requests" class="manager-quick-link rounded-xl bg-institutional-50 p-4 hover:bg-blue-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5"/></svg><span><strong class="block">Mis asignaciones →</strong><span class="mt-1 block text-sm text-slate-600">Atenciones directas del responsable.</span></span></a>
-      </div></section>
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card"><h2 class="text-xl font-extrabold">Indicadores del período</h2><dl class="mt-4 divide-y divide-slate-200 text-sm"><div class="flex justify-between gap-3 py-3"><dt>Solicitudes registradas</dt><dd class="font-extrabold"><?= (int) $managerTotal ?></dd></div><div class="flex justify-between gap-3 py-3"><dt>Sin asignar</dt><dd class="font-extrabold"><?= (int) $managerUnassigned ?></dd></div><div class="flex justify-between gap-3 py-3"><dt>Solucionadas</dt><dd class="font-extrabold"><?= (int) ($managerCounts['resolved'] ?? 0) ?></dd></div></dl><p class="mt-3 text-xs text-slate-600">Los indicadores consideran la fecha de registro de cada solicitud.</p></section>
-    </aside>
   </div>
 </main>
 <script src="/assets/manager-action-dialogs.js?v=<?= (int) filemtime(dirname(__DIR__, 3) . '/public/assets/manager-action-dialogs.js') ?>" defer></script>

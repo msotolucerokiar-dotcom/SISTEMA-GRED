@@ -59,6 +59,8 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringNotContainsString('De la solicitud al resultado', $managerDashboard);
             self::assertStringContainsString('Actividad reciente', $managerDashboard);
             self::assertStringContainsString('Urgentes abiertas', $managerDashboard);
+            self::assertStringNotContainsString('Accesos rápidos', $managerDashboard);
+            self::assertStringNotContainsString('Indicadores del período', $managerDashboard);
             self::assertStringContainsString('Nueva solicitud registrada', $managerDashboard);
             self::assertStringContainsString('href="/csi/activity"', $managerDashboard);
             [$status, $activityPage] = $this->request('GET', '/csi/activity', '', $managerCookie);
