@@ -59,20 +59,25 @@
   .manager-panel button, .manager-panel input, .manager-panel select, .manager-panel textarea { font-family: inherit; }
   .manager-panel .manager-topbar { border-bottom: 1px solid #e0e8e9; background: #fff; box-shadow: none; color: #203743; }
   .manager-panel .manager-topbar__inner { display: flex; min-height: 5rem; align-items: center; justify-content: space-between; gap: 1rem; padding: .55rem 2rem; }
-  .manager-shell { display: grid; grid-template-columns: 15rem minmax(0,1fr); align-items: start; }
+  .manager-shell { display: grid; grid-template-columns: 16rem minmax(0,1fr); align-items: start; }
   .manager-content { width: 100%; min-width: 0; }
-  .manager-sidebar { position: sticky; top: 0; min-height: calc(100vh - 5rem); padding: 1.25rem .8rem 2rem; background: #172c36; color: #b5c8d0; }
-  .manager-sidebar__brand { display: flex; align-items: center; gap: .7rem; margin: .2rem .25rem 1.4rem; border-bottom: 1px solid #35505b; padding: .15rem .3rem 1.45rem; }
-  .manager-sidebar__mark { display: grid; width: 2.45rem; height: 2.45rem; flex: none; place-items: center; border: 1px solid #4b727b; border-radius: .6rem; background: #24444d; color: #d6eeea; font-size: .74rem; font-weight: 800; }
-  .manager-sidebar__brand strong { display: block; color: #fff; font-size: .78rem; font-weight: 700; line-height: 1.25; }
-  .manager-sidebar__brand small { display: block; margin-top: .2rem; color: #9cb2bb; font-size: .65rem; }
-  .manager-sidebar__nav { display: grid; gap: 1.15rem; }
-  .manager-sidebar__group p { margin: 0 .75rem .45rem; color: #819aa4; font-size: .61rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-  .manager-sidebar__group a { display: flex; min-height: 2.65rem; align-items: center; gap: .65rem; border-radius: .45rem; padding: .5rem .75rem; color: #b5c8d0; font-size: .77rem; font-weight: 600; text-decoration: none; }
+  .manager-sidebar { position: sticky; top: 0; min-height: calc(100vh - 5rem); padding: 1rem .8rem 2rem; background: #172c36; color: #b5c8d0; }
+  .manager-sidebar__brand { display: flex; align-items: center; gap: .8rem; margin: 0 .15rem 1.35rem; border-bottom: 1px solid #35505b; padding: .2rem .35rem 1.4rem; }
+  .manager-sidebar__mark { display: grid; width: 2.7rem; height: 2.7rem; flex: none; place-items: center; border: 1px solid #4b727b; border-radius: .55rem; background: #24444d; color: #d6eeea; font-size: .85rem; font-weight: 800; }
+  .manager-sidebar__brand strong { display: block; color: #fff; font-size: .85rem; font-weight: 700; line-height: 1.25; }
+  .manager-sidebar__brand small { display: block; margin-top: .2rem; color: #b5c8d0; font-size: .74rem; }
+  .manager-sidebar__nav { display: grid; gap: 1.35rem; }
+  .manager-sidebar__group + .manager-sidebar__group { border-top: 1px solid #35505b; padding-top: 1.15rem; }
+  .manager-sidebar__group p { margin: 0 .6rem .6rem; color: #a2b3ba; font-size: .64rem; font-weight: 700; letter-spacing: .025em; text-transform: uppercase; }
+  .manager-sidebar__group a { display: flex; min-height: 3.65rem; align-items: center; gap: .75rem; border-radius: .5rem; padding: .55rem .6rem; color: #e8eff1; text-decoration: none; }
+  .manager-sidebar__group a + a { margin-top: .15rem; }
+  .manager-sidebar__item-text { display: grid; min-width: 0; gap: .15rem; }
+  .manager-sidebar__item-text strong { color: inherit; font-size: .83rem; font-weight: 700; line-height: 1.25; }
+  .manager-sidebar__item-text small { color: #aebdc3; font-size: .74rem; font-weight: 400; line-height: 1.25; }
   .manager-sidebar__group a:hover { background: #24414d; color: #fff; }
   .manager-sidebar__group a[aria-current="page"] { position: relative; background: #2a4c59; color: #fff; font-weight: 800; }
   .manager-sidebar__group a[aria-current="page"]::before { position: absolute; top: .45rem; bottom: .45rem; left: -.8rem; width: .18rem; border-radius: 999px; background: #68bbb7; content: ''; }
-  .manager-sidebar__group a svg { width: 1rem; height: 1rem; flex: none; color: #a7c5cc; }
+  .manager-sidebar__group a svg { width: 1.15rem; height: 1.15rem; flex: none; color: #b5c8d0; }
   .manager-sidebar__group a[aria-current="page"] svg { color: #91d4d0; }
   .manager-breadcrumb { display: flex; min-width: 0; flex-wrap: wrap; align-items: center; gap: .65rem; color: #8295a0; font-size: .82rem; }
   .manager-breadcrumb > a { color: #8295a0; text-decoration: none; }
@@ -98,7 +103,7 @@
   .manager-page-heading .manager-period select { min-width: 11rem; border-color: #d5e2e5; color: #203743; font-size: .8rem; font-weight: 700; }
   .manager-page-heading .manager-period button { border-color: #d5e2e5; background: #fff; color: #287f87; font-size: .8rem; font-weight: 700; }
   @media (max-width: 900px) { .manager-header-date { display: none; } }
-  @media (max-width: 900px) { .manager-shell { grid-template-columns: minmax(0,1fr); } .manager-sidebar { position: static; min-height: 0; padding: .35rem .8rem; } .manager-sidebar__brand, .manager-sidebar__group p { display: none; } .manager-sidebar__nav { display: flex; gap: .25rem; overflow-x: auto; scrollbar-width: thin; } .manager-sidebar__group { display: contents; } .manager-sidebar__group a { min-height: 2.75rem; flex: none; white-space: nowrap; } .manager-sidebar__group a[aria-current="page"]::before { display: none; } }
+  @media (max-width: 900px) { .manager-shell { grid-template-columns: minmax(0,1fr); } .manager-sidebar { position: static; min-height: 0; padding: .35rem .8rem; } .manager-sidebar__brand, .manager-sidebar__group p { display: none; } .manager-sidebar__nav { display: flex; gap: .25rem; overflow-x: auto; scrollbar-width: thin; } .manager-sidebar__group { display: contents; } .manager-sidebar__group a, .manager-sidebar__group a + a { min-height: 2.75rem; flex: none; margin-top: 0; white-space: nowrap; } .manager-sidebar__item-text small { display: none; } .manager-sidebar__group a[aria-current="page"]::before { display: none; } }
   @media (max-width: 620px) { .manager-panel .manager-topbar__inner { padding: .5rem .8rem; } .manager-breadcrumb { gap: .35rem; font-size: .72rem; } .manager-breadcrumb > span:nth-of-type(2), .manager-breadcrumb > span:nth-of-type(3), .manager-account__identity, .manager-panel .manager-account summary svg { display: none; } .manager-panel .manager-account { padding-left: .5rem; } .manager-header-actions { gap: .25rem; } }
   .manager-period { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: .8rem; font-weight: 700; }
   .manager-period select { min-height: 2.75rem; min-width: 13rem; border: 1px solid #cbd8e4; border-radius: .55rem; padding: .5rem .75rem; background: #fff; color: #1d375c; }
