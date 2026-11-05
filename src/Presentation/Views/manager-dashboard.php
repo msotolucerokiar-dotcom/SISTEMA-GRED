@@ -7,11 +7,11 @@ $csrfToken = $session->csrfToken();
 $statusIds = array_column($managerStatuses, 'id', 'code');
 $localDate = static fn (string $value): string => (new DateTimeImmutable($value))->setTimezone(new DateTimeZone('America/Lima'))->format('d/m/Y H:i');
 $summaryCards = [
-    ['Solicitudes abiertas', $managerOpen, '/csi/requests?' . http_build_query([...$managerDateRange, 'open' => '1'])],
-    ['Urgentes abiertas', $managerUrgent, '/csi/requests?' . http_build_query([...$managerDateRange, 'priority' => (int) $urgentPriorityId, 'open' => '1'])],
-    ['En atención', $managerCounts['in_progress'] ?? 0, '/csi/requests?' . http_build_query([...$managerDateRange, 'status' => $statusIds['in_progress'] ?? 0])],
-    ['Solucionadas', $managerCounts['resolved'] ?? 0, '/csi/requests?' . http_build_query([...$managerDateRange, 'status' => $statusIds['resolved'] ?? 0])],
-    ['Tareas por validar', $managerPendingValidation, '/csi/requests?' . http_build_query([...$managerDateRange, 'validation' => 'pending'])],
+    ['Solicitudes abiertas', $managerOpen, '/csi/requests?' . http_build_query([...$managerDateRange, 'open' => '1']), 'Casos sin solucionar'],
+    ['Urgentes abiertas', $managerUrgent, '/csi/requests?' . http_build_query([...$managerDateRange, 'priority' => (int) $urgentPriorityId, 'open' => '1']), 'Requieren atención prioritaria'],
+    ['En atención', $managerCounts['in_progress'] ?? 0, '/csi/requests?' . http_build_query([...$managerDateRange, 'status' => $statusIds['in_progress'] ?? 0]), 'Casos en proceso'],
+    ['Solucionadas', $managerCounts['resolved'] ?? 0, '/csi/requests?' . http_build_query([...$managerDateRange, 'status' => $statusIds['resolved'] ?? 0]), 'Resueltas en el período'],
+    ['Tareas por validar', $managerPendingValidation, '/csi/requests?' . http_build_query([...$managerDateRange, 'validation' => 'pending']), 'Trabajos de practicantes'],
 ];
 ?>
 <!doctype html>
@@ -43,9 +43,9 @@ $summaryCards = [
   <p class="mt-4 text-sm text-slate-600">Solicitudes registradas: <strong><?= $managerFrom === null ? 'Todas las solicitudes' : $e($managerPeriodLabel) . ', del ' . $e($managerFrom->format('d/m/Y')) . ' al ' . $e($managerToday->format('d/m/Y')) ?></strong> · hora de Lambayeque · Total: <strong><?= (int) $managerTotal ?></strong></p>
   <?php if (in_array($_GET['saved'] ?? null, ['assign', 'classify', 'classify-category', 'classify-priority'], true)): ?><p role="status" class="mt-5 rounded-xl border border-green-200 bg-green-50 p-4 font-semibold text-green-900">El cambio se guardó correctamente. La lista de intervención se actualizó.</p><?php endif; ?>
 
-  <section id="manager-overview" aria-labelledby="resumen-titulo" class="mt-6"><h2 id="resumen-titulo" class="sr-only">Estado de las solicitudes</h2><div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-    <?php foreach ($summaryCards as $index => [$title, $count, $url]): ?>
-      <a href="<?= $e($url) ?>" class="manager-kpi manager-kpi--<?= (int) $index ?> group relative overflow-hidden rounded-xl border shadow-card transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-institutional-700"><span aria-hidden="true" class="manager-kpi__orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><?php if ($index === 0): ?><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h8"/><?php elseif ($index === 1): ?><path d="m12 3 9 17H3L12 3Z"/><path d="M12 9v5m0 3h.01"/><?php elseif ($index === 2): ?><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/><?php elseif ($index === 3): ?><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/><?php else: ?><circle cx="8" cy="9" r="3"/><path d="M2 20c0-4 2-6 6-6s6 2 6 6M16 5a3 3 0 0 1 0 6M16 14c4 0 6 2 6 6"/><?php endif; ?></svg></span><strong class="manager-kpi__value"><?= (int) $count ?></strong><span class="manager-kpi__title"><?= $e($title) ?></span><svg class="manager-kpi__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a>
+  <section id="manager-overview" aria-labelledby="resumen-titulo" class="mt-6"><h2 id="resumen-titulo" class="manager-overview__heading"><span aria-hidden="true"></span>Resumen operativo del período seleccionado</h2><div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <?php foreach ($summaryCards as $index => [$title, $count, $url, $caption]): ?>
+      <a href="<?= $e($url) ?>" class="manager-kpi manager-kpi--<?= (int) $index ?> group rounded-xl border transition duration-200 hover:-translate-y-1 hover:shadow-card focus-visible:ring-2 focus-visible:ring-institutional-700"><span class="manager-kpi__title"><?= $e($title) ?></span><span aria-hidden="true" class="manager-kpi__orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><?php if ($index === 0): ?><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h8"/><?php elseif ($index === 1): ?><path d="m12 3 9 17H3L12 3Z"/><path d="M12 9v5m0 3h.01"/><?php elseif ($index === 2): ?><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/><?php elseif ($index === 3): ?><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/><?php else: ?><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 3h6v3H9zM9 10h6M9 14h4"/><?php endif; ?></svg></span><strong class="manager-kpi__value"><?= (int) $count ?></strong><span class="manager-kpi__caption"><?= $e($caption) ?></span></a>
     <?php endforeach; ?>
   </div></section>
 

@@ -52,7 +52,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString($emails[1], $profile);
             self::assertStringContainsString('Http csi_manager', $profile);
             self::assertSame(405, $this->request('POST', '/profile', '', $managerCookie)[0]);
-            self::assertStringContainsString('Estado de las solicitudes', $managerDashboard);
+            self::assertStringContainsString('Resumen operativo del período seleccionado', $managerDashboard);
             self::assertStringContainsString('href="/assets/app.css?v=', $managerDashboard);
             self::assertStringContainsString('Solicitudes que requieren intervención', $managerDashboard);
             self::assertStringNotContainsString('Ã', $managerDashboard);
