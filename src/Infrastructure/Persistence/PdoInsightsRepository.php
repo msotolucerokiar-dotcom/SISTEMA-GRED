@@ -234,6 +234,7 @@ final class PdoInsightsRepository implements InsightsRepository
         if (($filters['assignment'] ?? null) === 'unassigned') { $clauses[] = 'ra.request_id IS NULL'; }
         if (($filters['assignment'] ?? null) === 'assigned') { $clauses[] = 'ra.request_id IS NOT NULL'; }
         if (($filters['attention'] ?? null) === 'needed') { $clauses[] = 's.is_terminal = FALSE AND (ra.request_id IS NULL OR r.category_id IS NULL OR r.priority_id IS NULL)'; }
+        if (($filters['validation'] ?? null) === 'pending') { $clauses[] = "EXISTS (SELECT 1 FROM request_tasks validation_task WHERE validation_task.request_id = r.id AND validation_task.state = 'submitted')"; }
         if (($filters['open'] ?? false) === true) { $clauses[] = 's.is_terminal = FALSE'; }
         if ($filters['from'] !== null) { $clauses[] = "r.created_at >= (CAST(:from_date AS DATE) AT TIME ZONE 'America/Lima')"; $params['from_date'] = $filters['from']; }
         if ($filters['to'] !== null) { $clauses[] = "r.created_at < ((CAST(:to_date AS DATE) + INTERVAL '1 day') AT TIME ZONE 'America/Lima')"; $params['to_date'] = $filters['to']; }

@@ -222,15 +222,16 @@ if ($path === '/dashboard') {
     }
     if ($user->roleCode === 'csi_manager' && $canAccess->execute($user, 'request.view_all')) {
         $insights = $container->get(InsightsRepository::class);
-        $managerPeriod = is_string($_GET['period'] ?? null) && in_array($_GET['period'], ['today', '7days', 'month'], true) ? $_GET['period'] : '7days';
+        $managerPeriod = is_string($_GET['period'] ?? null) && in_array($_GET['period'], ['all', 'today', '7days', 'month'], true) ? $_GET['period'] : 'all';
         $managerToday = new \DateTimeImmutable('today', new \DateTimeZone('America/Lima'));
         $managerFrom = match ($managerPeriod) {
+            'all' => null,
             'today' => $managerToday,
             'month' => $managerToday->modify('first day of this month'),
             default => $managerToday->modify('-6 days'),
         };
-        $managerPeriodLabel = match ($managerPeriod) { 'today' => 'Hoy', 'month' => 'Este mes', default => 'Últimos siete días' };
-        $managerDateRange = ['from' => $managerFrom->format('Y-m-d'), 'to' => $managerToday->format('Y-m-d')];
+        $managerPeriodLabel = match ($managerPeriod) { 'all' => 'Todas las solicitudes', 'today' => 'Hoy', 'month' => 'Este mes', default => 'Últimos siete días' };
+        $managerDateRange = $managerFrom === null ? [] : ['from' => $managerFrom->format('Y-m-d'), 'to' => $managerToday->format('Y-m-d')];
         $managerFilters = $container->get(\App\Application\Support\RequestFilters::class)->fromInput($managerDateRange);
         $managerFilterOptions = $insights->filterOptions();
         $managerStatuses = array_values(array_filter(
@@ -239,6 +240,8 @@ if ($path === '/dashboard') {
         ));
         $managerCounts = array_column($insights->countByStatus($managerFilters), 'total', 'code');
         $managerTotal = array_sum($managerCounts);
+        $managerOpen = $insights->countFiltered([...$managerFilters, 'open' => true]);
+        $managerPendingValidation = $insights->countFiltered([...$managerFilters, 'validation' => 'pending']);
         $managerUnassigned = $insights->countFiltered([...$managerFilters, 'assignment' => 'unassigned']);
         $pendingStatusId = null;
         foreach ($managerStatuses as $status) {
