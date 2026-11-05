@@ -8,11 +8,11 @@ $periodQuery = http_build_query($managerDateRange);
 $statusIds = array_column($managerStatuses, 'id', 'code');
 $localDate = static fn (string $value): string => (new DateTimeImmutable($value))->setTimezone(new DateTimeZone('America/Lima'))->format('d/m/Y H:i');
 $summaryCards = [
-    ['Sin asignar', $managerUnassigned, '/csi/requests?' . $periodQuery . '&assignment=unassigned', 'Requieren asignación', 'text-white', 'bg-white/15'],
-    ['Pendientes asignadas', $managerPendingAssigned, '/csi/requests?' . $periodQuery . '&assignment=assigned&status=' . ($statusIds['pending'] ?? 0), 'Aún no inicia la atención', 'text-white', 'bg-white/15'],
-    ['En atención', $managerCounts['in_progress'] ?? 0, '/csi/requests?' . $periodQuery . '&status=' . ($statusIds['in_progress'] ?? 0), 'En seguimiento', 'text-ink', 'bg-white/60'],
-    ['Solucionadas del período', $managerCounts['resolved'] ?? 0, '/csi/requests?' . $periodQuery . '&status=' . ($statusIds['resolved'] ?? 0), 'Con solución registrada', 'text-ink', 'bg-green-50'],
-    ['Urgentes abiertas', $managerUrgent, '/csi/requests?' . $periodQuery . '&priority=' . (int) $urgentPriorityId . '&open=1', 'Requieren atención prioritaria', 'text-ink', 'bg-amber-50'],
+    ['Sin asignar', $managerUnassigned, '/csi/requests?' . $periodQuery . '&assignment=unassigned', 'Requieren asignación'],
+    ['Pendientes asignadas', $managerPendingAssigned, '/csi/requests?' . $periodQuery . '&assignment=assigned&status=' . ($statusIds['pending'] ?? 0), 'Aún no inicia la atención'],
+    ['En atención', $managerCounts['in_progress'] ?? 0, '/csi/requests?' . $periodQuery . '&status=' . ($statusIds['in_progress'] ?? 0), 'En seguimiento'],
+    ['Solucionadas del período', $managerCounts['resolved'] ?? 0, '/csi/requests?' . $periodQuery . '&status=' . ($statusIds['resolved'] ?? 0), 'Con solución registrada'],
+    ['Urgentes abiertas', $managerUrgent, '/csi/requests?' . $periodQuery . '&priority=' . (int) $urgentPriorityId . '&open=1', 'Requieren atención prioritaria'],
 ];
 ?>
 <!doctype html>
@@ -45,8 +45,8 @@ $summaryCards = [
   <?php if (in_array($_GET['saved'] ?? null, ['assign', 'classify', 'classify-category', 'classify-priority'], true)): ?><p role="status" class="mt-5 rounded-xl border border-green-200 bg-green-50 p-4 font-semibold text-green-900">El cambio se guardó correctamente. La lista de intervención se actualizó.</p><?php endif; ?>
 
   <section id="manager-overview" aria-labelledby="resumen-titulo" class="mt-6"><h2 id="resumen-titulo" class="sr-only">Estado de las solicitudes</h2><div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-    <?php foreach ($summaryCards as $index => [$title, $count, $url, $caption, $classes, $iconClasses]): ?>
-      <a href="<?= $e($url) ?>" class="manager-kpi manager-kpi--<?= (int) $index ?> group relative overflow-hidden rounded-2xl border border-slate-200 shadow-card transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-institutional-700 <?= $classes ?>"><span aria-hidden="true" class="manager-kpi__orb <?= $iconClasses ?>"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><?php if ($index === 0): ?><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/><?php elseif ($index === 1): ?><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/><?php elseif ($index === 2): ?><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/><?php elseif ($index === 3): ?><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/><?php else: ?><path d="m12 3 9 17H3L12 3Z"/><path d="M12 9v5m0 3h.01"/><?php endif; ?></svg></span><span class="manager-kpi__title"><?= $e($title) ?></span><strong class="manager-kpi__value"><?= (int) $count ?></strong><span class="manager-kpi__caption"><?php if ($index === 0): ?><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 10 18H2L12 3Zm0 6v5m0 3v1"/></svg><?php endif; ?><?= $e($caption) ?></span></a>
+    <?php foreach ($summaryCards as $index => [$title, $count, $url, $caption]): ?>
+      <a href="<?= $e($url) ?>" class="manager-kpi manager-kpi--<?= (int) $index ?> group relative overflow-hidden rounded-xl border shadow-card transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-institutional-700"><span aria-hidden="true" class="manager-kpi__orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><?php if ($index === 0): ?><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/><?php elseif ($index === 1): ?><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/><?php elseif ($index === 2): ?><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/><?php elseif ($index === 3): ?><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/><?php else: ?><path d="m12 3 9 17H3L12 3Z"/><path d="M12 9v5m0 3h.01"/><?php endif; ?></svg></span><span class="manager-kpi__title"><?= $e($title) ?></span><strong class="manager-kpi__value"><?= (int) $count ?></strong><span class="manager-kpi__caption"><?= $e($caption) ?></span><svg class="manager-kpi__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a>
     <?php endforeach; ?>
   </div></section>
 
