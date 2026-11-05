@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Persistence;
 use App\Application\Support\RequestFilters;
 use App\Infrastructure\Bootstrap\ContainerFactory;
 use App\Infrastructure\Persistence\PdoInsightsRepository;
+use App\Infrastructure\Persistence\PdoAssignedRequestRepository;
 use App\Infrastructure\Persistence\PdoManagementRepository;
 use App\Infrastructure\Persistence\PdoRequestRepository;
 use PDO;
@@ -63,6 +64,12 @@ final class PdoInsightsRepositoryTest extends TestCase
             self::assertSame([], $repo->historyForTechnician($code, $users[3]));
             self::assertCount(4, $repo->historyForTechnician($code, $users[4]));
             self::assertSame(0, $repo->countFiltered($filters));
+            $assigned = $container->get(PdoAssignedRequestRepository::class);
+            self::assertTrue($assigned->updateProgress($code, $users[4], 'in_progress', 'Inicio de atención.', null));
+            self::assertTrue($assigned->updateProgress($code, $users[4], 'resolved', 'Atención terminada.', 'Equipo operativo.'));
+            $workload = array_column($repo->technicianWorkload(), null, 'id');
+            self::assertSame(0, $workload[$users[4]]['open_count']);
+            self::assertSame(1, $workload[$users[4]]['resolved_count']);
             self::assertNotEmpty($repo->filterOptions()['statuses']);
         } finally {
             if ($code !== null) {

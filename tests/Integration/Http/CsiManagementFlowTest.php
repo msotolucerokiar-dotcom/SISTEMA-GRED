@@ -68,9 +68,9 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('Historial de actividad', $activityPage);
             self::assertStringContainsString($code, $activityPage);
             self::assertStringContainsString('Distribución del trabajo', $managerDashboard);
-            self::assertStringContainsString('Carga por estado', $managerDashboard);
-            self::assertStringContainsString('Pendientes (sin iniciar)', $managerDashboard);
-            self::assertStringContainsString('En atención (en proceso)', $managerDashboard);
+            self::assertStringContainsString('Ver detalle', $managerDashboard);
+            self::assertStringContainsString('Pendientes', $managerDashboard);
+            self::assertStringContainsString('Solucionadas', $managerDashboard);
             self::assertStringContainsString('Http technician', $managerDashboard);
             self::assertStringContainsString('open=1', $managerDashboard);
             self::assertStringContainsString('status=', $managerDashboard);
