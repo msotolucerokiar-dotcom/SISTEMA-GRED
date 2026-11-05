@@ -80,8 +80,10 @@ $summaryCards = [
         </ol></div><?php endif; ?>
       </section>
 
-      <?php require __DIR__ . '/partials/manager-workload.php'; ?>
-      <?php require __DIR__ . '/partials/manager-follow-up.php'; ?>
+      <div class="manager-secondary-grid">
+        <?php require __DIR__ . '/partials/manager-workload.php'; ?>
+        <?php require __DIR__ . '/partials/manager-follow-up.php'; ?>
+      </div>
   </div>
 </main>
 <script src="/assets/manager-action-dialogs.js?v=<?= (int) filemtime(dirname(__DIR__, 3) . '/public/assets/manager-action-dialogs.js') ?>" defer></script>

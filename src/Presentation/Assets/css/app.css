@@ -225,7 +225,58 @@
   .manager-workload__swatch--progress { background: #3188e8; }
   .manager-workload__swatch--empty { background: #d8dce4; }
   .manager-workload__legend p { margin-left: auto; color: #52677e; }
+  .manager-secondary-grid { display: grid; gap: 1.25rem; }
+  .manager-secondary-grid > section { min-width: 0; border-color: #dce6e7; border-radius: 1rem; box-shadow: 0 1px 2px rgba(29,55,92,.04); }
+  .manager-secondary-grid .manager-workload__title h2, .manager-secondary-grid .manager-activity__title h2 { color: #203743; font-size: 1.15rem; font-weight: 700; }
+  .manager-secondary-grid .manager-workload__title p, .manager-secondary-grid .manager-activity__title p { margin-top: .35rem; color: #8497a0; font-size: .8rem; }
+  .manager-secondary-grid .manager-workload__all, .manager-secondary-grid .manager-activity__all { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .4rem; color: #2b8792; font-size: .77rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .manager-secondary-grid .manager-workload__all:hover, .manager-secondary-grid .manager-activity__all:hover { text-decoration: underline; }
+  .manager-secondary-grid .manager-workload__mobile-legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-top: 1.25rem; color: #82959d; font-size: .73rem; }
+  .manager-secondary-grid .manager-workload__mobile-legend > span { display: inline-flex; align-items: center; gap: .35rem; }
+  .manager-secondary-grid .manager-workload__dot { width: .55rem; height: .55rem; border-radius: .15rem; }
+  .manager-secondary-grid .manager-workload__dot--pending { background: #d6b16a; }
+  .manager-secondary-grid .manager-workload__dot--progress { background: #6296af; }
+  .manager-secondary-grid .manager-workload__dot--resolved { background: #5da999; }
+  .manager-secondary-grid .manager-workload__table-wrap { margin-top: .4rem; }
+  .manager-secondary-grid .manager-workload__table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+  .manager-secondary-grid .manager-workload__table tbody tr:last-child { border-bottom: 0; }
+  .manager-secondary-grid .manager-workload__table tbody th, .manager-secondary-grid .manager-workload__table tbody td { padding: 1rem .25rem; }
+  .manager-secondary-grid .manager-workload__table tbody th { width: 30%; }
+  .manager-secondary-grid .manager-workload__table tbody td:nth-child(2) { width: 60%; }
+  .manager-secondary-grid .manager-workload__table tbody td:last-child { width: 10%; }
+  .manager-secondary-grid .manager-workload__avatar { width: 2.3rem; height: 2.3rem; background: #e9f1f2; color: #5a8d97; font-size: .7rem; font-weight: 800; }
+  .manager-secondary-grid .manager-workload__person-text { display: grid; gap: .12rem; }
+  .manager-secondary-grid .manager-workload__person-link { color: #203743; font-size: .78rem; }
+  .manager-secondary-grid .manager-workload__role { margin: 0; padding: 0; background: transparent; color: #9aabb3; font-size: .71rem; }
+  .manager-secondary-grid .manager-workload__bar { height: 1.8rem; border-radius: .35rem; }
+  .manager-secondary-grid .manager-workload__bar-pending { background: #d6b16a; color: #4b3c26; }
+  .manager-secondary-grid .manager-workload__bar-progress { background: #6296af; }
+  .manager-secondary-grid .manager-workload__bar-resolved { background: #5da999; }
+  .manager-secondary-grid .manager-workload__bar-pending, .manager-secondary-grid .manager-workload__bar-progress, .manager-secondary-grid .manager-workload__bar-resolved { font-size: .72rem; }
+  .manager-secondary-grid .manager-workload__total-wrap { display: grid; justify-items: center; }
+  .manager-secondary-grid .manager-workload__total { height: auto; font-size: 1.1rem; }
+  .manager-secondary-grid .manager-workload__total-wrap small { color: #9aabb3; font-size: .66rem; }
+  .manager-secondary-grid .manager-workload__more { opacity: 0; pointer-events: none; }
+  .manager-secondary-grid .manager-workload__table tr:hover .manager-workload__more, .manager-secondary-grid .manager-workload__more:focus-within, .manager-secondary-grid .manager-workload__more[open] { opacity: 1; pointer-events: auto; }
+  .manager-secondary-grid .manager-activity__title { gap: 0; }
+  .manager-secondary-grid .manager-activity__list { margin-top: 1.3rem; }
+  .manager-secondary-grid .manager-activity__list::before { left: 1.1rem; background: #deebec; }
+  .manager-secondary-grid .manager-activity__item { grid-template-columns: 2.3rem minmax(0,1fr); gap: .8rem; padding-bottom: 1.2rem; }
+  .manager-secondary-grid .manager-activity__icon { border: 1px solid #d8e9e9; border-radius: .55rem; background: #f4faf9; color: #5d9b9d; }
+  .manager-secondary-grid .manager-activity__line h3 { color: #203743; font-size: .82rem; font-weight: 700; }
+  .manager-secondary-grid .manager-activity__line time { color: #9cabb2; font-size: .7rem; }
+  .manager-secondary-grid .manager-activity__content > p { color: #8b9ca5; font-size: .75rem; }
+  .manager-secondary-grid .manager-activity__content > p a { color: #2b8792; text-decoration: none; }
+  .manager-secondary-grid .manager-activity__content > p a:hover { text-decoration: underline; }
+  .manager-activity__validation { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .7rem; margin-top: 1.3rem; border: 1px solid #cfe9e7; border-radius: .6rem; padding: .85rem 1rem; background: #f3faf9; }
+  .manager-activity__validation strong { color: #2b7079; font-size: .78rem; }
+  .manager-activity__validation p { margin-top: .25rem; color: #819da2; font-size: .72rem; }
+  .manager-activity__validation a { color: #2b8792; font-size: .75rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .manager-activity__validation a:hover { text-decoration: underline; }
+  @media (min-width: 1100px) { .manager-secondary-grid { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
+  @media (hover: none) { .manager-secondary-grid .manager-workload__more { opacity: 1; pointer-events: auto; } }
   @media (max-width: 760px) {
+    .manager-secondary-grid .manager-workload__table tbody th, .manager-secondary-grid .manager-workload__table tbody td { width: 100%; }
     .manager-workload__mobile-legend { display: flex; flex-wrap: wrap; gap: .4rem .8rem; margin-top: .8rem; font-size: .7rem; font-weight: 700; }
     .manager-workload__mobile-legend > span { display: inline-flex; align-items: center; gap: .3rem; }
     .manager-workload__table thead { display: none; }
