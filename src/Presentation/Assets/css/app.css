@@ -55,7 +55,7 @@
   .manager-account__menu a:hover, .manager-account__menu button:hover { background: #eaf3fa; }
   @media (max-width: 1040px) { .manager-panel .manager-topbar__inner { grid-template-columns: 1fr auto; gap: .4rem 1rem; padding: .55rem 1.25rem; } .manager-panel .manager-topnav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; overflow-x: auto; scrollbar-width: thin; } .manager-account { grid-column: 2; grid-row: 1; } }
   @media (max-width: 460px) { .manager-panel .manager-topbar__inner { padding-inline: .8rem; } .manager-brand__name { font-size: 1rem; } .manager-brand__section { font-size: .73rem; } .manager-topnav a { padding-inline: .55rem; font-size: .78rem; } }
-  .manager-panel { background: #f5f8f8; }
+  .manager-panel { --manager-section-title: 1.15rem; --manager-section-description: .8rem; --manager-section-link: .77rem; background: #f5f8f8; font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; }
   .manager-panel .manager-topbar { border-bottom: 1px solid #e0e8e9; background: #fff; box-shadow: none; color: #203743; }
   .manager-panel .manager-topbar__inner { display: flex; min-height: 5rem; align-items: center; justify-content: space-between; gap: 1rem; padding: .55rem 2rem; }
   .manager-shell { display: grid; grid-template-columns: 15rem minmax(0,1fr); align-items: start; }
@@ -117,9 +117,9 @@
   .manager-panel #intervencion { border-color: #dce5e8; border-radius: 1rem; padding: 1.3rem 1.5rem; box-shadow: 0 1px 2px rgba(29,55,92,.04); }
   .manager-attention-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; }
   .manager-attention-heading { min-width: 0; }
-  .manager-attention-heading h2 { color: #203743; font-size: 1.12rem; font-weight: 700; line-height: 1.3; }
-  .manager-attention-heading p { margin-top: .3rem; color: #82939c; font-size: .8rem; }
-  .manager-attention-all { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .4rem; color: #2b8792; font-size: .77rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .manager-attention-heading h2 { color: #203743; font-size: var(--manager-section-title); font-weight: 700; line-height: 1.3; }
+  .manager-attention-heading p { margin-top: .3rem; color: #82939c; font-size: var(--manager-section-description); }
+  .manager-attention-all { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .4rem; color: #2b8792; font-size: var(--manager-section-link); font-weight: 700; text-decoration: none; white-space: nowrap; }
   .manager-attention-all:hover { text-decoration: underline; }
   .manager-attention-all span { font-size: 1.2rem; line-height: 1; }
   .manager-attention-scroll { margin-top: 1.4rem; }
@@ -271,9 +271,9 @@
   .manager-workload__legend p { margin-left: auto; color: #52677e; }
   .manager-secondary-grid { display: grid; gap: 1.25rem; }
   .manager-secondary-grid > section { min-width: 0; border-color: #dce6e7; border-radius: 1rem; box-shadow: 0 1px 2px rgba(29,55,92,.04); }
-  .manager-secondary-grid .manager-workload__title h2, .manager-secondary-grid .manager-activity__title h2 { color: #203743; font-size: 1.15rem; font-weight: 700; }
-  .manager-secondary-grid .manager-workload__title p, .manager-secondary-grid .manager-activity__title p { margin-top: .35rem; color: #8497a0; font-size: .8rem; }
-  .manager-secondary-grid .manager-workload__all, .manager-secondary-grid .manager-activity__all { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .4rem; color: #2b8792; font-size: .77rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .manager-secondary-grid .manager-workload__title h2, .manager-secondary-grid .manager-activity__title h2 { color: #203743; font-size: var(--manager-section-title); font-weight: 700; }
+  .manager-secondary-grid .manager-workload__title p, .manager-secondary-grid .manager-activity__title p { margin-top: .35rem; color: #8497a0; font-size: var(--manager-section-description); }
+  .manager-secondary-grid .manager-workload__all, .manager-secondary-grid .manager-activity__all { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .4rem; color: #2b8792; font-size: var(--manager-section-link); font-weight: 700; text-decoration: none; white-space: nowrap; }
   .manager-secondary-grid .manager-workload__all:hover, .manager-secondary-grid .manager-activity__all:hover { text-decoration: underline; }
   .manager-secondary-grid .manager-workload__mobile-legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-top: 1.25rem; color: #82959d; font-size: .73rem; }
   .manager-secondary-grid .manager-workload__mobile-legend > span { display: inline-flex; align-items: center; gap: .35rem; }
