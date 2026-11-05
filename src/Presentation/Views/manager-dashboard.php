@@ -30,7 +30,7 @@ $summaryCards = [
 <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">Ir al contenido</a>
 <header class="manager-topbar">
   <div class="manager-topbar__inner">
-    <div class="manager-breadcrumb"><a href="/dashboard">GRED LAMBAYEQUE</a><span aria-hidden="true">/</span><span>Centro de Sistemas de Información</span><span aria-hidden="true">/</span><details class="manager-navigation"><summary aria-label="Inicio y navegación principal">Inicio</summary><nav aria-label="Navegación principal"><a href="/dashboard" aria-current="page">Inicio</a><a href="/csi/requests">Solicitudes</a><a href="#intervencion">Supervisión</a><a href="/csi/reports">Reportes</a><a href="/csi/users">Usuarios</a></nav></details></div>
+    <div class="manager-breadcrumb"><a href="/dashboard">GRED LAMBAYEQUE</a><span aria-hidden="true">/</span><span>Centro de Sistemas de Información</span><span aria-hidden="true">/</span><strong aria-current="page">Inicio</strong></div>
     <div class="manager-header-actions">
       <time class="manager-header-date" datetime="<?= $e($managerToday->format('Y-m-d')) ?>"><?= $e($managerDateLabel) ?></time>
       <?php require __DIR__ . '/partials/notifications-bell.php'; ?>
@@ -38,7 +38,15 @@ $summaryCards = [
     </div>
   </div>
 </header>
-<main id="contenido" class="mx-auto max-w-[90rem] px-5 py-7 sm:py-9">
+<div class="manager-shell">
+  <aside class="manager-sidebar" aria-label="Menú lateral del Responsable CSI">
+    <div class="manager-sidebar__brand"><span class="manager-sidebar__mark" aria-hidden="true">CSI</span><div><strong>Soporte tecnológico</strong><small>GRED Lambayeque</small></div></div>
+    <nav aria-label="Navegación principal" class="manager-sidebar__nav">
+      <div class="manager-sidebar__group"><p>Espacio de trabajo</p><a href="/dashboard" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg>Inicio</a><a href="/csi/requests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h6"/></svg>Solicitudes</a><a href="#intervencion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c0-4 2-6 6-6s6 2 6 6M15 15c4 0 6 2 6 5"/></svg>Supervisión</a></div>
+      <div class="manager-sidebar__group"><p>Administración</p><a href="/csi/reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20v-7m5 7V8m5 12v-9m5 9V4"/></svg>Reportes</a><a href="/csi/users"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg>Usuarios</a></div>
+    </nav>
+  </aside>
+<main id="contenido" class="manager-content mx-auto max-w-[90rem] px-5 py-7 sm:py-9">
   <div class="manager-page-heading">
     <div><p class="manager-page-heading__eyebrow">Centro de Sistemas de Información</p><h1>Panel del responsable</h1><p class="manager-page-heading__description">Supervisa las solicitudes de soporte, las asignaciones y el trabajo del equipo.</p></div>
     <form action="/dashboard" method="get" class="manager-period"><label for="manager-period">Período</label><select id="manager-period" name="period" onchange="this.form.requestSubmit()"><option value="all" <?= $managerPeriod === 'all' ? 'selected' : '' ?>>Todas las solicitudes</option><option value="today" <?= $managerPeriod === 'today' ? 'selected' : '' ?>>Hoy</option><option value="7days" <?= $managerPeriod === '7days' ? 'selected' : '' ?>>Últimos 7 días</option><option value="month" <?= $managerPeriod === 'month' ? 'selected' : '' ?>>Este mes</option></select><button type="submit">Aplicar</button></form>
@@ -83,6 +91,7 @@ $summaryCards = [
       </div>
   </div>
 </main>
+</div>
 <script src="/assets/manager-action-dialogs.js?v=<?= (int) filemtime(dirname(__DIR__, 3) . '/public/assets/manager-action-dialogs.js') ?>" defer></script>
 <script src="/assets/manager-header-menu.js?v=<?= (int) filemtime(dirname(__DIR__, 3) . '/public/assets/manager-header-menu.js') ?>" defer></script>
 </body></html>

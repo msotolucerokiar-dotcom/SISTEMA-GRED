@@ -1,4 +1,4 @@
-const managerHeaderMenus = '.manager-navigation[open], .manager-account[open]';
+const managerHeaderMenus = '.manager-account[open]';
 
 document.addEventListener('pointerdown', (event) => {
   document.querySelectorAll(managerHeaderMenus).forEach((menu) => {
