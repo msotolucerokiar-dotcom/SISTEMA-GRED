@@ -45,6 +45,8 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $managerDashboard] = $this->request('GET', '/dashboard', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('href="/profile">Perfil</a>', $managerDashboard);
+            self::assertStringContainsString('aria-label="Inicio y navegación principal"', $managerDashboard);
+            self::assertStringContainsString('Panel del responsable', $managerDashboard);
             self::assertStringContainsString('action="/logout" method="post"', $managerDashboard);
             self::assertSame(303, $this->request('GET', '/profile')[0]);
             [$status, $profile] = $this->request('GET', '/profile', '', $managerCookie);
