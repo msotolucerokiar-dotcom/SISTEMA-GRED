@@ -110,6 +110,13 @@
   .manager-mini-action { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: .25rem; border: 1px solid #d6e8e8; border-radius: .4rem; padding: .35rem .7rem; background: #edf7f6; color: #287f87; font-size: .71rem; font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; }
   .manager-mini-action svg { width: .95rem; height: .95rem; flex: none; }
   .manager-mini-action:hover { background: #dff0ef; border-color: #6baeb0; }
+  .manager-attention-more { position: relative; }
+  .manager-attention-more summary { display: grid; width: 2.75rem; min-height: 2.75rem; place-items: center; border: 1px solid #d6e8e8; border-radius: .4rem; color: #287f87; cursor: pointer; font-size: 1.1rem; font-weight: 800; list-style: none; }
+  .manager-attention-more summary::-webkit-details-marker { display: none; }
+  .manager-attention-more summary:hover, .manager-attention-more[open] summary { background: #edf7f6; }
+  .manager-attention-more__menu { position: absolute; z-index: 20; top: calc(100% + .3rem); right: 0; min-width: 8rem; overflow: hidden; border: 1px solid #d6e8e8; border-radius: .45rem; background: #fff; box-shadow: 0 10px 24px rgba(29,55,92,.14); }
+  .manager-attention-more__menu button { display: block; width: 100%; min-height: 2.5rem; padding: .5rem .75rem; color: #287f87; font-size: .75rem; font-weight: 700; text-align: left; white-space: nowrap; }
+  .manager-attention-more__menu button:hover { background: #edf7f6; }
   .manager-action-dialog { width: min(27rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); margin: auto; overflow-y: auto; border: 1px solid #cbdced; border-radius: 1rem; padding: 1.25rem; background: #fff; color: #1d375c; box-shadow: 0 24px 64px rgba(15,39,66,.25); }
   .manager-action-dialog::backdrop { background: rgba(15,39,66,.55); }
   .manager-action-dialog__heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
@@ -235,10 +242,11 @@
     .manager-attention-head { display: grid; border-radius: .45rem; padding: .8rem .85rem; background: #f5f8f8; color: #83959e; font-size: .68rem; font-weight: 800; text-transform: uppercase; }
     .manager-attention-row { align-items: center; padding: .9rem .85rem; }
     .manager-mini-action { min-height: 2.15rem; }
+    .manager-attention-more summary { width: 2.15rem; min-height: 2.15rem; }
     .manager-request-title, .manager-request-area { white-space: nowrap; }
     .manager-request-date { display: block; }
     .manager-state { white-space: nowrap; }
-    .manager-row-actions { flex-wrap: wrap; }
+    .manager-row-actions { flex-wrap: nowrap; }
     .manager-cell-label { display: none; }
     .manager-row-actions { grid-column: auto; }
     .manager-row-actions .manager-cell-label { display: none; }

@@ -2,7 +2,11 @@ document.addEventListener('click', (event) => {
   const opener = event.target.closest('[data-modal-open]');
   if (opener) {
     const dialog = document.getElementById(opener.dataset.modalOpen);
-    if (dialog instanceof HTMLDialogElement) dialog.showModal();
+    if (dialog instanceof HTMLDialogElement) {
+      const menu = opener.closest('[data-workload-menu]');
+      if (menu) menu.open = false;
+      dialog.showModal();
+    }
     return;
   }
   const closer = event.target.closest('[data-modal-close]');
