@@ -484,6 +484,50 @@
   @media (max-width: 1050px) { .csi-list-page .csi-list-filters { grid-template-columns: minmax(10rem,2fr) minmax(8rem,1fr) minmax(8rem,1fr); } .csi-list-page .csi-list-advanced { grid-column: 1; grid-row: 2; } .csi-list-page .csi-list-filter-button { grid-column: 2; grid-row: 2; } .csi-list-active-filters { grid-row: 3; } }
   @media (max-width: 620px) { .csi-list-page .csi-list-content { padding: 1.25rem .8rem 2rem; } .csi-list-page .csi-list-filters { grid-template-columns: repeat(2,minmax(0,1fr)); } .csi-list-page .csi-list-search { grid-column: 1/-1; grid-row: 1; } .csi-list-page .csi-list-filters__primary > .csi-list-field:nth-child(2) { grid-column: 1; grid-row: 2; } .csi-list-page .csi-list-filters__primary > .csi-list-field:nth-child(3) { grid-column: 2; grid-row: 2; } .csi-list-page .csi-list-advanced { grid-column: 1; grid-row: 3; } .csi-list-page .csi-list-filter-button { grid-column: 2; grid-row: 3; } .csi-list-active-filters { grid-row: 4; } .csi-list-page .csi-list-advanced__grid { right: auto; left: 0; grid-template-columns: repeat(2,minmax(0,1fr)); } .csi-list-card__toolbar { align-items: stretch; } .csi-list-attention { white-space: normal; } }
   @media (max-width: 430px) { .csi-list-page .csi-list-advanced__grid { grid-template-columns: 1fr; } }
+  /* Paleta de la bandeja CSI: acentos turquesa y estados diferenciados. */
+  .csi-list-page { --csi-accent: #087d82; --csi-accent-dark: #075c64; --csi-ink: #173245; --csi-muted: #506b7b; background: #f4f8fa; color: var(--csi-ink); }
+  .csi-list-page .manager-sidebar { background: linear-gradient(160deg,#0c2935 0%,#103441 53%,#0b2935 100%); color: #e7f3f4; }
+  .csi-list-page .manager-sidebar__mark { border-color: #127c82; background: linear-gradient(145deg,#09666b,#0a9190); color: #fff; }
+  .csi-list-page .manager-sidebar__brand { border-color: rgba(199,232,231,.16); }
+  .csi-list-page .manager-sidebar__brand small, .csi-list-page .manager-sidebar__item-text small { color: #c2d2d6; }
+  .csi-list-page .manager-sidebar__group p { color: #acc2ca; }
+  .csi-list-page .manager-sidebar__group + .manager-sidebar__group { border-color: rgba(199,232,231,.16); }
+  .csi-list-page .manager-sidebar__group a { color: #f0f7f7; }
+  .csi-list-page .manager-sidebar__group a svg { color: #c4d8dd; }
+  .csi-list-page .manager-sidebar__group a:hover { background: #1b5864; color: #fff; }
+  .csi-list-page .manager-sidebar__group a[aria-current="page"] { background: linear-gradient(100deg,#087680,#176b74); color: #fff; }
+  .csi-list-page .manager-sidebar__group a[aria-current="page"] svg, .csi-list-page .manager-sidebar__group a[aria-current="page"] small { color: #e5f5f5; }
+  .csi-list-page .manager-sidebar__group a[aria-current="page"]::before { background: #81d6cf; }
+  .csi-list-page .manager-topbar { background: #fff; }
+  .csi-list-page .manager-breadcrumb strong, .csi-list-page .csi-list-heading h1 { color: var(--csi-ink); }
+  .csi-list-page .csi-list-heading p { color: var(--csi-muted); }
+  .csi-list-page .csi-list-create, .csi-list-page .csi-list-filter-button { border: 1px solid #076b70; background: linear-gradient(180deg,#0a9999,#08767e); box-shadow: 0 3px 7px rgba(8,100,104,.13); color: #fff; }
+  .csi-list-page .csi-list-create:hover, .csi-list-page .csi-list-filter-button:hover { background: #075c64; }
+  .csi-list-page .csi-list-advanced summary { background: #f8fbfc; color: var(--csi-accent-dark); }
+  .csi-list-page .csi-list-advanced summary:hover { border-color: #9fcbd0; background: #eaf5f5; }
+  .csi-list-page .csi-list-active-filters > a:not(.csi-list-clear) { background: #e7f3f2; color: #125c63; }
+  .csi-list-page .csi-list-clear { color: var(--csi-accent-dark); }
+  .csi-list-page .csi-list-card { border-color: #d9e5e9; background: #fff; box-shadow: 0 7px 22px rgba(28,61,78,.08); }
+  .csi-list-page .csi-list-tabs a[aria-current="page"] { border-color: #08767e; background: linear-gradient(180deg,#0a9999,#08767e); color: #fff; }
+  .csi-list-page .csi-list-tabs a:not([aria-current="page"]):hover { border-color: #a7d5d3; background: #eaf5f5; color: var(--csi-accent-dark); }
+  .csi-list-page .csi-list-attention { background: #fff1d3; color: #9b3517; }
+  .csi-list-page .csi-list-attention svg { color: #cb6200; }
+  .csi-list-page .csi-list-attention:hover, .csi-list-page .csi-list-attention[aria-current="page"] { background: #ffe5ad; }
+  .csi-list-page .csi-list-table th { background: #edf3f5; color: #2b495a; }
+  .csi-list-page .csi-list-table tbody tr:hover { background: #f2fafa; }
+  .csi-list-page .csi-list-code { color: #05777e; }
+  .csi-list-page .csi-list-request__icon { background: #e2f2f1; color: #087b82; }
+  .csi-list-page .csi-list-badge--normal, .csi-list-page .csi-list-badge--missing { background: #e9f0f2; color: #526d7b; }
+  .csi-list-page .csi-list-badge--urgent { background: #fce4e6; color: #a91f2c; }
+  .csi-list-page .csi-list-badge--high { background: #fff0d9; color: #a24e00; }
+  .csi-list-page .csi-list-badge--low { background: #dceeff; color: #075e9e; }
+  .csi-list-page .csi-list-badge--pending { background: #fff1cc; color: #885800; }
+  .csi-list-page .csi-list-badge--in_progress { background: #dceaff; color: #075aaa; }
+  .csi-list-page .csi-list-badge--resolved, .csi-list-page .csi-list-badge--closed { background: #dcf6e8; color: #0c713d; }
+  .csi-list-page .csi-list-view { border-color: #9fcfce; background: #fff; color: #075f66; }
+  .csi-list-page .csi-list-view:hover { background: #eaf5f5; }
+  .csi-list-page .csi-list-pagination strong { border-color: #08767e; background: #087d82; color: #fff; }
+  .csi-list-page .csi-list-pagination a:hover { border-color: #9fcfce; background: #eaf5f5; }
   .manager-panel .manager-secondary-grid .manager-activity__line h3, .manager-panel .manager-secondary-grid .manager-workload__person-link { font-size: var(--manager-body-text); font-weight: 700; }
   .manager-panel .manager-secondary-grid .manager-activity__content > p { font-size: var(--manager-body-text); line-height: 1.4; }
   .manager-panel .manager-secondary-grid .manager-workload__mobile-legend, .manager-panel .manager-attention-head { font-size: var(--manager-label-text); }
