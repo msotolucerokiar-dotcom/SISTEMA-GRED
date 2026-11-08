@@ -9,7 +9,7 @@ use PDO;
 
 final class PdoInsightsRepository implements InsightsRepository
 {
-    private const LIST_COLUMNS = 'r.public_code, r.title, r.created_at, s.name AS status_name, s.code AS status_code,
+    private const LIST_COLUMNS = 'r.public_code, r.title, r.description, r.created_at, r.updated_at, s.name AS status_name, s.code AS status_code,
         a.name AS area_name, u.full_name AS requester_name, c.name AS category_name,
         p.name AS priority_name, tech.full_name AS technician_name';
 
@@ -60,8 +60,27 @@ final class PdoInsightsRepository implements InsightsRepository
     public function listFiltered(array $filters, int $limit, int $offset): array
     {
         [$where, $params] = $this->where($filters);
-        $direction = ($filters['sort'] ?? 'recent') === 'oldest' ? 'ASC' : 'DESC';
-        $query = $this->pdo->prepare('SELECT ' . self::LIST_COLUMNS . self::JOINS . $where . ' ORDER BY r.created_at ' . $direction . ', r.id ' . $direction . ' LIMIT :limit OFFSET :offset');
+        $order = match ($filters['sort'] ?? 'recent') {
+            'oldest' => 'r.created_at ASC',
+            'code_asc' => 'r.public_code ASC',
+            'code_desc' => 'r.public_code DESC',
+            'title_asc' => 'r.title ASC',
+            'title_desc' => 'r.title DESC',
+            'area_asc' => 'a.name ASC',
+            'area_desc' => 'a.name DESC',
+            'priority_asc' => 'p.sort_order ASC NULLS LAST',
+            'priority_desc' => 'p.sort_order DESC NULLS LAST',
+            'technician_asc' => 'tech.full_name ASC NULLS LAST',
+            'technician_desc' => 'tech.full_name DESC NULLS LAST',
+            'status_asc' => 's.name ASC',
+            'status_desc' => 's.name DESC',
+            'created_asc' => 'r.created_at ASC',
+            'created_desc' => 'r.created_at DESC',
+            'updated_asc' => 'r.updated_at ASC',
+            'updated_desc' => 'r.updated_at DESC',
+            default => 'r.created_at DESC',
+        };
+        $query = $this->pdo->prepare('SELECT ' . self::LIST_COLUMNS . self::JOINS . $where . ' ORDER BY ' . $order . ', r.id DESC LIMIT :limit OFFSET :offset');
         $this->bind($query, $params);
         $query->bindValue('limit', $limit, PDO::PARAM_INT);
         $query->bindValue('offset', $offset, PDO::PARAM_INT);
@@ -227,10 +246,11 @@ final class PdoInsightsRepository implements InsightsRepository
         $clauses = [];
         $params = [];
         if ($filters['search'] !== '') {
-            $clauses[] = '(r.public_code ILIKE :search OR r.title ILIKE :title_search OR u.full_name ILIKE :requester_search)';
+            $clauses[] = '(r.public_code ILIKE :search OR r.title ILIKE :title_search OR u.full_name ILIKE :requester_search OR a.name ILIKE :area_search)';
             $params['search'] = '%' . $this->escapeLike($filters['search']) . '%';
             $params['title_search'] = $params['search'];
             $params['requester_search'] = $params['search'];
+            $params['area_search'] = $params['search'];
         }
         foreach (['status' => 'r.status_id', 'area' => 'r.area_id', 'category' => 'r.category_id', 'priority' => 'r.priority_id', 'technician' => 'ra.technician_id'] as $key => $column) {
             if ($filters[$key] !== null) { $clauses[] = $column . ' = :' . $key; $params[$key] = $filters[$key]; }

@@ -17,7 +17,7 @@ INSERT INTO role_permission (role_id, permission_id)
 SELECT r.id, p.id FROM roles r CROSS JOIN permissions p
 WHERE (r.code = 'worker' AND p.code IN ('request.create', 'request.view_own'))
    OR (r.code = 'technician' AND p.code IN ('request.view_assigned', 'request.update_status'))
-   OR (r.code = 'csi_manager' AND p.code IN ('request.view_all', 'request.manage', 'user.manage_roles', 'report.view'));
+   OR (r.code = 'csi_manager' AND p.code IN ('request.create', 'request.view_all', 'request.manage', 'user.manage_roles', 'report.view'));
 
 INSERT INTO categories (name) VALUES
 ('Conectividad e Internet'), ('Configuración de IP'), ('Impresión'),

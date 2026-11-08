@@ -637,20 +637,36 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
     if ($path === '/csi/requests') {
         $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
         $filterErrors = [];
+        $perPage = filter_var($_GET['per_page'] ?? 5, FILTER_VALIDATE_INT);
+        if (!in_array($perPage, [5, 10, 20], true)) { $perPage = 5; }
         try {
-            $listing = $container->get(SearchRequests::class)->execute($_GET, $page, 5);
+            $listing = $container->get(SearchRequests::class)->execute($_GET, $page, $perPage);
         } catch (InvalidRequest $exception) {
             http_response_code(422);
             $filterErrors = $exception->errors;
-            $listing = ['filters' => [], 'items' => [], 'total' => 0, 'page' => 1, 'pages' => 1];
+            $listing = ['filters' => [], 'items' => [], 'total' => 0, 'page' => 1, 'pages' => 1, 'per_page' => $perPage];
         }
         $filterOptions = $container->get(InsightsRepository::class)->filterOptions();
         $listCountFilters = $listing['filters'];
         $listCountFilters['status'] = null;
+        $listCountFilters['assignment'] = null;
+        $listCountFilters['attention'] = null;
+        $listCountFilters['open'] = false;
         $listInsights = $container->get(InsightsRepository::class);
         $listStatusCounts = $filterErrors === [] ? $listInsights->countByStatus($listCountFilters) : [];
         $listAllCount = $filterErrors === [] ? $listInsights->countFiltered($listCountFilters) : 0;
+        $listUnassignedCount = $filterErrors === [] ? $listInsights->countFiltered([...$listCountFilters, 'assignment' => 'unassigned', 'open' => true]) : 0;
         $listAttentionCount = $filterErrors === [] ? $listInsights->countFiltered([...$listCountFilters, 'attention' => 'needed']) : 0;
+        $listMetricFilters = $listCountFilters;
+        foreach (['search', 'status', 'priority', 'technician', 'assignment', 'attention', 'validation', 'open', 'area', 'category'] as $key) { $listMetricFilters[$key] = $key === 'search' ? '' : ($key === 'open' ? false : null); }
+        $listMetrics = $filterErrors === [] ? [
+            'total' => $listInsights->countFiltered($listMetricFilters),
+            'urgent' => $listInsights->countFiltered([...$listMetricFilters, 'priority' => (int) (array_column($filterOptions['priorities'], 'id', 'code')['urgent'] ?? 0), 'open' => true]),
+            'in_progress' => $listInsights->countFiltered([...$listMetricFilters, 'status' => (int) (array_column($filterOptions['statuses'], 'id', 'code')['in_progress'] ?? 0)]),
+            'resolved' => $listInsights->countFiltered([...$listMetricFilters, 'status' => (int) (array_column($filterOptions['statuses'], 'id', 'code')['resolved'] ?? 0)]),
+            'unassigned' => $listInsights->countFiltered([...$listMetricFilters, 'assignment' => 'unassigned', 'open' => true]),
+            'closed' => $listInsights->countFiltered([...$listMetricFilters, 'status' => (int) (array_column($filterOptions['statuses'], 'id', 'code')['closed'] ?? 0)]),
+        ] : ['total' => 0, 'urgent' => 0, 'in_progress' => 0, 'resolved' => 0, 'unassigned' => 0, 'closed' => 0];
         require dirname(__DIR__) . '/src/Presentation/Views/csi-request-list.php';
         exit;
     }
@@ -792,7 +808,7 @@ if ($path === '/requests' || $path === '/requests/new' || preg_match('~^/request
                     $code = $container->get(CreateRequest::class)->execute(
                         $user->id, (int) $form['area'], $form['title'], $form['description'], $uploads
                     );
-                    header('Location: /requests/' . rawurlencode($code), true, 303);
+                    header('Location: ' . ($user->roleCode === 'csi_manager' ? '/csi/requests/' : '/requests/') . rawurlencode($code), true, 303);
                     exit;
                 } catch (InvalidRequest $exception) {
                     http_response_code(422);

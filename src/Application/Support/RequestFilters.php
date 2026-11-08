@@ -14,7 +14,7 @@ final class RequestFilters
         $errors = [];
         $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'priority' => null, 'technician' => null, 'assignment' => null, 'attention' => null, 'validation' => null, 'open' => false, 'from' => null, 'to' => null, 'sort' => 'recent'];
         $sort = $input['sort'] ?? 'recent';
-        if (!is_string($sort) || !in_array($sort, ['recent', 'oldest'], true)) { $errors['sort'] = 'Selecciona un orden válido.'; }
+        if (!is_string($sort) || !in_array($sort, ['recent', 'oldest', 'code_asc', 'code_desc', 'title_asc', 'title_desc', 'area_asc', 'area_desc', 'priority_asc', 'priority_desc', 'technician_asc', 'technician_desc', 'status_asc', 'status_desc', 'created_asc', 'created_desc', 'updated_asc', 'updated_desc'], true)) { $errors['sort'] = 'Selecciona un orden válido.'; }
         else { $filters['sort'] = $sort; }
         $search = is_string($input['search'] ?? null) ? trim($input['search']) : '';
         if (mb_strlen($search) > 100) { $errors['search'] = 'La búsqueda admite hasta 100 caracteres.'; }
