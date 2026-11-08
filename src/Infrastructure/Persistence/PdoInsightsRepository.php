@@ -60,7 +60,8 @@ final class PdoInsightsRepository implements InsightsRepository
     public function listFiltered(array $filters, int $limit, int $offset): array
     {
         [$where, $params] = $this->where($filters);
-        $query = $this->pdo->prepare('SELECT ' . self::LIST_COLUMNS . self::JOINS . $where . ' ORDER BY r.created_at DESC, r.id DESC LIMIT :limit OFFSET :offset');
+        $direction = ($filters['sort'] ?? 'recent') === 'oldest' ? 'ASC' : 'DESC';
+        $query = $this->pdo->prepare('SELECT ' . self::LIST_COLUMNS . self::JOINS . $where . ' ORDER BY r.created_at ' . $direction . ', r.id ' . $direction . ' LIMIT :limit OFFSET :offset');
         $this->bind($query, $params);
         $query->bindValue('limit', $limit, PDO::PARAM_INT);
         $query->bindValue('offset', $offset, PDO::PARAM_INT);
@@ -226,9 +227,10 @@ final class PdoInsightsRepository implements InsightsRepository
         $clauses = [];
         $params = [];
         if ($filters['search'] !== '') {
-            $clauses[] = '(r.public_code ILIKE :search OR r.title ILIKE :title_search)';
+            $clauses[] = '(r.public_code ILIKE :search OR r.title ILIKE :title_search OR u.full_name ILIKE :requester_search)';
             $params['search'] = '%' . $this->escapeLike($filters['search']) . '%';
             $params['title_search'] = $params['search'];
+            $params['requester_search'] = $params['search'];
         }
         foreach (['status' => 'r.status_id', 'area' => 'r.area_id', 'category' => 'r.category_id', 'priority' => 'r.priority_id', 'technician' => 'ra.technician_id'] as $key => $column) {
             if ($filters[$key] !== null) { $clauses[] = $column . ' = :' . $key; $params[$key] = $filters[$key]; }

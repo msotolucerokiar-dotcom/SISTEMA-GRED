@@ -99,6 +99,15 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $list] = $this->request('GET', '/csi/requests', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $list);
+            self::assertStringContainsString('Requiere intervenci', $list);
+            [$status, $searched] = $this->request('GET', '/csi/requests?search=Http%20worker', '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString($code, $searched);
+            [$status, $oldest] = $this->request('GET', '/csi/requests?sort=oldest&search=' . rawurlencode($code), '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('<option value="oldest" selected>', $oldest);
+            self::assertStringContainsString($code, $oldest);
+            self::assertSame(422, $this->request('GET', '/csi/requests?sort=invalid', '', $managerCookie)[0]);
             [$status, $detail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
             self::assertSame(200, $status);
             preg_match('/name="_csrf" value="([a-f0-9]+)"/', $detail, $match);

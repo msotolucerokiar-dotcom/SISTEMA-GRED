@@ -638,7 +638,7 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
         $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
         $filterErrors = [];
         try {
-            $listing = $container->get(SearchRequests::class)->execute($_GET, $page);
+            $listing = $container->get(SearchRequests::class)->execute($_GET, $page, 5);
         } catch (InvalidRequest $exception) {
             http_response_code(422);
             $filterErrors = $exception->errors;
@@ -650,6 +650,7 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
         $listInsights = $container->get(InsightsRepository::class);
         $listStatusCounts = $filterErrors === [] ? $listInsights->countByStatus($listCountFilters) : [];
         $listAllCount = $filterErrors === [] ? $listInsights->countFiltered($listCountFilters) : 0;
+        $listAttentionCount = $filterErrors === [] ? $listInsights->countFiltered([...$listCountFilters, 'attention' => 'needed']) : 0;
         require dirname(__DIR__) . '/src/Presentation/Views/csi-request-list.php';
         exit;
     }

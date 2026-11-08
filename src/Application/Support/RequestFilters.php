@@ -12,7 +12,10 @@ final class RequestFilters
     public function fromInput(array $input, bool $report = false): array
     {
         $errors = [];
-        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'priority' => null, 'technician' => null, 'assignment' => null, 'attention' => null, 'validation' => null, 'open' => false, 'from' => null, 'to' => null];
+        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'priority' => null, 'technician' => null, 'assignment' => null, 'attention' => null, 'validation' => null, 'open' => false, 'from' => null, 'to' => null, 'sort' => 'recent'];
+        $sort = $input['sort'] ?? 'recent';
+        if (!is_string($sort) || !in_array($sort, ['recent', 'oldest'], true)) { $errors['sort'] = 'Selecciona un orden válido.'; }
+        else { $filters['sort'] = $sort; }
         $search = is_string($input['search'] ?? null) ? trim($input['search']) : '';
         if (mb_strlen($search) > 100) { $errors['search'] = 'La búsqueda admite hasta 100 caracteres.'; }
         $filters['search'] = $search;
