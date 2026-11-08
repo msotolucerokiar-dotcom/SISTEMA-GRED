@@ -18,8 +18,8 @@ $previewDate = static fn (string $value): string => (new DateTimeImmutable($valu
         <div><dt>Área solicitante</dt><dd><?= $e($selectedRequest['area_name']) ?></dd></div>
         <div><dt>Solicitante</dt><dd><?= $e($selectedRequest['requester_name']) ?></dd></div>
         <div><dt>Clasificación</dt><dd><?= $e($selectedRequest['category_name'] ?? 'Sin clasificar') ?></dd></div>
-        <div><dt>Prioridad</dt><dd><?= $e($selectedRequest['priority_name'] ?? 'Sin prioridad') ?></dd></div>
-        <div><dt>Estado</dt><dd><?= $e($selectedRequest['status_name']) ?></dd></div>
+        <div><dt>Prioridad</dt><dd><span class="csi-list-preview__tag csi-list-preview__tag--<?= in_array($previewPriority, ['urgente', 'alta'], true) ? 'urgent' : 'neutral' ?>"><?= $e($selectedRequest['priority_name'] ?? 'Sin prioridad') ?></span></dd></div>
+        <div><dt>Estado</dt><dd><span class="csi-list-preview__tag csi-list-preview__tag--<?= $e($selectedRequest['status_code']) ?>"><?= $e($selectedRequest['status_name']) ?></span></dd></div>
         <div><dt>Responsable</dt><dd><?= $selectedRequest['technician_name'] === null ? 'Sin asignar' : $e(\App\Presentation\DisplayName::withoutDemoMarker($selectedRequest['technician_name'])) ?></dd></div>
         <div><dt>Fecha de registro</dt><dd><time datetime="<?= $e($selectedRequest['created_at']) ?>"><?= $e($previewDate($selectedRequest['created_at'])) ?></time></dd></div>
       </dl>

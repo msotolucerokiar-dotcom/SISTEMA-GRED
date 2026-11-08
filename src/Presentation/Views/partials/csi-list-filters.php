@@ -31,6 +31,7 @@ foreach ($filterLabels as $key => $label) {
     <div class="csi-list-field"><label for="to">Hasta</label><input id="to" name="to" type="date" value="<?= $e($value('to')) ?>"></div>
   </div></details>
   <button type="submit" class="csi-list-filter-button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5Z"/></svg>Filtrar</button>
+  <a class="csi-list-clear csi-list-clear--primary" href="/csi/requests">Limpiar</a>
   <?php if ($filterErrors !== []): ?><p role="alert" class="csi-list-filter-error"><?= $e(implode(' ', $filterErrors)) ?></p><?php endif; ?>
-  <?php if ($activeFilters !== []): ?><div class="csi-list-active-filters"><strong>Filtros aplicados:</strong><?php foreach ($activeFilters as $filter): ?><a href="<?= $e($filter['url']) ?>" aria-label="Quitar filtro <?= $e($filter['label']) ?>"><?= $e($filter['label']) ?> <span aria-hidden="true">×</span></a><?php endforeach; ?><a class="csi-list-clear" href="/csi/requests">Limpiar filtros</a></div><?php endif; ?>
+  <?php if ($activeFilters !== []): ?><div class="csi-list-active-filters"><strong>Filtros aplicados:</strong><?php foreach ($activeFilters as $filter): ?><a href="<?= $e($filter['url']) ?>" aria-label="Quitar filtro <?= $e($filter['label']) ?>"><?= $e($filter['label']) ?> <span aria-hidden="true">×</span></a><?php endforeach; ?></div><?php endif; ?>
 </form>
