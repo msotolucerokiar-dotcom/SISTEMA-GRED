@@ -364,6 +364,73 @@
     .manager-attention-item:hover .manager-attention-more, .manager-attention-more:focus-within, .manager-attention-more[open] { opacity: 1; pointer-events: auto; }
   }
   @media (min-width: 1500px) and (hover: none) { .manager-attention-more { opacity: 1; pointer-events: auto; } }
+  .csi-list-page { background: #f5f8f8; color: #203743; }
+  .csi-list-shell { align-items: stretch; min-height: 100vh; }
+  .csi-list-shell .manager-sidebar { min-height: 100vh; }
+  .csi-list-column { min-width: 0; }
+  .csi-list-content { max-width: 100rem; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+  .csi-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.35rem; }
+  .csi-list-heading h1 { color: #203743; font-size: 1.8rem; font-weight: 800; line-height: 1.15; }
+  .csi-list-heading p { margin-top: .3rem; color: #8295a0; font-size: .85rem; }
+  .csi-list-create, .csi-list-filter-button { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: .5rem; border-radius: .45rem; padding: .55rem 1rem; background: #168a91; color: #fff; font-size: .82rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .csi-list-create:hover, .csi-list-filter-button:hover { background: #0f7078; }
+  .csi-list-create span { font-size: 1.25rem; line-height: 1; }
+  .csi-list-filters { margin-bottom: 1rem; border: 1px solid #e2eaed; border-radius: .85rem; padding: .9rem 1rem; background: #fff; box-shadow: 0 1px 3px rgba(25,53,65,.04); }
+  .csi-list-filters__primary { display: grid; grid-template-columns: minmax(12rem,2.3fr) repeat(3,minmax(7rem,1fr)) auto; align-items: end; gap: .7rem; }
+  .csi-list-field, .csi-list-search { position: relative; min-width: 0; }
+  .csi-list-field label, .csi-list-search label { display: block; margin-bottom: .3rem; color: #637b86; font-size: .7rem; font-weight: 700; }
+  .csi-list-search label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+  .csi-list-search svg { position: absolute; top: .8rem; left: .7rem; width: 1rem; height: 1rem; color: #77929d; }
+  .csi-list-field select, .csi-list-field input, .csi-list-search input { width: 100%; min-height: 2.55rem; border: 1px solid #dce6e9; border-radius: .5rem; padding: .45rem .7rem; background: #fff; color: #203743; font-size: .78rem; }
+  .csi-list-search input { padding-left: 2.2rem; }
+  .csi-list-filter-button svg { width: 1rem; height: 1rem; }
+  .csi-list-advanced { margin-top: .7rem; }
+  .csi-list-advanced summary { display: inline-flex; min-height: 2rem; align-items: center; gap: .3rem; color: #287f87; cursor: pointer; font-size: .75rem; font-weight: 700; }
+  .csi-list-advanced__grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .75rem; margin-top: .75rem; border-top: 1px solid #e6edef; padding-top: .9rem; }
+  .csi-list-filter-error { margin-top: .75rem; border-radius: .5rem; padding: .7rem; background: #fff0ee; color: #9d2925; font-size: .8rem; }
+  .csi-list-clear { display: inline-block; margin-top: .4rem; color: #287f87; font-size: .74rem; font-weight: 700; }
+  .csi-list-card { border: 1px solid #dfe7e9; border-radius: 1rem; padding: 1.15rem 1.2rem; background: #fff; box-shadow: 0 2px 9px rgba(25,53,65,.04); }
+  .csi-list-tabs { display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: 1.1rem; }
+  .csi-list-tabs a { display: inline-flex; min-height: 2.4rem; align-items: center; justify-content: center; gap: .25rem; border: 1px solid #dfe8ea; border-radius: .45rem; padding: .45rem .85rem; color: #506674; font-size: .78rem; font-weight: 700; text-decoration: none; }
+  .csi-list-tabs a[aria-current="page"] { border-color: #168a91; background: #168a91; color: #fff; }
+  .csi-list-tabs a:not([aria-current="page"]):hover { background: #edf7f6; }
+  .csi-list-table-wrap { overflow-x: auto; }
+  .csi-list-table { width: 100%; border-collapse: collapse; text-align: left; font-size: .77rem; }
+  .csi-list-table thead { background: #f3f7f8; color: #6d8490; text-transform: uppercase; }
+  .csi-list-table th { padding: .7rem .65rem; font-size: .68rem; font-weight: 800; white-space: nowrap; }
+  .csi-list-table th:first-child { border-radius: .4rem 0 0 .4rem; }
+  .csi-list-table th:last-child { border-radius: 0 .4rem .4rem 0; }
+  .csi-list-table td { border-bottom: 1px solid #e9eff0; padding: .75rem .65rem; color: #425c69; vertical-align: middle; }
+  .csi-list-table tbody tr:last-child td { border-bottom: 0; }
+  .csi-list-table tbody tr:hover { background: #f8fbfb; }
+  .csi-list-code { color: #287f87; font-weight: 800; text-decoration: none; white-space: nowrap; }
+  .csi-list-code:hover { text-decoration: underline; }
+  .csi-list-subject { min-width: 10rem; color: #203743 !important; font-weight: 700; }
+  .csi-list-badge { display: inline-flex; align-items: center; border-radius: .35rem; padding: .32rem .55rem; background: #edf2f4; color: #617682; font-size: .7rem; font-weight: 700; white-space: nowrap; }
+  .csi-list-badge--urgent { background: #fcebe9; color: #a33c35; }
+  .csi-list-badge--high, .csi-list-badge--pending { background: #fff2d9; color: #8d5c16; }
+  .csi-list-badge--in_progress { background: #e0edff; color: #2463a7; }
+  .csi-list-badge--resolved, .csi-list-badge--closed, .csi-list-badge--low { background: #dff5e7; color: #2e8053; }
+  .csi-list-actions { display: flex; align-items: center; gap: .35rem; }
+  .csi-list-icon, .csi-list-more summary { display: grid; width: 2rem; height: 2rem; place-items: center; border: 1px solid #e0e9ec; border-radius: .45rem; color: #54717d; cursor: pointer; text-decoration: none; list-style: none; }
+  .csi-list-icon:hover, .csi-list-more summary:hover { background: #eaf3fa; }
+  .csi-list-icon svg { width: 1rem; height: 1rem; }
+  .csi-list-more { position: relative; }
+  .csi-list-more summary::-webkit-details-marker { display: none; }
+  .csi-list-more > div { position: static; min-width: 10rem; margin-top: .25rem; border: 1px solid #dce7e9; border-radius: .5rem; padding: .35rem; background: #fff; box-shadow: 0 8px 24px rgba(25,53,65,.14); }
+  .csi-list-more > div a { display: block; border-radius: .35rem; padding: .55rem .65rem; color: #203743; font-size: .75rem; text-decoration: none; white-space: nowrap; }
+  .csi-list-more > div a:hover { background: #edf7f6; }
+  .csi-list-pagination { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px solid #e9eff0; padding: 1rem .5rem 0; color: #607583; font-size: .76rem; }
+  .csi-list-pagination > div { display: flex; align-items: center; gap: .4rem; }
+  .csi-list-pagination a, .csi-list-pagination strong { display: grid; min-width: 2rem; min-height: 2rem; place-items: center; border: 1px solid #dce7e9; border-radius: .4rem; color: #287f87; text-decoration: none; }
+  .csi-list-pagination strong { border-color: #168a91; background: #168a91; color: #fff; }
+  .csi-list-empty { padding: 2.5rem 1rem; text-align: center; }
+  .csi-list-empty h2 { font-size: 1.1rem; font-weight: 700; }
+  .csi-list-empty p { margin-top: .3rem; color: #71858f; font-size: .8rem; }
+  @media (max-width: 1100px) { .csi-list-filters__primary { grid-template-columns: repeat(3,minmax(0,1fr)); } .csi-list-search { grid-column: 1/-1; } .csi-list-table { min-width: 52rem; } }
+  @media (max-width: 900px) { .csi-list-shell .manager-sidebar { min-height: 0; } .csi-list-content { padding: 1.5rem 1rem 2rem; } }
+  @media (max-width: 620px) { .csi-list-heading { align-items: flex-start; } .csi-list-heading h1 { font-size: 1.5rem; } .csi-list-filters__primary, .csi-list-advanced__grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .csi-list-search { grid-column: 1/-1; } .csi-list-filter-button { grid-column: 1/-1; } .csi-list-pagination { align-items: flex-start; flex-direction: column; } .csi-list-card { padding: .9rem; } }
+  @media (max-width: 430px) { .csi-list-filters__primary, .csi-list-advanced__grid { grid-template-columns: 1fr; } .csi-list-heading { flex-wrap: wrap; } }
   .manager-panel .manager-secondary-grid .manager-activity__line h3, .manager-panel .manager-secondary-grid .manager-workload__person-link { font-size: var(--manager-body-text); font-weight: 700; }
   .manager-panel .manager-secondary-grid .manager-activity__content > p { font-size: var(--manager-body-text); line-height: 1.4; }
   .manager-panel .manager-secondary-grid .manager-workload__mobile-legend, .manager-panel .manager-attention-head { font-size: var(--manager-label-text); }

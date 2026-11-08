@@ -645,6 +645,11 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
             $listing = ['filters' => [], 'items' => [], 'total' => 0, 'page' => 1, 'pages' => 1];
         }
         $filterOptions = $container->get(InsightsRepository::class)->filterOptions();
+        $listCountFilters = $listing['filters'];
+        $listCountFilters['status'] = null;
+        $listInsights = $container->get(InsightsRepository::class);
+        $listStatusCounts = $filterErrors === [] ? $listInsights->countByStatus($listCountFilters) : [];
+        $listAllCount = $filterErrors === [] ? $listInsights->countFiltered($listCountFilters) : 0;
         require dirname(__DIR__) . '/src/Presentation/Views/csi-request-list.php';
         exit;
     }
