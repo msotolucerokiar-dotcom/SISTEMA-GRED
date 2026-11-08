@@ -99,7 +99,14 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $list] = $this->request('GET', '/csi/requests', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $list);
-            self::assertStringContainsString('Revisar solicitudes', $list);
+            self::assertStringContainsString('Ver urgentes', $list);
+            self::assertStringContainsString('Detalle de solicitud', $list);
+            self::assertStringContainsString('id="detalle-solicitud"', $list);
+            self::assertStringContainsString('selected=' . $code, $list);
+            [$status, $selectedList] = $this->request('GET', '/csi/requests?selected=' . rawurlencode($code), '', $managerCookie);
+            self::assertSame(200, $status);
+            self::assertStringContainsString('class="csi-list-preview__code">' . $code, $selectedList);
+            self::assertStringContainsString('csi-list-row--selected', $selectedList);
             self::assertStringNotContainsString('>Registrar solicitud</a>', $list);
             self::assertStringContainsString('#asignar-responsable', $list);
             self::assertStringContainsString('#clasificar-solicitud', $list);
