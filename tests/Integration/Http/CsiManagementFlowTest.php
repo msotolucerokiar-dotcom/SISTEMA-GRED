@@ -99,7 +99,11 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $list] = $this->request('GET', '/csi/requests', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $list);
-            self::assertStringContainsString('Registrar solicitud', $list);
+            self::assertStringContainsString('Revisar solicitudes', $list);
+            self::assertStringNotContainsString('>Registrar solicitud</a>', $list);
+            self::assertStringContainsString('#asignar-responsable', $list);
+            self::assertStringContainsString('#clasificar-solicitud', $list);
+            self::assertStringContainsString('#priorizar-solicitud', $list);
             self::assertStringContainsString('Exportar', $list);
             self::assertStringContainsString('Filas por página:', $list);
             self::assertStringContainsString('Última actualización', $list);
@@ -118,6 +122,10 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(422, $this->request('GET', '/csi/requests?sort=invalid', '', $managerCookie)[0]);
             [$status, $detail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
             self::assertSame(200, $status);
+            self::assertStringContainsString('id="clasificar-solicitud"', $detail);
+            self::assertStringContainsString('id="priorizar-solicitud"', $detail);
+            self::assertStringContainsString('/classify-category" method="post"', $detail);
+            self::assertStringContainsString('/classify-priority" method="post"', $detail);
             preg_match('/name="_csrf" value="([a-f0-9]+)"/', $detail, $match);
             $csrf = $match[1] ?? '';
             self::assertNotSame('', $csrf);

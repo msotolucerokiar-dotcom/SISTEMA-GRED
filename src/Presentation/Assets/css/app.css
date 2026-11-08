@@ -579,6 +579,11 @@
   .csi-list-subject-cell small { max-width: 17rem; overflow: hidden; color: #7890a0; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
   .csi-list-area { display: inline-block; border: 1px solid #dde8ed; border-radius: .35rem; padding: .25rem .4rem; background: #f9fbfc; color: #39586d; white-space: nowrap; }
   .csi-list-assignee__avatar { display: grid; width: 1.7rem; height: 1.7rem; flex: none; place-items: center; border-radius: 999px; background: #e2f2f1; color: #087d82; font-size: .62rem; font-weight: 800; }
+  .csi-list-page .csi-list-card { scroll-margin-top: 1rem; }
+  .csi-list-page .csi-list-actions { flex-wrap: wrap; }
+  .csi-list-row-action { display: inline-flex; min-height: 2rem; align-items: center; justify-content: center; border: 1px solid #bbd9dd; border-radius: .4rem; padding: .25rem .5rem; background: #f3faf9; color: #086b73; font-size: .7rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .csi-list-row-action:hover { border-color: #087d82; background: #e3f3f2; }
+  .csi-list-row-action:focus-visible { outline: 3px solid #d9af32; outline-offset: 2px; }
   .csi-list-stamp { white-space: nowrap; color: #39566a; }
   .csi-list-stamp small { display: block; margin-top: .1rem; color: #6d879a; font-size: .68rem; }
   .csi-list-pagination__controls, .csi-list-pagination__controls form, .csi-list-pagination__pages { display: flex; align-items: center; gap: .4rem; }
