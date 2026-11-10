@@ -230,6 +230,9 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('class="manager-sidebar"', $report);
             self::assertStringContainsString('href="/csi/reports" aria-current="page"', $report);
             self::assertStringContainsString('Evolución de solicitudes', $report);
+            self::assertStringContainsString('Concentración de incidencias', $report);
+            self::assertStringContainsString('Dependencias con mayor demanda', $report);
+            self::assertStringContainsString('Seguimiento recomendado', $report);
             self::assertStringContainsString($code, $this->request('GET', '/csi/reports?tab=attention&search=' . rawurlencode($code), '', $managerCookie)[1]);
             self::assertStringContainsString('Solicitudes por oficina', $this->request('GET', '/csi/reports?tab=office&search=' . rawurlencode($code), '', $managerCookie)[1]);
             [$status, $csv, $csvHeaders] = $this->request('GET', '/csi/reports.csv?search=' . rawurlencode($code), '', $managerCookie);
