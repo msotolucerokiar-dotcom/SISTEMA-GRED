@@ -27,11 +27,16 @@ for ($i = 0; $i < $binCount; $i++) {
 }
 $areas = $categories = $people = $recent = [];
 $resolved = $inProgress = $pending = 0;
+$resolutionSeconds = $resolutionCount = 0;
 if ($filterErrors === []) {
     foreach ($reports->rows($filters) as $row) {
         $status = $row['status_code'];
         $isResolved = in_array($status, ['resolved', 'closed'], true);
         if ($isResolved) { $resolved++; }
+        if ($isResolved && is_string($row['resolved_at'] ?? null)) {
+            $resolutionSeconds += max(0, (new DateTimeImmutable($row['resolved_at']))->getTimestamp() - (new DateTimeImmutable($row['created_at']))->getTimestamp());
+            $resolutionCount++;
+        }
         if ($status === 'in_progress') { $inProgress++; }
         if ($status === 'pending') { $pending++; }
         $areaName = (string) $row['area_name'];
@@ -51,6 +56,25 @@ if ($filterErrors === []) {
     }
 }
 arsort($areas); arsort($categories); arsort($people);
+$averageResolution = $resolutionCount > 0 ? $resolutionSeconds / $resolutionCount : null;
+$previousTotal = $previousResolved = $previousResolutionSeconds = $previousResolutionCount = 0;
+if ($filterErrors === []) {
+    $previousInput = $_GET;
+    $previousInput['from'] = $start->modify('-' . $intervalDays . ' days')->format('Y-m-d');
+    $previousInput['to'] = $start->modify('-1 day')->format('Y-m-d');
+    $previousSummary = $reports->summary($previousInput);
+    $previousTotal = $previousSummary['total'];
+    foreach ($reports->rows($previousSummary['filters']) as $row) {
+        if (!in_array($row['status_code'], ['resolved', 'closed'], true)) { continue; }
+        $previousResolved++;
+        if (is_string($row['resolved_at'] ?? null)) {
+            $previousResolutionSeconds += max(0, (new DateTimeImmutable($row['resolved_at']))->getTimestamp() - (new DateTimeImmutable($row['created_at']))->getTimestamp());
+            $previousResolutionCount++;
+        }
+    }
+}
+$previousAverageResolution = $previousResolutionCount > 0 ? $previousResolutionSeconds / $previousResolutionCount : null;
+$percentChange = static fn (float $current, float $previous): ?string => $previous > 0 ? ($current >= $previous ? '+' : '−') . number_format(abs(($current - $previous) * 100 / $previous), 1, ',', '') . ' %' : null;
 $maxBin = max(1, ...array_map(static fn (array $bin): int => max($bin['received'], $bin['resolved']), $bins));
 $maxCategory = max(1, ...array_values($categories));
 $maxArea = max(1, ...array_values($areas));
@@ -62,7 +86,7 @@ $statusColors = ['pending' => '#e8b451', 'in_progress' => '#3a86bb', 'resolved' 
 <header class="report-heading"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 20h18M5 20V11h3v9m3 0V5h3v15m3 0v-7h3v7"/></svg></span><div><h1>Reportes</h1><p>Analiza los resultados de las atenciones y genera informes de soporte tecnológico.</p></div></header>
 <nav class="report-tabs" aria-label="Secciones del reporte"><?php foreach (['summary' => 'Resumen', 'attention' => 'Atenciones', 'office' => 'Por oficina', 'category' => 'Por tipo de problema', 'personnel' => 'Por personal'] as $key => $label): ?><a href="<?= $e($tabUrl($key)) ?>" <?= $tab === $key ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><?php if ($key === 'summary'): ?><path d="M3 20h18M5 20V11h3v9m3 0V5h3v15m3 0v-7h3v7"/><?php elseif ($key === 'attention'): ?><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h6"/><?php elseif ($key === 'office'): ?><path d="M4 20h16M6 20V4h12v16M9 8h2m2 0h2M9 12h2m2 0h2M9 16h2m2 0h2"/><?php elseif ($key === 'category'): ?><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/><?php else: ?><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c0-4 2-6 6-6s6 2 6 6M15 15c4 0 6 2 6 5"/><?php endif; ?></svg><?= $e($label) ?></a><?php endforeach; ?></nav>
 <?php require __DIR__ . '/partials/csi-report-filters.php'; ?>
-<?php if ($filterErrors === []): ?><section class="report-kpis" aria-label="Indicadores del período"><article><span>▤</span><div><strong><?= (int) $summary['total'] ?></strong><b>Solicitudes recibidas</b><small>Registradas durante el período</small></div></article><article><span>✓</span><div><strong><?= $resolved ?></strong><b>Solucionadas o cerradas</b><small>Registradas durante el período</small></div></article><article><span>▣</span><div><strong><?= $pending ?></strong><b>Pendientes al corte</b><small>Registradas durante el período</small></div></article><article><span>◷</span><div><strong><?= $inProgress ?></strong><b>En atención</b><small>En curso al momento de la consulta</small></div></article></section>
+<?php if ($filterErrors === []): ?><?php require __DIR__ . '/partials/csi-report-kpis.php'; ?>
 <?php if ($tab === 'summary'): ?><div class="report-grid report-grid--three"><section class="report-card"><h2>Evolución de solicitudes</h2><p>Recibidas y actualmente solucionadas según fecha de registro.</p><div class="report-legend"><span>● Recibidas</span><span>● Solucionadas</span></div><div class="report-chart" role="img" aria-label="Solicitudes por intervalo"><?php foreach ($bins as $bin): ?><div><span class="report-chart__bars"><i style="height:<?= 100 * $bin['received'] / $maxBin ?>%" title="<?= $bin['received'] ?> recibidas"></i><i style="height:<?= 100 * $bin['resolved'] / $maxBin ?>%" title="<?= $bin['resolved'] ?> solucionadas"></i></span><small><?= $e($bin['label']) ?></small></div><?php endforeach; ?></div></section><section class="report-card"><h2>Situación de las solicitudes al corte</h2><p>Estado actual de las solicitudes registradas en el período.</p><div class="report-status-bar" role="img" aria-label="Distribución por estado"><?php foreach ($summary['statuses'] as $status): ?><span style="width:<?= $summary['total'] > 0 ? 100 * $status['total'] / $summary['total'] : 0 ?>%;background:<?= $statusColors[$status['code']] ?? '#9aaeb9' ?>"></span><?php endforeach; ?></div><ul class="report-status-list"><?php foreach ($summary['statuses'] as $status): ?><li><i style="background:<?= $statusColors[$status['code']] ?? '#9aaeb9' ?>"></i><span><?= $e($status['name']) ?></span><b><?= (int) $status['total'] ?></b><small><?= $summary['total'] > 0 ? number_format(100 * $status['total'] / $summary['total'], 1, ',', '') : '0,0' ?> %</small></li><?php endforeach; ?></ul></section><section class="report-card"><h2>Solicitudes por tipo de problema</h2><p>Categorías con más incidencias.</p><ul class="report-rank"><?php foreach (array_slice($categories, 0, 5, true) as $name => $count): ?><li><div><span><?= $e($name) ?></span><b><?= $count ?> · <?= $summary['total'] > 0 ? number_format(100 * $count / $summary['total'], 1, ',', '') : '0,0' ?> %</b></div><i><span style="width:<?= 100 * $count / $maxCategory ?>%"></span></i></li><?php endforeach; ?></ul></section></div><div class="report-grid report-grid--two"><section class="report-card"><h2>Oficinas con mayor cantidad de solicitudes</h2><p>Dependencias con más incidencias en el período.</p><table class="report-table"><thead><tr><th>N.º</th><th>Oficina</th><th>Solicitudes</th><th>Participación</th></tr></thead><tbody><?php $rank = 0; foreach (array_slice($areas, 0, 5, true) as $name => $count): $rank++; ?><tr><td><?= $rank ?></td><th scope="row"><?= $e($name) ?></th><td><?= $count ?></td><td><span class="report-meter"><i style="width:<?= 100 * $count / $maxArea ?>%"></i></span><?= $summary['total'] > 0 ? number_format(100 * $count / $summary['total'], 1, ',', '') : '0,0' ?> %</td></tr><?php endforeach; ?></tbody></table><a href="<?= $e($tabUrl('office')) ?>">Ver análisis por oficina →</a></section><section class="report-card"><h2>Análisis del período</h2><p>Observaciones calculadas de los registros filtrados.</p><div class="report-observations"><?php if ($summary['total'] === 0): ?><p>No hay solicitudes en este período.</p><?php else: ?><p><strong>Tipo más frecuente</strong><?= $e((string) array_key_first($categories)) ?> reúne <?= current($categories) ?> solicitudes.</p><p><strong>Oficina con mayor demanda</strong><?= $e((string) array_key_first($areas)) ?> registra <?= current($areas) ?> solicitudes.</p><p><strong>Intervalo con más registros</strong><?php $peak = array_search(max(array_column($bins, 'received')), array_column($bins, 'received'), true); ?><?= $e($bins[$peak]['label']) ?> registra <?= $bins[$peak]['received'] ?> solicitudes.</p><?php endif; ?></div></section></div>
 <?php elseif ($tab === 'attention'): ?><section class="report-card"><h2>Atenciones registradas</h2><p>Últimas diez solicitudes del filtro. Abre el expediente para consultar su historial.</p><div class="report-table-wrap"><table class="report-table"><thead><tr><th>Código</th><th>Problema</th><th>Oficina</th><th>Estado</th><th>Responsable</th></tr></thead><tbody><?php foreach ($recent as $row): ?><tr><th scope="row"><a href="/csi/requests/<?= rawurlencode($row['public_code']) ?>"><?= $e($row['public_code']) ?></a></th><td><?= $e($row['title']) ?></td><td><?= $e($row['area_name']) ?></td><td><?= $e($row['status_name']) ?></td><td><?= $e($row['technician_name'] ?? 'Sin asignar') ?></td></tr><?php endforeach; ?></tbody></table></div></section>
 <?php else: ?><?php $breakdown = $tab === 'office' ? $areas : ($tab === 'category' ? $categories : $people); $label = $tab === 'office' ? 'Oficina' : ($tab === 'category' ? 'Tipo de problema' : 'Personal'); $maximum = max(1, ...array_values($breakdown)); ?><section class="report-card"><h2>Solicitudes por <?= mb_strtolower($label) ?></h2><p>Distribución de las <?= (int) $summary['total'] ?> solicitudes filtradas.</p><div class="report-table-wrap"><table class="report-table"><thead><tr><th><?= $e($label) ?></th><th>Solicitudes</th><th>Participación</th></tr></thead><tbody><?php foreach ($breakdown as $name => $count): ?><tr><th scope="row"><?= $e($name) ?></th><td><?= $count ?></td><td><span class="report-meter"><i style="width:<?= 100 * $count / $maximum ?>%"></i></span><?= $summary['total'] > 0 ? number_format(100 * $count / $summary['total'], 1, ',', '') : '0,0' ?> %</td></tr><?php endforeach; ?></tbody></table></div></section><?php endif; ?><?php endif; ?>

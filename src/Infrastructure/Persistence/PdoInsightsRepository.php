@@ -236,7 +236,9 @@ final class PdoInsightsRepository implements InsightsRepository
     public function exportFiltered(array $filters): iterable
     {
         [$where, $params] = $this->where($filters);
-        $query = $this->pdo->prepare('SELECT ' . self::LIST_COLUMNS . self::JOINS . $where . ' ORDER BY r.created_at DESC, r.id DESC');
+        $query = $this->pdo->prepare("SELECT " . self::LIST_COLUMNS . ",
+            (SELECT MIN(h.created_at) FROM request_history h WHERE h.request_id = r.id AND h.action = 'resolved') AS resolved_at"
+            . self::JOINS . $where . ' ORDER BY r.created_at DESC, r.id DESC');
         $query->execute($params);
         while (($row = $query->fetch()) !== false) { yield $row; }
     }

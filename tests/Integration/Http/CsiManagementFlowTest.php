@@ -246,6 +246,10 @@ final class CsiManagementFlowTest extends TestCase
             self::assertTrue($progress->updateProgress($code, $users[1], 'in_progress', 'Atención iniciada.', null));
             self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?alert=stale', '', $managerCookie)[1]);
             self::assertTrue($progress->updateProgress($code, $users[1], 'resolved', 'Atención completada.', 'Servicio restablecido.'));
+            [$reportStatus, $resolvedReport] = $this->request('GET', '/csi/reports?search=' . rawurlencode($code), '', $managerCookie);
+            self::assertSame(200, $reportStatus);
+            self::assertStringContainsString('Tiempo promedio de resolución', $resolvedReport);
+            self::assertStringContainsString('De 1 solicitud con solución registrada', $resolvedReport);
             self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?priority=' . $priority . '&open=1', '', $managerCookie)[1]);
             [$status, $finishedDetail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
             self::assertSame(200, $status);
