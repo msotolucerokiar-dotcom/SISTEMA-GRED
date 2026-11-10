@@ -826,22 +826,30 @@
   @media (max-width: 420px) { .manager-overview__cards { grid-template-columns: 1fr; } }
   .csi-list-page .csi-list-workspace { display: block; }
   .csi-list-page .manager-topbar__inner { gap: 1rem; }
-  .csi-list-page .manager-breadcrumb { margin-right: auto; }
+  .csi-list-page .manager-breadcrumb { display: none; }
+  .csi-list-page .manager-top-search { width: min(31rem,42vw); margin-left: auto; }
   .csi-list-page .manager-header-date { display: none; }
+  .csi-list-page .manager-account__avatar { width: 2.3rem; height: 2.3rem; border-radius: 50%; background: #dcebf4; color: #295470; }
   .csi-list-page .csi-list-workspace__main { min-width: 0; }
   .csi-list-page .csi-list-content { padding: 1.15rem 1.15rem 2rem; }
   .csi-list-page .csi-list-heading { margin-bottom: .85rem; }
   .csi-list-page .csi-list-heading__title { display: flex; align-items: center; gap: .7rem; }
   .csi-list-heading__icon { display: grid; width: 2.35rem; height: 2.35rem; flex: none; place-items: center; border-radius: .5rem; background: #e9f1f8; color: #1d5d8b; }
   .csi-list-heading__icon svg { width: 1.25rem; height: 1.25rem; }
-  .csi-list-page .csi-list-heading h1 { font-size: 1.5rem; }
+  .csi-list-page .csi-list-heading h1 { font-size: 1.65rem; }
   .csi-list-page .csi-list-heading p { margin-top: .1rem; color: #70859b; font-size: .72rem; }
+  .csi-list-page .csi-list-heading__actions { display: flex; align-items: center; gap: .55rem; }
+  .csi-list-page .csi-list-create { min-height: 2.6rem; border-radius: .45rem; padding: .55rem 1rem; background: #008587; color: #fff; box-shadow: 0 3px 7px rgba(0,112,118,.14); font-size: .76rem; }
+  .csi-list-page .csi-list-create:hover { background: #006e73; }
   .csi-list-page .csi-list-summary { grid-template-columns: repeat(4,minmax(0,1fr)); gap: .7rem; margin: .7rem 0 .85rem; }
-  .csi-list-page .csi-list-summary__card { min-height: 6rem; padding: .85rem; background: #fff; }
+  .csi-list-page .csi-list-summary__card { position: relative; min-height: 7rem; gap: .8rem; padding: 1rem; background: #fff; }
+  .csi-list-page .csi-list-summary__card::after { position: absolute; top: 1.15rem; right: .8rem; color: #8aa0b3; font-size: 1rem; content: '›'; }
+  .csi-list-page .csi-list-summary__icon { width: 2.65rem; height: 2.65rem; }
+  .csi-list-page .csi-list-summary__icon svg { width: 1.5rem; height: 1.5rem; }
   .csi-list-page .csi-list-summary__content { gap: .12rem; }
-  .csi-list-page .csi-list-summary__card strong { order: 0; margin: 0; font-size: 1.6rem; }
-  .csi-list-page .csi-list-summary__label { order: 1; font-size: .72rem; }
-  .csi-list-page .csi-list-summary__card small { order: 2; font-size: .62rem; }
+  .csi-list-page .csi-list-summary__card strong { order: 0; margin: 0; font-size: 1.75rem; }
+  .csi-list-page .csi-list-summary__label { order: 1; font-size: .8rem; }
+  .csi-list-page .csi-list-summary__card small { order: 2; font-size: .65rem; }
   .csi-list-page .csi-list-tabs { gap: .45rem; border-bottom: 1px solid #dce6eb; margin: 0 0 .75rem; padding-bottom: .55rem; }
   .csi-list-page .csi-list-tabs a { min-height: 2.3rem; border-color: #dce6eb; border-radius: .4rem; padding: .4rem .7rem; background: #fff; font-size: .72rem; }
   .csi-list-page .csi-list-tabs a[aria-current="page"] { background: #087f82; }

@@ -106,7 +106,8 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringNotContainsString('Detalle de solicitud prioritaria', $list);
             self::assertStringNotContainsString('id="detalle-solicitud"', $list);
             self::assertStringContainsString('href="/csi/requests/' . $code . '"', $list);
-            self::assertStringNotContainsString('>Registrar solicitud</a>', $list);
+            self::assertStringContainsString('> Registrar solicitud</a>', $list);
+            self::assertStringContainsString('id="csi-global-search"', $list);
             self::assertStringContainsString('#asignar-responsable', $list);
             self::assertStringContainsString('#clasificar-solicitud', $list);
             self::assertStringContainsString('#priorizar-solicitud', $list);
