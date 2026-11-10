@@ -94,7 +94,7 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $unassigned] = $this->request('GET', '/csi/requests?assignment=unassigned', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $unassigned);
-            self::assertStringContainsString('value="unassigned" selected', $unassigned);
+            self::assertStringContainsString('Asignación: Sin asignar', $unassigned);
             self::assertSame(422, $this->request('GET', '/csi/requests?assignment=invalid', '', $managerCookie)[0]);
             [$status, $attentionList] = $this->request('GET', '/csi/requests?attention=needed', '', $managerCookie);
             self::assertSame(200, $status);
