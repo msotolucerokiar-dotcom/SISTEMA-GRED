@@ -643,10 +643,11 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
         exit;
     }
     if ($path === '/csi/requests') {
+        if (!isset($_GET['open'], $_GET['status'], $_GET['assignment'], $_GET['validation'], $_GET['attention'], $_GET['technician'])) { $_GET['open'] = '1'; }
         $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
         $filterErrors = [];
-        $perPage = filter_var($_GET['per_page'] ?? 5, FILTER_VALIDATE_INT);
-        if (!in_array($perPage, [5, 10, 20], true)) { $perPage = 5; }
+        $perPage = filter_var($_GET['per_page'] ?? 10, FILTER_VALIDATE_INT);
+        if (!in_array($perPage, [5, 10, 20], true)) { $perPage = 10; }
         try {
             $listing = $container->get(SearchRequests::class)->execute($_GET, $page, $perPage);
         } catch (InvalidRequest $exception) {
@@ -669,12 +670,13 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
         foreach (['search', 'status', 'priority', 'technician', 'assignment', 'attention', 'validation', 'open', 'area', 'category'] as $key) { $listMetricFilters[$key] = $key === 'search' ? '' : ($key === 'open' ? false : null); }
         $listMetrics = $filterErrors === [] ? [
             'total' => $listInsights->countFiltered($listMetricFilters),
+            'active' => $listInsights->countFiltered([...$listMetricFilters, 'open' => true]),
             'urgent' => $listInsights->countFiltered([...$listMetricFilters, 'priority' => (int) (array_column($filterOptions['priorities'], 'id', 'code')['urgent'] ?? 0), 'open' => true]),
             'in_progress' => $listInsights->countFiltered([...$listMetricFilters, 'status' => (int) (array_column($filterOptions['statuses'], 'id', 'code')['in_progress'] ?? 0)]),
             'resolved' => $listInsights->countFiltered([...$listMetricFilters, 'status' => (int) (array_column($filterOptions['statuses'], 'id', 'code')['resolved'] ?? 0)]),
             'unassigned' => $listInsights->countFiltered([...$listMetricFilters, 'assignment' => 'unassigned', 'open' => true]),
             'closed' => $listInsights->countFiltered([...$listMetricFilters, 'status' => (int) (array_column($filterOptions['statuses'], 'id', 'code')['closed'] ?? 0)]),
-        ] : ['total' => 0, 'urgent' => 0, 'in_progress' => 0, 'resolved' => 0, 'unassigned' => 0, 'closed' => 0];
+        ] : ['total' => 0, 'active' => 0, 'urgent' => 0, 'in_progress' => 0, 'resolved' => 0, 'unassigned' => 0, 'closed' => 0];
         $selectedRequest = null;
         foreach ($listing['items'] as $item) {
             if (($item['public_code'] ?? '') === ($_GET['selected'] ?? null)) { $selectedRequest = $item; break; }

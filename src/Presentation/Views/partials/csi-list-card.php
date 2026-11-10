@@ -16,6 +16,7 @@ unset($paginationQuery['page'], $paginationQuery['per_page']);
 $perPageUrl = '/csi/requests' . ($paginationQuery === [] ? '' : '?' . http_build_query($paginationQuery));
 ?>
 <section id="listado-solicitudes" class="csi-list-card" aria-label="Listado de solicitudes">
+<div class="csi-list-card__heading"><div><h2>Listado de solicitudes</h2><p>Consulta los casos y accede a su expediente para realizar la gesti&oacute;n correspondiente.</p></div><span><?= (int) $listing['total'] ?> resultados</span></div>
 <?php if ($listing['items'] === []): ?><div class="csi-list-empty"><h2>No hay solicitudes para mostrar</h2><p>Prueba con otros filtros o espera nuevas solicitudes.</p></div><?php else: ?>
 <div class="csi-list-table-wrap"><table class="csi-list-table csi-list-table--detailed"><caption class="sr-only">Solicitudes filtradas</caption><thead><tr>
 <th scope="col"><a href="<?= $e($sortUrl('code')) ?>">Código <span aria-hidden="true">↕</span></a></th>
