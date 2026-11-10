@@ -677,20 +677,6 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
             'unassigned' => $listInsights->countFiltered([...$listMetricFilters, 'assignment' => 'unassigned', 'open' => true]),
             'closed' => $listInsights->countFiltered([...$listMetricFilters, 'status' => (int) (array_column($filterOptions['statuses'], 'id', 'code')['closed'] ?? 0)]),
         ] : ['total' => 0, 'active' => 0, 'urgent' => 0, 'in_progress' => 0, 'resolved' => 0, 'unassigned' => 0, 'closed' => 0];
-        $selectedRequest = null;
-        foreach ($listing['items'] as $item) {
-            if (($item['public_code'] ?? '') === ($_GET['selected'] ?? null)) { $selectedRequest = $item; break; }
-        }
-        if ($selectedRequest === null) {
-            foreach ($listing['items'] as $item) {
-                if (in_array(mb_strtolower((string) ($item['priority_name'] ?? '')), ['urgente', 'alta'], true)
-                    && !in_array($item['status_code'], ['resolved', 'closed', 'cancelled'], true)) { $selectedRequest = $item; break; }
-            }
-        }
-        $selectedRequest ??= $listing['items'][0] ?? null;
-        $selectedHistory = $selectedRequest === null ? [] : array_slice(
-            $container->get(GetRequestHistory::class)->forManager($selectedRequest['public_code']), -3
-        );
         require dirname(__DIR__) . '/src/Presentation/Views/csi-request-list.php';
         exit;
     }

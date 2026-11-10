@@ -33,11 +33,11 @@ $perPageUrl = '/csi/requests' . ($paginationQuery === [] ? '' : '?' . http_build
     $priority = mb_strtolower((string) ($item['priority_name'] ?? ''));
     $priorityClass = str_contains($priority, 'urgent') ? 'urgent' : (str_contains($priority, 'alta') ? 'high' : (str_contains($priority, 'baja') ? 'low' : 'normal'));
     $detailUrl = '/csi/requests/' . rawurlencode($item['public_code']);
-    $selectUrl = '/csi/requests?' . http_build_query([...$query, 'selected' => $item['public_code']]) . '#detalle-solicitud';
+    $selectUrl = $detailUrl;
     [$createdIso, $createdDate, $createdTime] = $dateParts($item['created_at']);
     [$updatedIso, $updatedDate, $updatedTime] = $dateParts($item['updated_at']);
 ?>
-<tr class="csi-list-row csi-list-row--<?= $priorityClass ?> <?= $selectedRequest !== null && $selectedRequest['public_code'] === $item['public_code'] ? 'csi-list-row--selected' : '' ?>">
+<tr class="csi-list-row csi-list-row--<?= $priorityClass ?>">
 <td data-label="Código"><div class="csi-list-code-cell"><span class="csi-list-request__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8"/></svg></span><a class="csi-list-code" href="<?= $e($selectUrl) ?>"><?= $e($item['public_code']) ?></a></div></td>
 <td data-label="Solicitud"><div class="csi-list-subject-cell"><strong><?= $e($item['title']) ?></strong><small><?= $e(mb_strimwidth(preg_replace('/\s+/u', ' ', $item['description']), 0, 76, '…')) ?></small></div></td>
 <td data-label="Área solicitante"><span class="csi-list-area"><?= $e($item['area_name']) ?></span></td>

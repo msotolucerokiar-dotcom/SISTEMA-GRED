@@ -828,7 +828,6 @@
   .csi-list-page .manager-topbar__inner { gap: 1rem; }
   .csi-list-page .manager-breadcrumb { margin-right: auto; }
   .csi-list-page .manager-header-date { display: none; }
-  .csi-list-page .csi-list-preview-container { margin-top: .8rem; }
   .csi-list-page .csi-list-workspace__main { min-width: 0; }
   .csi-list-page .csi-list-content { padding: 1.15rem 1.15rem 2rem; }
   .csi-list-page .csi-list-heading { margin-bottom: .85rem; }

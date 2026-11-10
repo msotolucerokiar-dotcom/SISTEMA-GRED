@@ -54,7 +54,7 @@ $csrfToken = $session->csrfToken();
   <?php require __DIR__ . '/partials/csi-list-filters.php'; ?>
   <div class="csi-list-alerts"><strong>&#9888; Gestiones pendientes</strong><a href="/csi/requests?priority=<?= (int) (array_column($filterOptions['priorities'], 'id', 'code')['urgent'] ?? 0) ?>&amp;assignment=unassigned&amp;open=1">Ver urgentes: <?= (int) $listInsights->countFiltered([...$listMetricFilters, 'priority' => (int) (array_column($filterOptions['priorities'], 'id', 'code')['urgent'] ?? 0), 'assignment' => 'unassigned', 'open' => true]) ?> sin asignar</a><a href="/csi/requests?attention=needed"><?= (int) $listAttentionCount ?> por asignar o clasificar</a></div>
   <?php require __DIR__ . '/partials/csi-list-card.php'; ?>
-  </div><div class="csi-list-preview-container"><?php require __DIR__ . '/partials/csi-list-preview.php'; ?></div></div>
+  </div></div>
 </main></div></div>
 <script src="/assets/manager-header-menu.js?v=<?= (int) filemtime(dirname(__DIR__, 3) . '/public/assets/manager-header-menu.js') ?>" defer></script>
 </body></html>
