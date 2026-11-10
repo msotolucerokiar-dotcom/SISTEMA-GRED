@@ -224,6 +224,8 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $report] = $this->request('GET', '/csi/reports?search=' . rawurlencode($code), '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('<h1>Reportes</h1>', $report);
+            self::assertStringContainsString('class="manager-sidebar"', $report);
+            self::assertStringContainsString('href="/csi/reports" aria-current="page"', $report);
             self::assertStringContainsString('Evolución de solicitudes', $report);
             self::assertStringContainsString($code, $this->request('GET', '/csi/reports?tab=attention&search=' . rawurlencode($code), '', $managerCookie)[1]);
             self::assertStringContainsString('Solicitudes por oficina', $this->request('GET', '/csi/reports?tab=office&search=' . rawurlencode($code), '', $managerCookie)[1]);
