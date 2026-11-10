@@ -1107,4 +1107,24 @@
   .report-observations strong { display: block; color: #2d4c60; }
   @media (max-width: 1480px) { .report-filters__main { grid-template-columns: repeat(3,minmax(0,1fr)); } .report-grid--three { grid-template-columns: 1fr 1fr; } .report-grid--three .report-card:first-child { grid-column: 1/-1; } }
   @media (max-width: 700px) { .report-content { padding: 1rem; } .report-top { flex-wrap: wrap; } .report-filters__main, .report-kpis, .report-grid--three, .report-grid--two { grid-template-columns: 1fr; } .report-grid--three .report-card:first-child { grid-column: auto; } }
+  .report-heading > span svg { width: 1.3rem; height: 1.3rem; }
+  .report-tabs a { display: inline-flex; align-items: center; gap: .55rem; }
+  .report-tabs a svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
+  .report-filters--reference .report-filters__main { grid-template-columns: minmax(15rem,1.45fr) repeat(4,minmax(8rem,1fr)) minmax(6.5rem,.65fr) minmax(12rem,1.55fr); gap: .65rem; }
+  .report-filters--reference .report-field-label { display: block; margin-bottom: .42rem; color: #607d95; font-size: .72rem; font-weight: 700; }
+  .report-filters--reference .report-period { position: relative; }
+  .report-filters--reference .report-period summary { display: flex; width: 100%; min-height: 2.7rem; align-items: center; gap: .6rem; border: 1px solid #cddde7; border-radius: .43rem; padding: .48rem .7rem; background: #fff; color: #2d4a60; cursor: pointer; font-size: .76rem; list-style: none; white-space: nowrap; }
+  .report-filters--reference .report-period summary span:last-child { margin-left: auto; color: #7797a5; }
+  .report-filters--reference svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
+  .report-filters--reference .report-period__popover { position: absolute; z-index: 21; top: calc(100% + .35rem); left: 0; width: min(18rem,calc(100vw - 3rem)); border: 1px solid #cddde7; border-radius: .5rem; padding: .85rem; background: #fff; box-shadow: 0 12px 28px rgba(25,55,72,.15); }
+  .report-filters--reference .report-period__popover label { margin-top: .4rem; }
+  .report-filters--reference .report-period__popover button, .report-filters--reference .report-more > div button { width: 100%; min-height: 2.3rem; margin-top: .65rem; border: 0; border-radius: .4rem; background: #087f80; color: #fff; font-size: .75rem; font-weight: 700; cursor: pointer; }
+  .report-filters--reference .report-more summary { display: flex; justify-content: center; gap: .4rem; font-weight: 700; }
+  .report-filters--reference .report-export summary { display: flex; justify-content: center; gap: .5rem; }
+  .report-filters--reference .report-export summary span:last-child { margin-left: auto; }
+  .report-filters--reference .report-filters__bottom strong { margin-right: .3rem; color: #70899a; font-size: .72rem; }
+  .report-filters--reference .report-filters__bottom button { border: 1px solid #cddde7; border-radius: .33rem; padding: .34rem .55rem; background: #fff; color: #5d7889; font-size: .72rem; cursor: pointer; }
+  .report-filters--reference .report-filters__bottom button:hover { background: #edf7f7; color: #087f80; }
+  @media (max-width: 1500px) { .report-filters--reference .report-filters__main { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+  @media (max-width: 700px) { .report-filters--reference .report-filters__main { grid-template-columns: 1fr; } }
 }

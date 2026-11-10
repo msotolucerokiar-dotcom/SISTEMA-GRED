@@ -224,6 +224,9 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $report] = $this->request('GET', '/csi/reports?search=' . rawurlencode($code), '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('<h1>Reportes</h1>', $report);
+            self::assertStringContainsString('id="report-period"', $report);
+            self::assertStringContainsString('Rango personalizado', $report);
+            self::assertStringContainsString('Exportar reporte', $report);
             self::assertStringContainsString('class="manager-sidebar"', $report);
             self::assertStringContainsString('href="/csi/reports" aria-current="page"', $report);
             self::assertStringContainsString('Evolución de solicitudes', $report);
