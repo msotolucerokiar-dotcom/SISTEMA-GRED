@@ -31,6 +31,9 @@ interface InsightsRepository
     public function technicianWorkload(): array;
 
     /** @return list<array<string,mixed>> */
+    public function activeDelegatedTasks(int $limit): array;
+
+    /** @return list<array<string,mixed>> */
     public function recentActivityForManager(int $limit, int $offset = 0): array;
 
     public function countActivityForManager(): int;

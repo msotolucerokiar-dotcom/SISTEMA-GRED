@@ -89,6 +89,13 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringNotContainsString('id="manager-period"', $managerDashboard);
             self::assertStringContainsString('Nuevas por revisar', $managerDashboard);
             self::assertStringContainsString('Por validar', $managerDashboard);
+            [$teamStatus, $teamPage] = $this->request('GET', '/dashboard?section=team', '', $managerCookie);
+            self::assertSame(200, $teamStatus);
+            self::assertStringContainsString('Distribución del trabajo por integrante', $teamPage);
+            self::assertStringContainsString('Tareas asignadas', $teamPage);
+            self::assertStringContainsString('Validaciones pendientes', $teamPage);
+            self::assertSame(200, $this->request('GET', '/dashboard?section=team&tab=tasks', '', $managerCookie)[0]);
+            self::assertSame(200, $this->request('GET', '/dashboard?section=team&tab=validation', '', $managerCookie)[0]);
             self::assertStringContainsString('validation=pending', $managerDashboard);
             self::assertSame(200, $this->request('GET', '/dashboard?period=today', '', $managerCookie)[0]);
             [$status, $unassigned] = $this->request('GET', '/csi/requests?assignment=unassigned', '', $managerCookie);

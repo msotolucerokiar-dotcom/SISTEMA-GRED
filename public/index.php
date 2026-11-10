@@ -264,6 +264,12 @@ if ($path === '/dashboard') {
         ]);
         $managerAttention = $insights->attentionNeeded(5);
         $managerWorkload = $insights->technicianWorkload();
+        if (($_GET['section'] ?? null) === 'team') {
+            $teamTab = in_array($_GET['tab'] ?? null, ['workload', 'tasks', 'validation'], true) ? $_GET['tab'] : 'workload';
+            $teamFollowUp = $insights->managerFollowUp(20);
+            $teamTasks = $insights->activeDelegatedTasks(50);
+            $teamStaleCount = $insights->countFiltered([...$managerFilters, 'alert' => 'stale']);
+        }
         $managerActivity = $insights->recentActivityForManager(5);
         $managementOptions = $container->get(ManagementRepository::class);
         $managerCategories = $managementOptions->categories();

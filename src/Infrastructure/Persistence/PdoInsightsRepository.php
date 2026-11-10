@@ -144,6 +144,21 @@ final class PdoInsightsRepository implements InsightsRepository
         ], $summary);
     }
 
+    public function activeDelegatedTasks(int $limit): array
+    {
+        $query = $this->pdo->prepare("SELECT t.id, t.state, t.created_at, t.submitted_at,
+                r.public_code, r.title, intern.full_name AS intern_name,
+                responsible.full_name AS responsible_name
+            FROM request_tasks t JOIN requests r ON r.id = t.request_id
+            JOIN users intern ON intern.id = t.intern_id
+            JOIN users responsible ON responsible.id = t.responsible_id
+            WHERE t.state IN ('assigned', 'submitted')
+            ORDER BY t.created_at DESC, t.id DESC LIMIT :limit");
+        $query->bindValue('limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
     public function recentActivityForManager(int $limit, int $offset = 0): array
     {
         $query = $this->pdo->prepare("SELECT h.id, h.action, h.created_at AS event_at, r.public_code,
