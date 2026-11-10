@@ -643,7 +643,18 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
         exit;
     }
     if ($path === '/csi/requests') {
-        if (!isset($_GET['open'], $_GET['status'], $_GET['assignment'], $_GET['validation'], $_GET['attention'], $_GET['technician'])) { $_GET['open'] = '1'; }
+        $listPeriod = is_string($_GET['period'] ?? null) ? $_GET['period'] : '';
+        if ($listPeriod === 'all') { unset($_GET['from'], $_GET['to']); }
+        if (in_array($listPeriod, ['today', '7days', 'month'], true)) {
+            $periodToday = new DateTimeImmutable('today', new DateTimeZone('America/Lima'));
+            $_GET['from'] = match ($listPeriod) {
+                'today' => $periodToday->format('Y-m-d'),
+                '7days' => $periodToday->modify('-6 days')->format('Y-m-d'),
+                default => $periodToday->format('Y-m-01'),
+            };
+            $_GET['to'] = $periodToday->format('Y-m-d');
+        }
+        if (!isset($_GET['open'], $_GET['status'], $_GET['assignment'], $_GET['validation'], $_GET['attention'], $_GET['technician'], $_GET['alert'])) { $_GET['open'] = '1'; }
         $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
         $filterErrors = [];
         $perPage = filter_var($_GET['per_page'] ?? 10, FILTER_VALIDATE_INT);
@@ -667,7 +678,13 @@ if ($path === '/csi/requests' || preg_match('~^/csi/requests/(SOL-[0-9]{4}-[0-9]
         $listUnassignedCount = $filterErrors === [] ? $listInsights->countFiltered([...$listCountFilters, 'assignment' => 'unassigned', 'open' => true]) : 0;
         $listAttentionCount = $filterErrors === [] ? $listInsights->countFiltered([...$listCountFilters, 'attention' => 'needed']) : 0;
         $listMetricFilters = $listCountFilters;
-        foreach (['search', 'status', 'priority', 'technician', 'assignment', 'attention', 'validation', 'open', 'area', 'category'] as $key) { $listMetricFilters[$key] = $key === 'search' ? '' : ($key === 'open' ? false : null); }
+        foreach (['search', 'status', 'priority', 'technician', 'assignment', 'attention', 'validation', 'alert', 'open', 'area', 'category'] as $key) { $listMetricFilters[$key] = $key === 'search' ? '' : ($key === 'open' ? false : null); }
+        $listAlertCounts = $filterErrors === [] ? [
+            'urgent_unassigned' => $listInsights->countFiltered([...$listMetricFilters, 'priority' => (int) (array_column($filterOptions['priorities'], 'id', 'code')['urgent'] ?? 0), 'assignment' => 'unassigned', 'open' => true]),
+            'stale' => $listInsights->countFiltered([...$listMetricFilters, 'alert' => 'stale']),
+            'missing_priority' => $listInsights->countFiltered([...$listMetricFilters, 'alert' => 'missing_priority']),
+            'missing_category' => $listInsights->countFiltered([...$listMetricFilters, 'alert' => 'missing_category']),
+        ] : ['urgent_unassigned' => 0, 'stale' => 0, 'missing_priority' => 0, 'missing_category' => 0];
         $listMetrics = $filterErrors === [] ? [
             'total' => $listInsights->countFiltered($listMetricFilters),
             'active' => $listInsights->countFiltered([...$listMetricFilters, 'open' => true]),

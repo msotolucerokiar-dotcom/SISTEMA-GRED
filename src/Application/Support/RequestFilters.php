@@ -12,7 +12,7 @@ final class RequestFilters
     public function fromInput(array $input, bool $report = false): array
     {
         $errors = [];
-        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'priority' => null, 'technician' => null, 'assignment' => null, 'attention' => null, 'validation' => null, 'open' => false, 'from' => null, 'to' => null, 'sort' => 'recent'];
+        $filters = ['search' => '', 'status' => null, 'area' => null, 'category' => null, 'priority' => null, 'technician' => null, 'assignment' => null, 'attention' => null, 'validation' => null, 'alert' => null, 'open' => false, 'from' => null, 'to' => null, 'sort' => 'recent'];
         $sort = $input['sort'] ?? 'recent';
         if (!is_string($sort) || !in_array($sort, ['recent', 'oldest', 'code_asc', 'code_desc', 'title_asc', 'title_desc', 'area_asc', 'area_desc', 'priority_asc', 'priority_desc', 'technician_asc', 'technician_desc', 'status_asc', 'status_desc', 'created_asc', 'created_desc', 'updated_asc', 'updated_desc'], true)) { $errors['sort'] = 'Selecciona un orden válido.'; }
         else { $filters['sort'] = $sort; }
@@ -43,6 +43,11 @@ final class RequestFilters
         if ($validation !== null && $validation !== '') {
             if ($validation !== 'pending') { $errors['validation'] = 'Selecciona una opción válida.'; }
             else { $filters['validation'] = 'pending'; }
+        }
+        $alert = $input['alert'] ?? null;
+        if ($alert !== null && $alert !== '') {
+            if (!is_string($alert) || !in_array($alert, ['stale', 'missing_priority', 'missing_category'], true)) { $errors['alert'] = 'Selecciona un aviso válido.'; }
+            else { $filters['alert'] = $alert; }
         }
         $open = $input['open'] ?? null;
         if ($open !== null && $open !== '') {

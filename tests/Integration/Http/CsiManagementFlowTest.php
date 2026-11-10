@@ -102,7 +102,10 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $list] = $this->request('GET', '/csi/requests', '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $list);
-            self::assertStringContainsString('Ver urgentes', $list);
+            self::assertStringContainsString('urgentes sin asignar', $list);
+            self::assertStringContainsString('alert=stale', $list);
+            self::assertStringContainsString('alert=missing_priority', $list);
+            self::assertStringContainsString('alert=missing_category', $list);
             self::assertStringNotContainsString('Detalle de solicitud prioritaria', $list);
             self::assertStringNotContainsString('id="detalle-solicitud"', $list);
             self::assertStringContainsString('href="/csi/requests/' . $code . '"', $list);
@@ -127,6 +130,8 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('<option value="10" selected>', $sorted);
             self::assertStringContainsString($code, $sorted);
             self::assertSame(422, $this->request('GET', '/csi/requests?sort=invalid', '', $managerCookie)[0]);
+            self::assertSame(422, $this->request('GET', '/csi/requests?alert=invalid', '', $managerCookie)[0]);
+            self::assertSame(200, $this->request('GET', '/csi/requests?alert=stale', '', $managerCookie)[0]);
             [$status, $detail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('id="clasificar-solicitud"', $detail);
@@ -196,6 +201,10 @@ final class CsiManagementFlowTest extends TestCase
             [$status, $filtered] = $this->request('GET', '/csi/requests?search=' . rawurlencode($code), '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString($code, $filtered);
+            $pdo->prepare("UPDATE requests SET updated_at = NOW() - INTERVAL '3 days' WHERE public_code = :code")->execute(['code' => $code]);
+            $pdo->prepare("UPDATE request_assignments SET assigned_at = NOW() - INTERVAL '3 days' WHERE request_id = (SELECT id FROM requests WHERE public_code = :code) AND ended_at IS NULL")->execute(['code' => $code]);
+            $pdo->prepare("UPDATE request_history SET created_at = NOW() - INTERVAL '3 days' WHERE request_id = (SELECT id FROM requests WHERE public_code = :code)")->execute(['code' => $code]);
+            self::assertStringContainsString($code, $this->request('GET', '/csi/requests?alert=stale', '', $managerCookie)[1]);
             [$status] = $this->request('GET', '/csi/requests?from=2026-02-30', '', $managerCookie);
             self::assertSame(422, $status);
             [$status] = $this->request('GET', '/csi/reports', '', $workerCookie);
@@ -215,6 +224,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('application/pdf', implode(' ', $pdfHeaders));
             $progress = $container->get(PdoAssignedRequestRepository::class);
             self::assertTrue($progress->updateProgress($code, $users[1], 'in_progress', 'Atención iniciada.', null));
+            self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?alert=stale', '', $managerCookie)[1]);
             self::assertTrue($progress->updateProgress($code, $users[1], 'resolved', 'Atención completada.', 'Servicio restablecido.'));
             self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?priority=' . $priority . '&open=1', '', $managerCookie)[1]);
             [$status, $finishedDetail] = $this->request('GET', '/csi/requests/' . $code, '', $managerCookie);
