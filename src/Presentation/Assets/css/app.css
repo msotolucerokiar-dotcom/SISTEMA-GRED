@@ -847,6 +847,8 @@
   .csi-list-page .csi-list-tabs a[aria-current="page"] { background: #087f82; }
   .csi-list-page .csi-list-tabs a span { margin-left: .3rem; border-radius: .25rem; padding: .06rem .25rem; background: rgba(255,255,255,.2); }
   .csi-list-page .csi-list-filters { margin-bottom: .7rem; padding: .7rem; }
+  .csi-list-page .csi-list-advanced[open] { display: block; width: 100%; }
+  .csi-list-page .csi-list-advanced__grid { position: static; top: auto; right: auto; left: auto; z-index: auto; width: 100%; margin-top: .45rem; border: 0; border-top: 1px solid #e6edef; border-radius: 0; padding: .7rem 0 0; background: transparent; box-shadow: none; }
   .csi-list-page .csi-list-filters__primary > .csi-list-field label { margin-bottom: .2rem; }
   .csi-list-page .csi-list-search input, .csi-list-page .csi-list-field select { min-height: 2.3rem; }
   .csi-list-alerts { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: .7rem; border: 1px solid #dce7ed; border-radius: .55rem; padding: .65rem .75rem; background: #fff; color: #334d62; font-size: .72rem; }
