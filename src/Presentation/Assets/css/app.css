@@ -984,6 +984,36 @@
   .team-bar span:first-child { background: #93afbf; }
   .team-bar span:nth-child(2) { background: #0e9996; }
   .team-action { display: inline-block; border: 1px solid #9cced0; border-radius: .35rem; padding: .4rem .65rem; color: #087f80; font-size: .72rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .team-panel--distribution { padding: 1rem 1.15rem; }
+  .team-panel--distribution > header { margin-bottom: .9rem; }
+  .team-panel--distribution > header p { margin-top: .2rem; }
+  .team-panel__controls { display: flex; align-items: center; gap: .5rem; }
+  .team-panel__controls select { min-height: 2.15rem; max-width: 13rem; border: 1px solid #d9e5ea; border-radius: .4rem; padding: .35rem 1.5rem .35rem .6rem; background: #f9fcfd; color: #557383; font-size: .71rem; font-weight: 700; cursor: pointer; }
+  .team-panel__controls form:first-child select { border-color: #d4eae8; background: #edf8f6; color: #178381; }
+  .team-panel--distribution .team-table { min-width: 58rem; font-size: .73rem; }
+  .team-panel--distribution .team-table thead { background: #f3f7f9; }
+  .team-panel--distribution .team-table thead th { color: #587387; font-size: .68rem; }
+  .team-panel--distribution .team-table th, .team-panel--distribution .team-table td { padding: .8rem .55rem; }
+  .team-panel--distribution .team-table tbody th { min-width: 13rem; }
+  .team-panel--distribution .team-table tbody td { color: #415d71; text-align: center; }
+  .team-panel--distribution .team-table tbody .team-table__progress { color: #008983; font-weight: 800; }
+  .team-panel--distribution .team-table tbody td:nth-child(5) { min-width: 11rem; text-align: left; }
+  .team-panel--distribution .team-table tbody td:nth-child(5) small { margin-top: .25rem; }
+  .team-panel--distribution .team-bar { max-width: 12rem; height: .8rem; }
+  .team-panel--distribution .team-table tfoot { background: #eef7f5; color: #35626b; font-weight: 800; }
+  .team-panel--distribution .team-table tfoot td { text-align: center; }
+  .team-panel--distribution .team-table tfoot td:nth-child(5) { text-align: left; }
+  .team-panel--distribution .team-table tfoot small { font-weight: 700; }
+  .team-delay { display: inline-block; min-width: 1.35rem; border-radius: .3rem; padding: .3rem; background: #eef3f5; color: #77909d; font-weight: 800; }
+  .team-delay--active { background: #fae5e5; color: #bd4e4e; }
+  .team-panel--distribution footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: .9rem; }
+  .team-legend { display: flex; flex-wrap: wrap; gap: .85rem; }
+  .team-legend span { display: inline-flex; align-items: center; gap: .3rem; }
+  .team-legend i { width: .5rem; height: .5rem; border-radius: .15rem; background: #93afbf; }
+  .team-legend span:nth-child(2) i { background: #0e9996; }
+  .team-legend span:nth-child(3) i { background: #f3cece; }
+  @media (max-width: 1150px) { .team-panel--distribution > header { align-items: flex-start; flex-direction: column; } }
+  @media (max-width: 650px) { .team-panel__controls { flex-wrap: wrap; } .team-panel--distribution footer { align-items: flex-start; flex-direction: column; } }
   .team-empty { padding: 1.5rem; text-align: center; }
   @media (max-width: 850px) { .team-kpis { grid-template-columns: 1fr; } .team-alert { flex-wrap: wrap; } .team-alert a { margin-left: 0; } }
   @media (max-width: 650px) { .team-alert__actions { width: 100%; margin: .3rem 0 0 2.95rem; } }
