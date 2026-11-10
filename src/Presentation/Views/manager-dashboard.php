@@ -30,6 +30,7 @@ $summaryCards = [
 <header class="manager-topbar">
   <div class="manager-topbar__inner">
     <div class="manager-breadcrumb"><a href="/dashboard">GRED LAMBAYEQUE</a><span aria-hidden="true">/</span><span>Centro de Sistemas de Información</span><span aria-hidden="true">/</span><strong aria-current="page">Inicio</strong></div>
+    <form class="manager-top-search" action="/csi/requests" method="get" role="search"><label class="sr-only" for="manager-global-search">Buscar solicitudes</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="manager-global-search" type="search" name="search" maxlength="100" placeholder="Buscar solicitudes, oficinas, trabajadores o códigos..."><button class="sr-only focus:not-sr-only" type="submit">Buscar</button></form>
     <div class="manager-header-actions">
       <time class="manager-header-date" datetime="<?= $e($managerToday->format('Y-m-d')) ?>"><?= $e($managerDateLabel) ?></time>
       <?php require __DIR__ . '/partials/notifications-bell.php'; ?>

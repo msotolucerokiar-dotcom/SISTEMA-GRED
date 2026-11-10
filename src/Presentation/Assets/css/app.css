@@ -706,6 +706,13 @@
   .manager-panel .manager-secondary-grid .manager-activity__content > p { font-size: var(--manager-body-text); line-height: 1.4; }
   .manager-panel .manager-secondary-grid .manager-workload__mobile-legend, .manager-panel .manager-attention-head { font-size: var(--manager-label-text); }
   .manager-overview-page { background: #f4f8fb; color: #1b3450; }
+  .manager-overview-page .manager-breadcrumb { margin-right: auto; }
+  .manager-overview-page .manager-topbar__inner { gap: 1rem; }
+  .manager-top-search { position: relative; width: min(25rem,32vw); flex: none; }
+  .manager-top-search svg { position: absolute; top: 50%; left: .8rem; width: 1rem; height: 1rem; transform: translateY(-50%); color: #7790a6; }
+  .manager-top-search input { width: 100%; min-height: 2.45rem; border: 1px solid #d4e2ed; border-radius: .52rem; padding: .45rem .7rem .45rem 2.35rem; background: #fff; color: #1d375c; font-size: .72rem; }
+  .manager-top-search input::placeholder { color: #8496a9; }
+  .manager-top-search input:focus-visible { outline: 2px solid #3a699b; outline-offset: 2px; }
   .manager-overview-page .manager-content { max-width: none; padding: 1.1rem 1.15rem 2rem; }
   .manager-overview-page .manager-page-heading { gap: 1rem; padding: .2rem 0 .75rem; }
   .manager-page-heading__main { display: flex; align-items: center; gap: .75rem; }
@@ -800,7 +807,23 @@
   .manager-overview-page .manager-activity__line h3 { font-size: .66rem; }
   .manager-overview-page .manager-activity__content > p { font-size: .63rem; }
   .manager-overview-page .manager-activity__line time { font-size: .6rem; }
+  .manager-overview-page .manager-secondary-grid > .manager-followup { display: flex; flex-direction: column; padding: 1rem 1rem 0; overflow: hidden; }
+  .manager-overview-page .manager-activity__title { align-items: center; gap: .65rem; }
+  .manager-overview-page .manager-activity__title > svg { width: 1.2rem; height: 1.2rem; margin: 0; color: #078b8b; }
+  .manager-overview-page .manager-activity__list { margin-top: .65rem; }
+  .manager-overview-page .manager-activity__item { grid-template-columns: 1.8rem minmax(0,1fr) auto; align-items: center; gap: .7rem; min-height: 3.25rem; padding: .4rem 0; }
+  .manager-overview-page .manager-activity__item:last-child { border-bottom: 0; }
+  .manager-overview-page .manager-activity__icon { width: 1.75rem; height: 1.75rem; }
+  .manager-overview-page .manager-activity__icon svg { width: .9rem; height: .9rem; }
+  .manager-overview-page .manager-activity__summary { margin: 0; color: #52677e; font-size: .72rem; line-height: 1.4; }
+  .manager-overview-page .manager-activity__summary a { color: #078087; font-weight: 800; text-decoration: none; }
+  .manager-overview-page .manager-activity__summary a:hover { text-decoration: underline; }
+  .manager-overview-page .manager-activity__compact-time { color: #8ea0af; font-size: .65rem; white-space: nowrap; }
+  .manager-overview-page .manager-activity__footer { margin: auto -1rem 0; border-top: 1px solid #e7eef2; padding: .8rem 1rem; }
+  .manager-overview-page .manager-activity__footer a { font-size: .73rem; }
+  @media (max-width: 1180px) { .manager-overview-page .manager-breadcrumb > span:nth-of-type(2), .manager-overview-page .manager-breadcrumb > span:nth-of-type(3) { display: none; } .manager-top-search { width: min(22rem,34vw); } }
+  @media (max-width: 900px) { .manager-overview-page .manager-topbar__inner { flex-wrap: wrap; } .manager-top-search { order: 3; width: 100%; } }
   @media (max-width: 1100px) { .manager-overview__cards { grid-template-columns: repeat(2,minmax(0,1fr)); } .manager-alerts { grid-template-columns: 1fr 1fr; } .manager-alerts h2 { grid-column: 1/-1; } }
-  @media (max-width: 620px) { .manager-overview-page .manager-topbar__inner { padding: .45rem .7rem; } .manager-top-search { width: min(15rem,55vw); } .manager-overview-page .manager-page-heading__actions { width: 100%; justify-content: space-between; } .manager-alerts { grid-template-columns: 1fr; } .manager-alerts h2 { grid-column: auto; } .manager-overview-page .manager-workload__overview-load { flex-wrap: wrap; } }
-  @media (max-width: 420px) { .manager-overview__cards { grid-template-columns: 1fr; } .manager-top-search { width: min(12rem,48vw); } }
+  @media (max-width: 620px) { .manager-overview-page .manager-topbar__inner { padding: .45rem .7rem; } .manager-overview-page .manager-page-heading__actions { width: 100%; justify-content: space-between; } .manager-alerts { grid-template-columns: 1fr; } .manager-alerts h2 { grid-column: auto; } .manager-overview-page .manager-workload__overview-load { flex-wrap: wrap; } }
+  @media (max-width: 420px) { .manager-overview__cards { grid-template-columns: 1fr; } }
 }

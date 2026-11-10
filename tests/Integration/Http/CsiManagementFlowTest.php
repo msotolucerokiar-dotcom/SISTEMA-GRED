@@ -49,6 +49,8 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('Vista general', $managerDashboard);
             self::assertStringContainsString('class="manager-breadcrumb"', $managerDashboard);
             self::assertStringContainsString('class="manager-sidebar__brand"', $managerDashboard);
+            self::assertStringContainsString('id="manager-global-search"', $managerDashboard);
+            self::assertStringContainsString('class="manager-activity__summary"', $managerDashboard);
             self::assertStringContainsString('action="/logout" method="post"', $managerDashboard);
             self::assertSame(303, $this->request('GET', '/profile')[0]);
             [$status, $profile] = $this->request('GET', '/profile', '', $managerCookie);
@@ -66,7 +68,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('Alertas prioritarias', $managerDashboard);
             self::assertStringNotContainsString('Accesos rápidos', $managerDashboard);
             self::assertStringNotContainsString('Indicadores del período', $managerDashboard);
-            self::assertStringContainsString('Nueva solicitud registrada', $managerDashboard);
+            self::assertStringContainsString('Se registró la solicitud', $managerDashboard);
             self::assertStringContainsString('href="/csi/activity"', $managerDashboard);
             [$status, $activityPage] = $this->request('GET', '/csi/activity', '', $managerCookie);
             self::assertSame(200, $status);
