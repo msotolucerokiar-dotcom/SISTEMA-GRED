@@ -20,11 +20,11 @@ $perPageUrl = '/csi/requests' . ($paginationQuery === [] ? '' : '?' . http_build
 <?php if ($listing['items'] === []): ?><div class="csi-list-empty"><h2>No hay solicitudes para mostrar</h2><p>Prueba con otros filtros o espera nuevas solicitudes.</p></div><?php else: ?>
 <div class="csi-list-table-wrap"><table class="csi-list-table csi-list-table--compact"><caption class="sr-only">Solicitudes filtradas</caption><thead><tr>
 <th scope="col"><a href="<?= $e($sortUrl('code')) ?>">Código ↕</a></th>
-<th scope="col"><a href="<?= $e($sortUrl('area')) ?>">Oficina ↕</a></th>
-<th scope="col"><a href="<?= $e($sortUrl('title')) ?>">Problema ↕</a></th>
-<th scope="col"><a href="<?= $e($sortUrl('priority')) ?>">Prioridad ↕</a></th>
-<th scope="col"><a href="<?= $e($sortUrl('status')) ?>">Estado ↕</a></th>
-<th scope="col"><a href="<?= $e($sortUrl('technician')) ?>">Responsable ↕</a></th>
+<th scope="col">Oficina</th>
+<th scope="col">Problema</th>
+<th scope="col">Prioridad</th>
+<th scope="col">Estado</th>
+<th scope="col">Responsable</th>
 <th scope="col"><a href="<?= $e($sortUrl('created')) ?>">Registro ↓</a></th>
 <th scope="col">Acciones</th></tr></thead><tbody>
 <?php foreach ($listing['items'] as $item):
