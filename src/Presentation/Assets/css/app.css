@@ -829,9 +829,12 @@
   @media (max-width: 420px) { .manager-overview__cards { grid-template-columns: 1fr; } }
   .csi-list-page .csi-list-workspace { display: block; }
   .csi-list-page .manager-topbar__inner { gap: 1rem; }
-  .csi-list-page .manager-breadcrumb { display: none; }
+  .csi-list-page .manager-breadcrumb { display: flex; }
   .csi-list-page .manager-top-search { width: min(31rem,42vw); margin-left: auto; }
-  .csi-list-page .manager-header-date { display: none; }
+  .csi-list-page .manager-header-date { display: inline; }
+  .csi-list-page .csi-list-shell { min-height: calc(100vh - 5rem); }
+  .csi-list-page .csi-list-shell .manager-sidebar { min-height: calc(100vh - 5rem); }
+  @media (max-width: 900px) { .csi-list-page .manager-header-date { display: none; } .csi-list-page .csi-list-shell .manager-sidebar { min-height: 0; } }
   .csi-list-page .manager-account__avatar { width: 2.3rem; height: 2.3rem; border-radius: 50%; background: #dcebf4; color: #295470; }
   .csi-list-page .csi-list-workspace__main { min-width: 0; }
   .csi-list-page .csi-list-content { padding: 1.15rem 1.15rem 2rem; }
