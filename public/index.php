@@ -269,6 +269,7 @@ if ($path === '/dashboard') {
             $teamFollowUp = $insights->managerFollowUp(20);
             $teamTasks = $insights->activeDelegatedTasks(50);
             $teamStaleCount = $insights->countFiltered([...$managerFilters, 'alert' => 'stale']);
+            $teamStaleExample = $teamStaleCount > 0 ? ($insights->listFiltered([...$managerFilters, 'alert' => 'stale'], 1, 0)[0] ?? null) : null;
         }
         $managerActivity = $insights->recentActivityForManager(5);
         $managementOptions = $container->get(ManagementRepository::class);

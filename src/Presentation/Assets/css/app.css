@@ -958,6 +958,16 @@
   .team-kpi__icon--violet { background: #f0eafe; color: #7854be; }
   .team-alert { display: flex; align-items: center; gap: .8rem; margin-bottom: 1rem; border: 1px solid #efd9b2; border-radius: .65rem; padding: .9rem 1rem; background: #fffaf1; color: #73552f; font-size: .78rem; }
   .team-alert a { margin-left: auto; color: #087f80; font-weight: 700; white-space: nowrap; }
+  .team-alert { gap: .8rem; min-height: 4.25rem; padding: .7rem 1rem; }
+  .team-alert__icon { display: grid; width: 2.15rem; height: 2.15rem; flex: 0 0 auto; place-items: center; border-radius: .5rem; background: #fff0d5; color: #c78215; font-size: 1.1rem; }
+  .team-alert__message { display: grid; gap: .2rem; }
+  .team-alert__message strong { color: #705230; font-size: .83rem; }
+  .team-alert__message span { color: #846b50; font-size: .75rem; }
+  .team-alert__message b { color: #705230; }
+  .team-alert__actions { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
+  .team-alert .team-alert__primary { margin: 0; border-radius: .4rem; padding: .65rem .85rem; background: #087f80; color: #fff; font-size: .75rem; text-decoration: none; }
+  .team-alert .team-alert__primary:hover { background: #066b6c; }
+  .team-alert .team-alert__secondary { margin: 0; color: #247f84; font-size: .72rem; font-weight: 500; line-height: 1.3; }
   .team-panel { border: 1px solid #dce6ea; border-radius: .75rem; padding: 1rem; background: #fff; box-shadow: 0 3px 9px rgba(27,56,72,.04); }
   .team-panel > header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .8rem; }
   .team-panel > header a { color: #087f80; font-size: .8rem; font-weight: 700; text-decoration: none; }
@@ -976,5 +986,6 @@
   .team-action { display: inline-block; border: 1px solid #9cced0; border-radius: .35rem; padding: .4rem .65rem; color: #087f80; font-size: .72rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
   .team-empty { padding: 1.5rem; text-align: center; }
   @media (max-width: 850px) { .team-kpis { grid-template-columns: 1fr; } .team-alert { flex-wrap: wrap; } .team-alert a { margin-left: 0; } }
+  @media (max-width: 650px) { .team-alert__actions { width: 100%; margin: .3rem 0 0 2.95rem; } }
   @media (max-width: 550px) { .team-tabs { overflow-x: auto; } .team-tabs a { white-space: nowrap; } .team-page h1 { font-size: 1.4rem; } }
 }
