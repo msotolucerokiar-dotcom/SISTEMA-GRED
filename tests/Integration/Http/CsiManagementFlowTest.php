@@ -47,7 +47,8 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString('href="/profile">Perfil</a>', $managerDashboard);
             self::assertStringContainsString('aria-label="Menú lateral del Responsable CSI"', $managerDashboard);
             self::assertStringContainsString('Vista general', $managerDashboard);
-            self::assertStringContainsString('Buscar solicitudes, oficinas, trabajadores o códigos', $managerDashboard);
+            self::assertStringContainsString('class="manager-breadcrumb"', $managerDashboard);
+            self::assertStringContainsString('class="manager-sidebar__brand"', $managerDashboard);
             self::assertStringContainsString('action="/logout" method="post"', $managerDashboard);
             self::assertSame(303, $this->request('GET', '/profile')[0]);
             [$status, $profile] = $this->request('GET', '/profile', '', $managerCookie);

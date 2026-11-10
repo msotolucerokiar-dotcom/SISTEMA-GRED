@@ -29,26 +29,26 @@ $summaryCards = [
 <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">Ir al contenido</a>
 <header class="manager-topbar">
   <div class="manager-topbar__inner">
-    <form class="manager-top-search" action="/csi/requests" method="get" role="search"><label class="sr-only" for="manager-global-search">Buscar solicitudes</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="manager-global-search" type="search" name="search" maxlength="100" placeholder="Buscar solicitudes, oficinas, trabajadores o códigos..."><button class="sr-only focus:not-sr-only" type="submit">Buscar</button></form>
+    <div class="manager-breadcrumb"><a href="/dashboard">GRED LAMBAYEQUE</a><span aria-hidden="true">/</span><span>Centro de Sistemas de Información</span><span aria-hidden="true">/</span><strong aria-current="page">Inicio</strong></div>
     <div class="manager-header-actions">
       <time class="manager-header-date" datetime="<?= $e($managerToday->format('Y-m-d')) ?>"><?= $e($managerDateLabel) ?></time>
       <?php require __DIR__ . '/partials/notifications-bell.php'; ?>
-      <details class="manager-account"><summary aria-label="Opciones de cuenta" title="Opciones de cuenta"><span class="manager-account__avatar" aria-hidden="true"><?= $e(mb_strtoupper(mb_substr(\App\Presentation\DisplayName::withoutDemoMarker($user->fullName), 0, 2))) ?></span><span class="manager-account__identity"><strong><?= $e(\App\Presentation\DisplayName::withoutDemoMarker($user->fullName)) ?></strong><small>Responsable del CSI</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="manager-account__menu"><a href="/profile">Perfil</a><form action="/logout" method="post"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button type="submit">Cerrar sesión</button></form></div></details>
+      <details class="manager-account"><summary aria-label="Opciones de cuenta" title="Opciones de cuenta"><span class="manager-account__avatar" aria-hidden="true">RC</span><span class="manager-account__identity"><strong>Responsable del CSI</strong><small>Administración del servicio</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="manager-account__menu"><a href="/profile">Perfil</a><form action="/logout" method="post"><input type="hidden" name="_csrf" value="<?= $e($csrfToken) ?>"><button type="submit">Cerrar sesión</button></form></div></details>
     </div>
   </div>
 </header>
 <div class="manager-shell">
   <aside class="manager-sidebar" aria-label="Menú lateral del Responsable CSI">
-    <div class="manager-identity"><div class="manager-identity__row"><span class="manager-identity__mark" aria-hidden="true">GRL</span><strong>Gobierno Regional<br>de Lambayeque</strong></div><div class="manager-identity__row"><span class="manager-identity__mark" aria-hidden="true">G</span><span><strong>GRED</strong><small>Gerencia Regional de Educación</small></span></div><div class="manager-identity__row"><span class="manager-identity__mark" aria-hidden="true">CSI</span><span><strong>CSI</strong><small>Centro de Sistemas de Información</small></span></div></div>
+    <div class="manager-sidebar__brand"><span class="manager-sidebar__mark" aria-hidden="true">CSI</span><div><strong>Soporte tecnológico</strong><small>GRED Lambayeque</small></div></div>
     <nav aria-label="Navegación principal" class="manager-sidebar__nav">
-      <div class="manager-sidebar__group"><p>Navegación</p>
+      <div class="manager-sidebar__group"><p>Espacio de trabajo</p>
         <a href="/dashboard" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="manager-sidebar__item-text"><strong>Vista general</strong><small>Resumen operativo</small></span></a>
         <a href="/csi/requests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h6"/></svg><span class="manager-sidebar__item-text"><strong>Solicitudes</strong><small>Gestión de atenciones</small></span></a>
         <a href="#equipo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c0-4 2-6 6-6s6 2 6 6M15 15c4 0 6 2 6 5"/></svg><span class="manager-sidebar__item-text"><strong>Equipo y tareas</strong><small>Supervisión del personal</small></span></a>
       </div>
-      <div class="manager-sidebar__group manager-sidebar__group--admin">
+      <div class="manager-sidebar__group"><p>Administración</p>
         <a href="/csi/reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20v-7m5 7V8m5 12v-9m5 9V4"/></svg><span class="manager-sidebar__item-text"><strong>Reportes</strong><small>Resultados del servicio</small></span></a>
-        <a href="/csi/users"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg><span class="manager-sidebar__item-text"><strong>Administración</strong><small>Usuarios y permisos</small></span></a>
+        <a href="/csi/users"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg><span class="manager-sidebar__item-text"><strong>Usuarios y permisos</strong><small>Control de accesos</small></span></a>
       </div>
     </nav>
   </aside>
