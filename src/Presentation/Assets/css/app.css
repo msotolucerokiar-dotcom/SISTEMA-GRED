@@ -850,6 +850,13 @@
   .csi-list-page .csi-list-summary__card strong { order: 0; margin: 0; font-size: 1.75rem; }
   .csi-list-page .csi-list-summary__label { order: 1; font-size: .8rem; }
   .csi-list-page .csi-list-summary__card small { order: 2; font-size: .65rem; }
+  .csi-list-page .csi-list-summary__card { min-height: 7rem; border-color: #dce5ed; border-radius: .6rem; background: #fff; box-shadow: 0 2px 5px rgba(22,50,76,.05); }
+  .csi-list-page .csi-list-summary__card--total .csi-list-summary__icon { background: #e9f3ff; color: #2879c8; }
+  .csi-list-page .csi-list-summary__card--unassigned .csi-list-summary__icon { background: #fff2df; color: #c68417; }
+  .csi-list-page .csi-list-summary__card--progress .csi-list-summary__icon { background: #e3f6ef; color: #16a477; }
+  .csi-list-page .csi-list-summary__card--resolved .csi-list-summary__icon { background: #efe9ff; color: #8057d3; }
+  .csi-list-utilities { display: flex; justify-content: flex-end; margin: -.35rem 0 .65rem; }
+  .csi-list-utilities .csi-list-export summary { min-height: 2rem; padding: .35rem .7rem; font-size: .7rem; }
   .csi-list-page .csi-list-tabs { gap: .45rem; border-bottom: 1px solid #dce6eb; margin: 0 0 .75rem; padding-bottom: .55rem; }
   .csi-list-page .csi-list-tabs a { min-height: 2.3rem; border-color: #dce6eb; border-radius: .4rem; padding: .4rem .7rem; background: #fff; font-size: .72rem; }
   .csi-list-page .csi-list-tabs a[aria-current="page"] { background: #087f82; }
