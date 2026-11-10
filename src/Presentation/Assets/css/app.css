@@ -997,6 +997,9 @@
   .team-panel--distribution .team-table tbody th { min-width: 13rem; }
   .team-panel--distribution .team-table tbody td { color: #415d71; text-align: center; }
   .team-panel--distribution .team-table tbody .team-table__progress { color: #008983; font-weight: 800; }
+  .team-panel--distribution .team-table .team-table__progress-heading { min-width: 6.4rem; color: #167e7d; text-align: center; white-space: nowrap; }
+  .team-panel--distribution .team-table .team-table__progress a { display: inline-block; min-width: 1.7rem; border-radius: .3rem; padding: .2rem .3rem; color: #008983; text-decoration: none; }
+  .team-panel--distribution .team-table .team-table__progress a:hover, .team-panel--distribution .team-table .team-table__progress a:focus-visible { background: #e1f4f1; outline-color: #008983; }
   .team-panel--distribution .team-table tbody td:nth-child(5) { min-width: 11rem; text-align: left; }
   .team-panel--distribution .team-table tbody td:nth-child(5) small { margin-top: .25rem; }
   .team-panel--distribution .team-bar { max-width: 12rem; height: .8rem; }

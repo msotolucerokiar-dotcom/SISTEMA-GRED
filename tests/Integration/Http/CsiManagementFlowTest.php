@@ -93,6 +93,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(200, $teamStatus);
             self::assertStringContainsString('Distribución del trabajo por integrante', $teamPage);
             self::assertStringContainsString('Con demora', $teamPage);
+            self::assertStringContainsString('solicitudes en atención de', $teamPage);
             self::assertStringContainsString('Selección parcial', $teamPage);
             self::assertSame(200, $this->request('GET', '/dashboard?section=team&team_selection=all&team_scope=loaded', '', $managerCookie)[0]);
             self::assertStringContainsString('Tareas asignadas', $teamPage);
