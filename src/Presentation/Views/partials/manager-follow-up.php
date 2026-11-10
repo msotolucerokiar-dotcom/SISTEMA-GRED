@@ -41,7 +41,7 @@ $activityDescription = static function (array $item): string {
   <div class="manager-activity__heading"><div class="manager-activity__title"><?php if (!empty($activityFullPage)): ?><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m5 13 4-4 3 5 3-3 4 3"/></svg><?php endif; ?><div><h2 id="manager-follow-up"><?= !empty($activityFullPage) ? 'Historial de actividad' : 'Actividad reciente' ?></h2><p><?= !empty($activityFullPage) ? 'Últimos movimientos de solicitudes del CSI' : 'Últimos movimientos de las solicitudes y tareas' ?></p></div></div><?php if (!empty($activityFullPage)): ?><span class="manager-activity__period">Todos</span><?php else: ?><a class="manager-activity__all" href="/csi/activity">Historial completo <span aria-hidden="true">→</span></a><?php endif; ?></div>
   <?php if ($managerActivity === []): ?><p class="manager-activity__empty">Todavía no hay movimientos registrados.</p><?php else: ?>
   <ol class="manager-activity__list">
-    <?php foreach (!empty($activityFullPage) ? $managerActivity : array_slice($managerActivity, 0, 2) as $item): ?>
+    <?php foreach (!empty($activityFullPage) ? $managerActivity : array_slice($managerActivity, 0, 3) as $item): ?>
       <?php
         [$title, $badge, $style] = $activityLabels[$item['action']] ?? ['Actividad registrada', 'Actualizada', 'classified'];
         $eventAt = (new DateTimeImmutable($item['event_at']))->setTimezone($zone);
@@ -52,5 +52,5 @@ $activityDescription = static function (array $item): string {
     <?php endforeach; ?>
   </ol>
   <?php endif; ?>
-  <?php if (!empty($activityFullPage)): ?><div class="manager-activity__footer"><a href="/dashboard#manager-follow-up">Volver al panel <span aria-hidden="true">→</span></a></div><?php else: ?><div class="manager-activity__validation"><div><strong><?= (int) $managerPendingValidation ?> <?= $managerPendingValidation === 1 ? 'tarea espera' : 'tareas esperan' ?> validación</strong><p>Revisa el trabajo antes de cerrar los casos.</p></div><a href="/csi/requests?validation=pending">Revisar tareas <span aria-hidden="true">→</span></a></div><?php endif; ?>
+  <?php if (!empty($activityFullPage)): ?><div class="manager-activity__footer"><a href="/dashboard#manager-follow-up">Volver al panel <span aria-hidden="true">→</span></a></div><?php else: ?><div class="manager-activity__footer"><a href="/csi/activity">Ver toda la actividad <span aria-hidden="true">→</span></a></div><?php endif; ?>
 </section>

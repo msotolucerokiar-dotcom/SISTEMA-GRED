@@ -250,9 +250,17 @@ if ($path === '/dashboard') {
         $managerPendingAssigned = $pendingStatusId === null ? 0 : $insights->countFiltered([
             ...$managerFilters, 'status' => $pendingStatusId, 'assignment' => 'assigned',
         ]);
+        $managerNewToReview = $pendingStatusId === null ? 0 : $insights->countFiltered([
+            ...$managerFilters, 'status' => $pendingStatusId, 'assignment' => 'unassigned',
+        ]);
+        $managerDecisionsPending = $insights->countFiltered([...$managerFilters, 'attention' => 'needed']);
+        $managerAttentionTotal = $insights->countFiltered([...$managerFilters, 'from' => null, 'to' => null, 'attention' => 'needed']);
         $urgentPriorityId = array_column($managerFilterOptions['priorities'], 'id', 'code')['urgent'] ?? null;
         $managerUrgent = $urgentPriorityId === null ? 0 : $insights->countFiltered([
             ...$managerFilters, 'priority' => $urgentPriorityId, 'open' => true,
+        ]);
+        $managerPriorityUnassigned = $urgentPriorityId === null ? 0 : $insights->countFiltered([
+            ...$managerFilters, 'priority' => (int) $urgentPriorityId, 'assignment' => 'unassigned', 'open' => true,
         ]);
         $managerAttention = $insights->attentionNeeded(5);
         $managerWorkload = $insights->technicianWorkload();

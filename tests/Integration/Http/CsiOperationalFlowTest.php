@@ -77,7 +77,7 @@ final class CsiOperationalFlowTest extends TestCase
             self::assertSame(303, $this->request('POST', '/intern/tasks/' . $taskId . '/submit', http_build_query(['_csrf' => $internCsrf, 'work_note' => 'Se reconectó el cable de red.']), $intern)[0]);
             $followUp = $container->get(PdoInsightsRepository::class)->managerFollowUp(50);
             self::assertContains($code, array_column($followUp['pending_validation'], 'public_code'));
-            self::assertStringContainsString('Tareas por validar', $this->request('GET', '/dashboard', '', $manager)[1]);
+            self::assertStringContainsString('Por validar', $this->request('GET', '/dashboard', '', $manager)[1]);
             [$validationStatus, $validationList] = $this->request('GET', '/csi/requests?validation=pending', '', $manager);
             self::assertSame(200, $validationStatus);
             self::assertStringContainsString($code, $validationList);
