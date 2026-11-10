@@ -86,9 +86,7 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString($code, $managerDashboard);
             self::assertStringContainsString('/csi/requests/' . $code . '/assign', $managerDashboard);
             self::assertStringContainsString('/csi/requests/' . $code . '/classify', $managerDashboard);
-            self::assertStringContainsString('<option value="all" selected>Todas las solicitudes</option>', $managerDashboard);
-            self::assertStringContainsString('<option value="today"', $managerDashboard);
-            self::assertStringContainsString('<option value="month"', $managerDashboard);
+            self::assertStringNotContainsString('id="manager-period"', $managerDashboard);
             self::assertStringContainsString('Nuevas por revisar', $managerDashboard);
             self::assertStringContainsString('Por validar', $managerDashboard);
             self::assertStringContainsString('validation=pending', $managerDashboard);
