@@ -112,6 +112,9 @@ final class PdoInsightsRepository implements InsightsRepository
                 COUNT(r.id) FILTER (WHERE s.is_terminal = FALSE) AS open_count,
                 COUNT(r.id) FILTER (WHERE s.code = 'pending') AS pending_count,
                 COUNT(r.id) FILTER (WHERE s.code = 'in_progress') AS in_progress_count,
+                COUNT(r.id) FILTER (WHERE s.code = 'in_progress' AND EXISTS (
+                    SELECT 1 FROM request_tasks t WHERE t.request_id = r.id AND t.state = 'submitted'
+                )) AS waiting_count,
                 COUNT(r.id) FILTER (WHERE s.code = 'resolved') AS resolved_count,
                 COUNT(r.id) FILTER (WHERE s.is_terminal = FALSE AND GREATEST(r.updated_at, ra.assigned_at,
                     COALESCE((SELECT MAX(h.created_at) FROM request_history h WHERE h.request_id = r.id), r.created_at)) < NOW() - INTERVAL '48 hours') AS stale_count,
@@ -141,6 +144,7 @@ final class PdoInsightsRepository implements InsightsRepository
             'id' => (int) $row['id'], 'name' => $row['name'], 'role_code' => $row['role_code'],
             'open_count' => (int) $row['open_count'], 'pending_count' => (int) $row['pending_count'],
             'in_progress_count' => (int) $row['in_progress_count'], 'resolved_count' => (int) $row['resolved_count'],
+            'waiting_count' => (int) $row['waiting_count'],
             'high_priority_count' => (int) $row['high_priority_count'],
             'stale_count' => (int) $row['stale_count'],
             'cases' => $casesByTechnician[(int) $row['id']] ?? [],

@@ -27,7 +27,7 @@ interface InsightsRepository
     /** @return list<array<string,mixed>> */
     public function attentionNeeded(int $limit): array;
 
-    /** @return list<array{id:int,name:string,role_code:string,open_count:int,pending_count:int,in_progress_count:int,resolved_count:int,high_priority_count:int,stale_count:int,cases:list<array{public_code:string,title:string,status_name:string}>}> */
+    /** @return list<array{id:int,name:string,role_code:string,open_count:int,pending_count:int,in_progress_count:int,waiting_count:int,resolved_count:int,high_priority_count:int,stale_count:int,cases:list<array{public_code:string,title:string,status_name:string}>}> */
     public function technicianWorkload(): array;
 
     /** @return list<array<string,mixed>> */

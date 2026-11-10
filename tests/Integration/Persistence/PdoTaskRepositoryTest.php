@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Persistence;
 
 use App\Infrastructure\Bootstrap\ContainerFactory;
 use App\Infrastructure\Persistence\PdoAssignedRequestRepository;
+use App\Infrastructure\Persistence\PdoInsightsRepository;
 use App\Infrastructure\Persistence\PdoManagementRepository;
 use App\Infrastructure\Persistence\PdoRequestRepository;
 use App\Infrastructure\Persistence\PdoTaskRepository;
@@ -84,8 +85,14 @@ final class PdoTaskRepositoryTest extends TestCase
             self::assertTrue($assigned->updateProgress($code, $ids[2], 'in_progress', 'Inicio de atención.', null));
             self::assertFalse($assigned->updateProgress($code, $ids[2], 'resolved', 'Falta tarea.', 'Solución anticipada.'));
             self::assertTrue($tasks->submit($taskId, $ids[3], 'Se revisó el cableado y se reconectó.'));
+            $workload = $container->get(PdoInsightsRepository::class)->technicianWorkload();
+            $technicianWorkload = array_values(array_filter($workload, static fn (array $member): bool => $member['id'] === $ids[2]))[0];
+            self::assertSame(1, $technicianWorkload['waiting_count']);
             self::assertFalse($tasks->approve($taskId, $ids[4], false));
             self::assertTrue($tasks->approve($taskId, $ids[2], false));
+            $workload = $container->get(PdoInsightsRepository::class)->technicianWorkload();
+            $technicianWorkload = array_values(array_filter($workload, static fn (array $member): bool => $member['id'] === $ids[2]))[0];
+            self::assertSame(0, $technicianWorkload['waiting_count']);
             self::assertSame('approved', $tasks->findForIntern($taskId, $ids[3])['state']);
             self::assertFalse($assigned->updateProgress($code, $ids[2], 'resolved', 'Otra tarea pendiente.', 'No todavía.'));
             self::assertTrue($tasks->submit($secondTaskId, $ids[4], 'Controlador instalado y verificado.'));
