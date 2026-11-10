@@ -1,0 +1,3 @@
+<label for="report-attention">Atención requerida</label><select id="report-attention" name="attention"><option value="">Todas</option><option value="needed" <?= ($filters['attention'] ?? '') === 'needed' ? 'selected' : '' ?>>Por asignar o clasificar</option></select>
+<label for="report-validation">Validación de tareas</label><select id="report-validation" name="validation"><option value="">Todas</option><option value="pending" <?= ($filters['validation'] ?? '') === 'pending' ? 'selected' : '' ?>>Pendientes de validar</option></select>
+<label for="report-open">Situación</label><select id="report-open" name="open"><option value="">Todas</option><option value="1" <?= ($filters['open'] ?? false) === true ? 'selected' : '' ?>>Abiertas</option></select>
