@@ -79,6 +79,9 @@
   .manager-sidebar__group a[aria-current="page"]::before { position: absolute; top: .45rem; bottom: .45rem; left: -.8rem; width: .18rem; border-radius: 999px; background: #68bbb7; content: ''; }
   .manager-sidebar__group a svg { width: 1.15rem; height: 1.15rem; flex: none; color: #b5c8d0; }
   .manager-sidebar__group a[aria-current="page"] svg { color: #91d4d0; }
+  .manager-sidebar__nav .manager-sidebar__group a[aria-current="page"] { background: #087f82; }
+  .manager-sidebar__nav .manager-sidebar__group a[aria-current="page"]::before { background: #62d2c7; }
+  .manager-sidebar__nav .manager-sidebar__group a[aria-current="page"] svg { color: #dcf7f3; }
   .manager-breadcrumb { display: flex; min-width: 0; flex-wrap: wrap; align-items: center; gap: .65rem; color: #8295a0; font-size: .82rem; }
   .manager-breadcrumb > a { color: #8295a0; text-decoration: none; }
   .manager-breadcrumb > a:hover { color: #287f87; text-decoration: underline; }
