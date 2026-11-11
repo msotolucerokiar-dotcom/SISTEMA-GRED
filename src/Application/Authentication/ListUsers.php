@@ -11,11 +11,11 @@ final class ListUsers
     public function __construct(private readonly UserAdministrationRepository $users) {}
 
     /** @return array{items:list<array<string,mixed>>,total:int,page:int,pages:int} */
-    public function execute(int $page): array
+    public function execute(int $page, string $search = '', string $role = '', string $status = ''): array
     {
-        $total = $this->users->countUsers();
+        $total = $this->users->countUsers($search, $role, $status);
         $pages = max(1, (int) ceil($total / 20));
         $page = min(max(1, $page), $pages);
-        return ['items' => $this->users->listUsers(20, ($page - 1) * 20), 'total' => $total, 'page' => $page, 'pages' => $pages];
+        return ['items' => $this->users->listUsers(20, ($page - 1) * 20, $search, $role, $status), 'total' => $total, 'page' => $page, 'pages' => $pages];
     }
 }

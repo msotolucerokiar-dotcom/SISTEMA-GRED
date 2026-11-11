@@ -418,7 +418,10 @@ if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)(?:/(permissions)
             }
         }
     }
-    $listing = $container->get(ListUsers::class)->execute($page);
+    $userSearch = is_string($_GET['search'] ?? null) ? mb_substr(trim($_GET['search']), 0, 100) : '';
+    $userRole = is_string($_GET['role'] ?? null) && in_array($_GET['role'], ['worker', 'technician', 'csi_manager', 'intern'], true) ? $_GET['role'] : '';
+    $userStatus = is_string($_GET['status'] ?? null) && in_array($_GET['status'], ['active', 'inactive'], true) ? $_GET['status'] : '';
+    $listing = $container->get(ListUsers::class)->execute($page, $userSearch, $userRole, $userStatus);
     $permissionRepository = $container->get(UserPermissionRepository::class);
     $grantsByUser = [];
     $permissionHistoryByUser = [];
@@ -428,6 +431,9 @@ if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)(?:/(permissions)
             $permissionHistoryByUser[$account['id']] = $permissionRepository->historyFor($account['id']);
         }
     }
+    $notifications = $container->get(PdoNotificationRepository::class);
+    $notificationUnread = $notifications->unreadCount($user->id);
+    $notificationRecent = $notifications->listFor($user->id, 5);
     require dirname(__DIR__) . '/src/Presentation/Views/csi-users.php';
     exit;
 }

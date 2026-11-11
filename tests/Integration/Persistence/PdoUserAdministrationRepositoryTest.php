@@ -47,13 +47,18 @@ final class PdoUserAdministrationRepositoryTest extends TestCase
         try {
             self::assertGreaterThanOrEqual(1, $admin->countUsers());
             self::assertContains($id, array_column($admin->listUsers(20, 0), 'id'));
+            self::assertSame(1, $admin->countUsers($email, 'worker', 'active'));
+            self::assertSame([$id], array_column($admin->listUsers(20, 0, $email, 'worker', 'active'), 'id'));
+            self::assertSame(0, $admin->countUsers($email, 'technician', 'active'));
             self::assertSame('updated', $admin->updateAccess($id, $id, 'technician', true));
             self::assertSame('technician', $users->findActiveById($id)?->roleCode);
+            self::assertSame(1, $admin->countUsers($email, 'technician', 'active'));
             $permissions = $container->get(PdoUserPermissionRepository::class);
             self::assertSame('changed', $permissions->change($id, $id, 'request.assign', true));
             self::assertContains('request.assign', $permissions->grantsFor($id));
             self::assertSame('updated', $admin->updateAccess($id, $id, 'technician', false));
             self::assertNull($users->findActiveById($id));
+            self::assertSame(1, $admin->countUsers($email, 'technician', 'inactive'));
             self::assertSame([], $permissions->grantsFor($id));
             self::assertSame('revoked', $permissions->historyFor($id)[0]['action']);
             self::assertSame('updated', $admin->updateAccess($id, $id, 'technician', true));
