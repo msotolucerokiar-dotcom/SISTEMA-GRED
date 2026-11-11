@@ -49,6 +49,12 @@ final class PdoUserAdministrationRepositoryTest extends TestCase
             self::assertContains($id, array_column($admin->listUsers(20, 0), 'id'));
             self::assertSame(1, $admin->countUsers($email, 'worker', 'active'));
             self::assertSame([$id], array_column($admin->listUsers(20, 0, $email, 'worker', 'active'), 'id'));
+            $areaId = (int) $pdo->query('SELECT id FROM areas ORDER BY id LIMIT 1')->fetchColumn();
+            $assignArea = $pdo->prepare('UPDATE users SET area_id = :area WHERE id = :id');
+            $assignArea->execute(['area' => $areaId, 'id' => $id]);
+            self::assertSame(1, $admin->countUsers($email, 'worker', 'active', $areaId));
+            self::assertNotNull($admin->listUsers(20, 0, $email, 'worker', 'active', $areaId)[0]['area_name']);
+            self::assertSame(0, $admin->countUsers($email, 'worker', 'active', 999999999));
             self::assertSame(0, $admin->countUsers($email, 'technician', 'active'));
             self::assertSame('updated', $admin->updateAccess($id, $id, 'technician', true));
             self::assertSame('technician', $users->findActiveById($id)?->roleCode);

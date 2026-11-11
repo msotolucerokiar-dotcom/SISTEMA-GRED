@@ -421,7 +421,10 @@ if ($path === '/csi/users' || preg_match('~^/csi/users/([0-9]+)(?:/(permissions)
     $userSearch = is_string($_GET['search'] ?? null) ? mb_substr(trim($_GET['search']), 0, 100) : '';
     $userRole = is_string($_GET['role'] ?? null) && in_array($_GET['role'], ['worker', 'technician', 'csi_manager', 'intern'], true) ? $_GET['role'] : '';
     $userStatus = is_string($_GET['status'] ?? null) && in_array($_GET['status'], ['active', 'inactive'], true) ? $_GET['status'] : '';
-    $listing = $container->get(ListUsers::class)->execute($page, $userSearch, $userRole, $userStatus);
+    $officeOptions = $container->get(InsightsRepository::class)->filterOptions()['areas'];
+    $requestedOffice = filter_var($_GET['office'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0;
+    $userOffice = in_array($requestedOffice, array_column($officeOptions, 'id'), true) ? $requestedOffice : 0;
+    $listing = $container->get(ListUsers::class)->execute($page, $userSearch, $userRole, $userStatus, $userOffice);
     $permissionRepository = $container->get(UserPermissionRepository::class);
     $grantsByUser = [];
     $permissionHistoryByUser = [];

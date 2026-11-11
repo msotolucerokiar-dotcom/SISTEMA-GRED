@@ -13,10 +13,10 @@ final class PdoUserAdministrationRepository implements UserAdministrationReposit
 {
     public function __construct(private readonly PDO $pdo) {}
 
-    public function listUsers(int $limit, int $offset, string $search = '', string $role = '', string $status = ''): array
+    public function listUsers(int $limit, int $offset, string $search = '', string $role = '', string $status = '', int $areaId = 0): array
     {
-        $query = $this->pdo->prepare('SELECT u.id, u.email, u.full_name, u.is_active, r.code AS role_code, r.name AS role_name FROM users u JOIN roles r ON r.id = u.role_id WHERE (:name_search = \'\' OR u.full_name ILIKE :name_pattern OR u.email ILIKE :email_pattern) AND (:role_filter = \'\' OR r.code = :role_value) AND (:status_filter = \'\' OR u.is_active = CAST(:active_value AS boolean)) ORDER BY u.id DESC LIMIT :limit OFFSET :offset');
-        $this->bindFilters($query, $search, $role, $status);
+        $query = $this->pdo->prepare('SELECT u.id, u.email, u.full_name, u.is_active, r.code AS role_code, r.name AS role_name, a.name AS area_name FROM users u JOIN roles r ON r.id = u.role_id LEFT JOIN areas a ON a.id = u.area_id WHERE (:name_search = \'\' OR u.full_name ILIKE :name_pattern OR u.email ILIKE :email_pattern) AND (:role_filter = \'\' OR r.code = :role_value) AND (:status_filter = \'\' OR u.is_active = CAST(:active_value AS boolean)) AND (:area_filter = 0 OR u.area_id = :area_value) ORDER BY u.id DESC LIMIT :limit OFFSET :offset');
+        $this->bindFilters($query, $search, $role, $status, $areaId);
         $query->bindValue('limit', $limit, PDO::PARAM_INT);
         $query->bindValue('offset', $offset, PDO::PARAM_INT);
         $query->execute();
@@ -27,15 +27,15 @@ final class PdoUserAdministrationRepository implements UserAdministrationReposit
         }, $query->fetchAll());
     }
 
-    public function countUsers(string $search = '', string $role = '', string $status = ''): int
+    public function countUsers(string $search = '', string $role = '', string $status = '', int $areaId = 0): int
     {
-        $query = $this->pdo->prepare('SELECT COUNT(*) FROM users u JOIN roles r ON r.id = u.role_id WHERE (:name_search = \'\' OR u.full_name ILIKE :name_pattern OR u.email ILIKE :email_pattern) AND (:role_filter = \'\' OR r.code = :role_value) AND (:status_filter = \'\' OR u.is_active = CAST(:active_value AS boolean))');
-        $this->bindFilters($query, $search, $role, $status);
+        $query = $this->pdo->prepare('SELECT COUNT(*) FROM users u JOIN roles r ON r.id = u.role_id WHERE (:name_search = \'\' OR u.full_name ILIKE :name_pattern OR u.email ILIKE :email_pattern) AND (:role_filter = \'\' OR r.code = :role_value) AND (:status_filter = \'\' OR u.is_active = CAST(:active_value AS boolean)) AND (:area_filter = 0 OR u.area_id = :area_value)');
+        $this->bindFilters($query, $search, $role, $status, $areaId);
         $query->execute();
         return (int) $query->fetchColumn();
     }
 
-    private function bindFilters(\PDOStatement $query, string $search, string $role, string $status): void
+    private function bindFilters(\PDOStatement $query, string $search, string $role, string $status, int $areaId): void
     {
         $query->bindValue('name_search', $search);
         $query->bindValue('name_pattern', '%' . $search . '%');
@@ -44,6 +44,8 @@ final class PdoUserAdministrationRepository implements UserAdministrationReposit
         $query->bindValue('role_value', $role);
         $query->bindValue('status_filter', $status);
         $query->bindValue('active_value', $status === 'active' ? 'true' : 'false');
+        $query->bindValue('area_filter', $areaId, PDO::PARAM_INT);
+        $query->bindValue('area_value', $areaId, PDO::PARAM_INT);
     }
 
     public function createUser(string $email, string $fullName, string $passwordHash, string $roleCode, bool $active): bool
