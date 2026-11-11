@@ -577,6 +577,9 @@ if (in_array($path, ['/csi/reports', '/csi/reports.csv', '/csi/reports.pdf'], tr
         exit;
     }
     $filterOptions = $container->get(InsightsRepository::class)->filterOptions();
+    $notifications = $container->get(PdoNotificationRepository::class);
+    $notificationUnread = $notifications->unreadCount($user->id);
+    $notificationRecent = $notifications->listFor($user->id, 5);
     require dirname(__DIR__) . '/src/Presentation/Views/csi-report.php';
     exit;
 }
