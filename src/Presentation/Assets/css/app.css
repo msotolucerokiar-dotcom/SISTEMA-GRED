@@ -827,6 +827,59 @@
   @media (max-width: 1100px) { .manager-overview__cards { grid-template-columns: repeat(2,minmax(0,1fr)); } .manager-alerts { grid-template-columns: 1fr 1fr; } .manager-alerts h2 { grid-column: 1/-1; } }
   @media (max-width: 620px) { .manager-overview-page .manager-topbar__inner { padding: .45rem .7rem; } .manager-overview-page .manager-page-heading__actions { width: 100%; justify-content: space-between; } .manager-alerts { grid-template-columns: 1fr; } .manager-alerts h2 { grid-column: auto; } .manager-overview-page .manager-workload__overview-load { flex-wrap: wrap; } }
   @media (max-width: 420px) { .manager-overview__cards { grid-template-columns: 1fr; } }
+  .manager-overview-page { background: #f4f7fa; }
+  .manager-overview-page .manager-shell { grid-template-columns: 15rem minmax(0,1fr); }
+  .manager-overview-page .manager-sidebar { min-height: calc(100vh - 5rem); background: #102b49; }
+  .manager-overview-page .manager-sidebar { display: flex; flex-direction: column; }
+  .manager-institution { display: grid; gap: .25rem; margin: 0 .25rem 1rem; border-bottom: 1px solid #38546a; padding: .25rem .25rem 1rem; }
+  .manager-institution > div { display: flex; align-items: center; gap: .6rem; min-height: 2.7rem; }
+  .manager-institution > div + div { border-top: 1px solid #38546a; padding-top: .55rem; }
+  .manager-institution > div > span { display: grid; width: 2rem; height: 2rem; flex: none; place-items: center; border: 1px solid #668298; border-radius: .35rem; color: #fff; font-size: .62rem; font-weight: 800; }
+  .manager-institution > div:last-child > span { width: 2.3rem; height: 2.3rem; }
+  .manager-institution strong { color: #f8fbff; font-size: .69rem; line-height: 1.3; }
+  .manager-institution > div:first-child strong { font-size: .55rem; letter-spacing: .025em; }
+  .manager-institution p { display: grid; gap: .12rem; }
+  .manager-institution p strong { font-size: .87rem; }
+  .manager-institution small { color: #b8cad8; font-size: .58rem; line-height: 1.25; }
+  .manager-institution-footer { display: grid; gap: .25rem; margin: auto .25rem 0; border-top: 1px solid #38546a; padding: .75rem .25rem 0; }
+  .manager-institution-footer strong { color: #f7fbff; font-size: .61rem; }
+  .manager-institution-footer small { color: #b4c6d3; font-size: .58rem; line-height: 1.4; }
+  .manager-overview-page .manager-sidebar__group p { margin-block: .85rem .6rem; color: #afc4d5; letter-spacing: .1em; }
+  .manager-overview-page .manager-sidebar__group a { min-height: 2.75rem; margin-top: .2rem; padding: .55rem .7rem; }
+  .manager-overview-page .manager-sidebar__group a[aria-current="page"] { background: #087f82; }
+  .manager-overview-page .manager-sidebar__group a[aria-current="page"]::before { left: -.2rem; }
+  .manager-overview-page .manager-account__avatar { background: #e1edf6; color: #315f81; }
+  .manager-overview-page .manager-content { padding: 1.25rem 1.6rem 2rem; }
+  .manager-overview-page .manager-overview { margin-bottom: .8rem; }
+  .manager-overview-page .manager-kpi { min-height: 7.3rem; }
+  .manager-alerts__item--clear { border-color: #dbe5ed; background: #f7fafc; }
+  .manager-alerts__item--clear::before { width: .65rem; height: .4rem; border-left: 1.5px solid #5b93a0; border-bottom: 1.5px solid #5b93a0; border-radius: 0; background: transparent; transform: rotate(-45deg); }
+  .manager-alerts__item--clear span { color: #357587; }
+  .manager-overview-page .manager-intervention__empty { display: flex; min-height: 5.5rem; align-items: center; justify-content: center; gap: .85rem; padding: 1rem; }
+  .manager-overview-page .manager-intervention__empty > span { display: grid; width: 2.3rem; height: 2.3rem; flex: none; place-items: center; border: 1px solid #d9ebe6; border-radius: 50%; background: #edf7f4; color: #078b85; font-size: 1rem; }
+  .manager-overview-page .manager-intervention__empty p { display: grid; gap: .2rem; }
+  .manager-overview-page .manager-intervention__empty strong { color: #243e52; font-size: .76rem; }
+  .manager-overview-page .manager-intervention__empty small { color: #607b90; font-size: .68rem; }
+  .manager-overview-page .manager-workload__table { table-layout: fixed; }
+  .manager-overview-page .manager-workload__table thead { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; background: #edf3f7; }
+  .manager-overview-page .manager-workload__table thead th { padding: .45rem .5rem; color: #607b8e; font-size: .61rem; }
+  .manager-overview-page .manager-workload__table thead th:nth-child(1) { width: 32%; }
+  .manager-overview-page .manager-workload__table thead th:nth-child(2) { width: 33%; }
+  .manager-overview-page .manager-workload__table thead th:nth-child(3) { width: 14%; }
+  .manager-overview-page .manager-workload__table thead th:nth-child(4) { width: 16%; }
+  .manager-overview-page .manager-workload__table thead th:nth-child(5) { width: 5%; }
+  .manager-overview-page .manager-workload__table tbody th, .manager-overview-page .manager-workload__table tbody td, .manager-overview-page .manager-workload__table tbody th:first-child, .manager-overview-page .manager-workload__table tbody td:nth-child(2), .manager-overview-page .manager-workload__table tbody td:last-child { width: auto; padding: .55rem .5rem; }
+  .manager-overview-page .manager-workload__overview-load { display: grid; gap: .25rem; }
+  .manager-overview-page .manager-workload__bar { width: 100%; max-width: 12rem; }
+  .manager-overview-page .manager-workload__overview-load small { display: flex; justify-content: space-between; gap: .25rem; max-width: 12rem; font-size: .57rem; }
+  .manager-overview-page .manager-workload__active-count { color: #24445a; font-size: .66rem; white-space: nowrap; }
+  .manager-overview-page .manager-workload__delay { color: #8194a3; font-size: .59rem; white-space: nowrap; }
+  .manager-overview-page .manager-workload__delay--late { border-radius: .25rem; padding: .28rem .35rem; background: #fff1d9; color: #a36919; font-weight: 800; }
+  .manager-overview-page .manager-workload__actions { justify-content: flex-end; }
+  .manager-overview-page .manager-workload__more summary { width: 1.5rem; height: 1.5rem; border: 0; }
+  .manager-overview-page .manager-activity__title p { display: block; }
+  @media (max-width: 900px) { .manager-overview-page .manager-shell { grid-template-columns: 1fr; } .manager-institution, .manager-institution-footer { display: none; } .manager-overview-page .manager-sidebar { min-height: 0; } }
+  @media (max-width: 600px) { .manager-overview-page .manager-content { padding: 1rem .75rem 2rem; } .manager-overview-page .manager-workload__table-wrap { overflow-x: auto; } .manager-overview-page .manager-workload__table { min-width: 36rem; } }
   .csi-list-page .csi-list-workspace { display: block; }
   .csi-list-page .manager-topbar__inner { gap: 1rem; }
   .csi-list-page .manager-breadcrumb { display: flex; }
