@@ -7,3 +7,4 @@ Documentacion.txt
 .phpunit.cache/
 __pycache__/
 *.py[cod]
+/docs/evidencias-pruebas/*.txt
