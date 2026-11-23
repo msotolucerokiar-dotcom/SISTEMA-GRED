@@ -81,7 +81,7 @@ final class CsiOperationalFlowTest extends TestCase
             [$validationStatus, $validationList] = $this->request('GET', '/csi/requests?validation=pending', '', $manager);
             self::assertSame(200, $validationStatus);
             self::assertStringContainsString($code, $validationList);
-            self::assertStringContainsString('value="pending" selected', $validationList);
+            self::assertStringContainsString('Quitar filtro Validación: Pendientes de validar', html_entity_decode($validationList, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             self::assertSame(403, $this->request('POST', '/technician/tasks/' . $taskId . '/approve', http_build_query(['_csrf' => $internCsrf]), $intern)[0]);
             self::assertSame(303, $this->grant($manager, $managerCsrf, $ids[2], 'request.delegate', '0'));
             self::assertSame(403, $this->request('POST', '/technician/requests/' . $code . '/delegate', http_build_query(['_csrf' => $techCsrf, 'intern' => $ids[3], 'instructions' => 'Otra tarea.']), $technician)[0]);

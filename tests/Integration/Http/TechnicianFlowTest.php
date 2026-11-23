@@ -55,6 +55,8 @@ final class TechnicianFlowTest extends TestCase
             self::assertSame(303, $status);
             [$status, $workerDetail] = $this->request('GET', '/requests/' . $code, '', $worker);
             self::assertSame(200, $status);
+            self::assertStringContainsString('Estado de atención: En atención', $workerDetail);
+            self::assertStringContainsString('Revisé el equipo', $workerDetail);
             self::assertStringNotContainsString('Solución registrada', $workerDetail);
             [$status] = $this->request('POST', '/technician/requests/' . $code . '/progress', http_build_query(['_csrf' => $csrf, 'status' => 'resolved', 'observation' => 'Probado', 'solution' => '']), $technician);
             self::assertSame(422, $status);
@@ -62,6 +64,8 @@ final class TechnicianFlowTest extends TestCase
             self::assertSame(303, $status);
             [$status, $workerDetail] = $this->request('GET', '/requests/' . $code, '', $worker);
             self::assertSame(200, $status);
+            self::assertStringContainsString('Estado de atención: Solucionada', $workerDetail);
+            self::assertStringContainsString('Probado', $workerDetail);
             self::assertStringContainsString('Se reconectó el equipo.', $workerDetail);
             self::assertStringContainsString('Solucionada: CSI registró una solución.', $workerDetail);
             try {

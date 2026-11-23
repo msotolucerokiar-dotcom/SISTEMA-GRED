@@ -52,7 +52,7 @@ final class UserCreationFlowTest extends TestCase
                 if ($role === 'worker') { self::assertContains('request.view_own', $record['permissions']); }
             }
             $listing = $this->request('GET', '/csi/users?created=1', '', $manager)[1];
-            self::assertStringContainsString('El usuario se creó correctamente', $listing);
+            self::assertStringContainsString('El usuario se creó correctamente', html_entity_decode($listing, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             self::assertStringContainsString('Nueva Persona', $listing);
             $duplicate = $this->request('POST', '/csi/users/new', http_build_query([
                 '_csrf' => $csrf, 'full_name' => 'Otra Persona', 'email' => $emails[1], 'role' => 'worker',
