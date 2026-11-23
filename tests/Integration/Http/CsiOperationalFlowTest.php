@@ -31,11 +31,21 @@ final class CsiOperationalFlowTest extends TestCase
                 $ids[] = (int) $insert->fetchColumn();
                 $emails[] = $email;
             }
-            $code = $container->get(PdoRequestRepository::class)->create($ids[0], $area, 'Impresora sin red', 'La impresora no responde en oficina.', []);
             [$manager, $managerCsrf] = $this->login($emails[1], $password);
             [$technician, $techCsrf] = $this->login($emails[2], $password);
             [$intern, $internCsrf] = $this->login($emails[3], $password);
             [$worker] = $this->login($emails[0], $password);
+            [$formStatus, $form] = $this->request('GET', '/requests/new', '', $worker);
+            self::assertSame(200, $formStatus);
+            preg_match('/name="_csrf" value="([a-f0-9]+)"/', $form, $formCsrf);
+            [$createdStatus, , $createdHeaders] = $this->request('POST', '/requests/new', http_build_query([
+                '_csrf' => $formCsrf[1] ?? '', 'title' => 'Impresora sin red',
+                'description' => 'La impresora no responde en oficina.', 'area' => $area,
+            ]), $worker);
+            self::assertSame(303, $createdStatus);
+            preg_match('~Location: /requests/(SOL-[0-9]{4}-[0-9]+)~i', implode("\n", $createdHeaders), $createdCode);
+            $code = $createdCode[1] ?? null;
+            self::assertNotNull($code);
 
             self::assertSame(403, $this->request('GET', '/csi/requests', '', $technician)[0]);
             self::assertSame(403, $this->request('GET', '/csi/reports', '', $technician)[0]);

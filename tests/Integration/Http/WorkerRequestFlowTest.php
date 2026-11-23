@@ -44,6 +44,8 @@ final class WorkerRequestFlowTest extends TestCase
             self::assertStringNotContainsString('Permisos de tu cuenta', $dashboard);
             [$status, $form] = $this->request('GET', '/requests/new', '', '', $cookie);
             self::assertSame(200, $status);
+            self::assertStringContainsString('name="viewport" content="width=device-width, initial-scale=1"', $form);
+            self::assertStringContainsString('min-h-12 w-full', $form);
             self::assertStringContainsString('registrar la solicitud desde tu celular', $form);
             self::assertStringContainsString('Desde tu celular puedes elegir una foto', $form);
             $token = $this->csrf($form);
@@ -106,7 +108,7 @@ final class WorkerRequestFlowTest extends TestCase
     /** @return array{int,string,list<string>} */
     private function request(string $method, string $path, string $body = '', string $contentType = '', string $cookie = ''): array
     {
-        $headers = [];
+        $headers = ['User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile'];
         if ($contentType !== '') { $headers[] = 'Content-Type: ' . $contentType; }
         if ($cookie !== '') { $headers[] = 'Cookie: ' . $cookie; }
         $context = stream_context_create(['http' => [
