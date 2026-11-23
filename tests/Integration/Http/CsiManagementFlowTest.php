@@ -221,6 +221,10 @@ final class CsiManagementFlowTest extends TestCase
             self::assertSame(422, $status);
             [$status] = $this->request('GET', '/csi/reports', '', $workerCookie);
             self::assertSame(403, $status);
+            self::assertSame(403, $this->request('GET', '/csi/reports.csv', '', $workerCookie)[0]);
+            self::assertSame(403, $this->request('GET', '/csi/reports.pdf', '', $workerCookie)[0]);
+            self::assertSame(422, $this->request('GET', '/csi/reports.csv?from=2024-01-01&to=2026-01-01', '', $managerCookie)[0]);
+            self::assertSame(422, $this->request('GET', '/csi/reports.pdf?from=2024-01-01&to=2026-01-01', '', $managerCookie)[0]);
             [$status, $report] = $this->request('GET', '/csi/reports?search=' . rawurlencode($code), '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringContainsString('<h1>Reportes</h1>', $report);
@@ -240,11 +244,13 @@ final class CsiManagementFlowTest extends TestCase
             self::assertStringContainsString($code, $csv);
             self::assertStringContainsString("'=SUM(1,2)", $csv);
             self::assertStringContainsString('text/csv', implode(' ', $csvHeaders));
+            self::assertStringStartsWith("\xEF\xBB\xBF", $csv);
             [$status, $pdf, $pdfHeaders] = $this->request('GET', '/csi/reports.pdf?search=' . rawurlencode($code), '', $managerCookie);
             self::assertSame(200, $status);
             self::assertStringStartsWith('%PDF-1.4', $pdf);
             self::assertStringContainsString($code, $pdf);
             self::assertStringContainsString('application/pdf', implode(' ', $pdfHeaders));
+            self::assertStringContainsString('%%EOF', $pdf);
             $progress = $container->get(PdoAssignedRequestRepository::class);
             self::assertTrue($progress->updateProgress($code, $users[1], 'in_progress', 'Atención iniciada.', null));
             self::assertStringNotContainsString($code, $this->request('GET', '/csi/requests?alert=stale', '', $managerCookie)[1]);
